@@ -29,6 +29,32 @@ BEGIN
 END
 GO
 
+-- Food Categories Master Table
+IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='QCR_FoodCategories' AND xtype='U')
+BEGIN
+    CREATE TABLE QCR_FoodCategories (
+        id INT IDENTITY(1,1) PRIMARY KEY,
+        category_name NVARCHAR(200) NOT NULL,
+        min_temp DECIMAL(5,2) NULL,
+        max_temp DECIMAL(5,2) NULL,
+        is_active BIT DEFAULT 1,
+        created_at DATETIME DEFAULT GETDATE(),
+        updated_at DATETIME DEFAULT GETDATE()
+    );
+
+    -- Insert default food categories with temperature ranges
+    INSERT INTO QCR_FoodCategories (category_name, min_temp, max_temp) VALUES
+    ('Fresh Meat', 0, 4),
+    ('Fresh Poultry', 0, 4),
+    ('Fresh Fish/Seafood', 0, 2),
+    ('Dairy Products', 0, 5),
+    ('Chilled Products', 0, 5),
+    ('Fresh Vegetables', 1, 7),
+    ('Frozen Products', -25, -18),
+    ('Ambient/Dry Goods', NULL, NULL);
+END
+GO
+
 -- Quality Control Receiving Documents (One per day)
 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='QCR_Documents' AND xtype='U')
 BEGIN
