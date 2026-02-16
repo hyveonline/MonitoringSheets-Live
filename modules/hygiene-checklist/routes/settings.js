@@ -45,11 +45,9 @@ router.get('/all', requireAuth, requireRole('SuperAuditor', 'Admin'), async (req
         
         const result = await pool.request()
             .query(`
-                SELECT s.id, s.setting_key, s.setting_value, s.updated_at,
-                       u.display_name as updated_by_name
-                FROM HygieneSettings s
-                LEFT JOIN Users u ON s.updated_by = u.id
-                ORDER BY s.id
+                SELECT id, setting_key, setting_value, updated_at
+                FROM HygieneSettings
+                ORDER BY id
             `);
         
         res.json(result.recordset);
@@ -81,18 +79,16 @@ router.put('/', requireAuth, requireRole('SuperAuditor', 'Admin'), async (req, r
                 await transaction.request()
                     .input('key', sql.NVarChar, key)
                     .input('value', sql.NVarChar, value)
-                    .input('updated_by', sql.Int, req.currentUser.id)
                     .query(`
                         MERGE HygieneSettings AS target
                         USING (SELECT @key AS setting_key) AS source
                         ON target.setting_key = source.setting_key
                         WHEN MATCHED THEN
                             UPDATE SET setting_value = @value, 
-                                       updated_by = @updated_by,
                                        updated_at = GETDATE()
                         WHEN NOT MATCHED THEN
-                            INSERT (setting_key, setting_value, updated_by)
-                            VALUES (@key, @value, @updated_by);
+                            INSERT (setting_key, setting_value)
+                            VALUES (@key, @value);
                     `);
             }
             
@@ -126,11 +122,9 @@ router.put('/:key', requireAuth, requireRole('SuperAuditor', 'Admin'), async (re
         const result = await pool.request()
             .input('key', sql.NVarChar, key)
             .input('value', sql.NVarChar, value)
-            .input('updated_by', sql.Int, req.currentUser.id)
             .query(`
                 UPDATE HygieneSettings 
                 SET setting_value = @value, 
-                    updated_by = @updated_by,
                     updated_at = GETDATE()
                 WHERE setting_key = @key;
                 
@@ -142,10 +136,9 @@ router.put('/:key', requireAuth, requireRole('SuperAuditor', 'Admin'), async (re
             await pool.request()
                 .input('key', sql.NVarChar, key)
                 .input('value', sql.NVarChar, value)
-                .input('updated_by', sql.Int, req.currentUser.id)
                 .query(`
-                    INSERT INTO HygieneSettings (setting_key, setting_value, updated_by)
-                    VALUES (@key, @value, @updated_by)
+                    INSERT INTO HygieneSettings (setting_key, setting_value)
+                    VALUES (@key, @value)
                 `);
         }
         
