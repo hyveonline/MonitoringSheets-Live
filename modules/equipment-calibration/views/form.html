@@ -641,7 +641,11 @@
         let editData = null;
         
         document.addEventListener('DOMContentLoaded', async () => {
-            document.getElementById('log-date').valueAsDate = new Date();
+            const today = new Date().toISOString().split('T')[0];
+            const logDateInput = document.getElementById('log-date');
+            logDateInput.value = today;
+            logDateInput.min = today;
+            logDateInput.max = today;
             await loadCurrentUser();
             await loadBranches();
             await loadReferences();
