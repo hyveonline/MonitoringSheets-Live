@@ -529,7 +529,10 @@
 
         async function loadMethods() {
             try {
-                const response = await fetch('/cooking-cooling/api/methods');
+                const response = await fetch('/cooking-cooling/api/methods', {
+                    cache: 'no-store',
+                    headers: { 'Cache-Control': 'no-cache' }
+                });
                 methods = await response.json();
                 renderMethods();
             } catch (error) {
