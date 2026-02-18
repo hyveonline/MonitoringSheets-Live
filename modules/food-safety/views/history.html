@@ -492,6 +492,12 @@
                         <option value="0">Pending</option>
                     </select>
                 </div>
+                <div class="filter-group">
+                    <label>Procedure</label>
+                    <select id="filter-procedure">
+                        <option value="">All Procedures</option>
+                    </select>
+                </div>
                 <button class="btn-filter" onclick="loadHistory()">Apply</button>
             </div>
         </div>
@@ -554,6 +560,7 @@
     <script>
         let currentUser = null;
         let verifications = [];
+        let proceduresList = [];
         
         document.addEventListener('DOMContentLoaded', async () => {
             // Set default date range (last 30 days)
@@ -565,8 +572,29 @@
             document.getElementById('filter-from').valueAsDate = thirtyDaysAgo;
             
             await loadCurrentUser();
+            await loadProceduresList();
             await loadHistory();
         });
+        
+        async function loadProceduresList() {
+            try {
+                const res = await fetch('/food-safety/api/references?_=' + Date.now(), {
+                    cache: 'no-store'
+                });
+                proceduresList = await res.json();
+                
+                // Populate the procedure filter dropdown
+                const select = document.getElementById('filter-procedure');
+                proceduresList.forEach(proc => {
+                    const option = document.createElement('option');
+                    option.value = proc.name;
+                    option.textContent = proc.name;
+                    select.appendChild(option);
+                });
+            } catch (e) {
+                console.error('Error loading procedures list:', e);
+            }
+        }
         
         async function loadCurrentUser() {
             try {
@@ -594,11 +622,13 @@
             const toDate = document.getElementById('filter-to').value;
             const status = document.getElementById('filter-status').value;
             const verified = document.getElementById('filter-verified').value;
+            const procedure = document.getElementById('filter-procedure').value;
             
             if (fromDate) params.append('from', fromDate);
             if (toDate) params.append('to', toDate);
             if (status) params.append('status', status);
             if (verified) params.append('verified', verified);
+            if (procedure) params.append('procedure', procedure);
             
             params.append('_', Date.now());
             

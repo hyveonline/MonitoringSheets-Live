@@ -233,7 +233,7 @@ router.delete('/api/references/:id', async (req, res) => {
 // Get verification history
 router.get('/api/verifications', async (req, res) => {
     try {
-        const { from, to, status, verified } = req.query;
+        const { from, to, status, verified, procedure } = req.query;
         
         let query = `
             SELECT 
@@ -265,6 +265,12 @@ router.get('/api/verifications', async (req, res) => {
         if (verified !== undefined && verified !== '') {
             query += ` AND s.verified = @verified`;
             request.input('verified', sql.Bit, verified === '1');
+        }
+        
+        // Filter by procedure - find sessions that have records with this procedure
+        if (procedure) {
+            query += ` AND EXISTS (SELECT 1 FROM FoodSafetyVerificationRecords r2 WHERE r2.session_id = s.id AND r2.procedure_name = @procedure)`;
+            request.input('procedure', sql.NVarChar, procedure);
         }
         
         query += ` GROUP BY s.id, s.document_number, s.verification_date, s.branch, s.verified_by, s.verified, s.verified_by_user, s.verified_at, s.created_at, s.updated_at`;
