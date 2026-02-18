@@ -398,6 +398,9 @@
                 <option value="Pass">Pass Only</option>
                 <option value="Fail">Fail Only</option>
             </select>
+            <select id="filter-equipment">
+                <option value="">All Equipment</option>
+            </select>
             <button class="view-btn" onclick="applyFilters()">Apply Filters</button>
         </div>
         
@@ -453,11 +456,33 @@
     <script>
         let calibrations = [];
         let currentUser = null;
+        let equipmentList = [];
         
         document.addEventListener('DOMContentLoaded', async () => {
             await loadCurrentUser();
+            await loadEquipmentList();
             loadHistory();
         });
+        
+        async function loadEquipmentList() {
+            try {
+                const res = await fetch('/equipment-calibration/api/references?_=' + Date.now(), {
+                    cache: 'no-store'
+                });
+                equipmentList = await res.json();
+                
+                // Populate the equipment filter dropdown
+                const select = document.getElementById('filter-equipment');
+                equipmentList.forEach(eq => {
+                    const option = document.createElement('option');
+                    option.value = eq.name;
+                    option.textContent = eq.name;
+                    select.appendChild(option);
+                });
+            } catch (e) {
+                console.error('Error loading equipment list:', e);
+            }
+        }
         
         async function loadCurrentUser() {
             try {
@@ -573,6 +598,7 @@
             const dateFrom = document.getElementById('filter-date-from').value;
             const dateTo = document.getElementById('filter-date-to').value;
             const status = document.getElementById('filter-status').value;
+            const equipment = document.getElementById('filter-equipment').value;
             
             let filtered = [...calibrations];
             
@@ -586,6 +612,9 @@
                 filtered = filtered.filter(c => c.fail_count === 0);
             } else if (status === 'Fail') {
                 filtered = filtered.filter(c => c.fail_count > 0);
+            }
+            if (equipment) {
+                filtered = filtered.filter(c => c.equipment_name === equipment);
             }
             
             renderTable(filtered);

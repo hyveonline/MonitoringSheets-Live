@@ -229,6 +229,23 @@ router.delete('/api/suppliers/:id', async (req, res) => {
 });
 
 // ==========================================
+// Products API (for filter dropdown)
+// ==========================================
+
+// Get distinct product names from entries
+router.get('/api/products', async (req, res) => {
+    try {
+        const pool = await getPool();
+        const result = await pool.request()
+            .query('SELECT DISTINCT product_name FROM QCR_Entries WHERE product_name IS NOT NULL ORDER BY product_name');
+        res.json(result.recordset.map(r => r.product_name));
+    } catch (err) {
+        console.error('Error fetching products:', err);
+        res.status(500).json({ error: 'Failed to fetch products' });
+    }
+});
+
+// ==========================================
 // Food Category Management APIs
 // ==========================================
 
@@ -312,7 +329,7 @@ router.delete('/api/food-categories/:id', async (req, res) => {
 // Get all documents (history)
 router.get('/api/documents', async (req, res) => {
     try {
-        const { date, status, startDate, endDate } = req.query;
+        const { date, status, startDate, endDate, supplier_id, product_name } = req.query;
         const pool = await getPool();
         
         let query = `SELECT d.*, 
@@ -334,6 +351,18 @@ router.get('/api/documents', async (req, res) => {
         if (status) {
             query += ' AND d.status = @status';
             request.input('status', sql.NVarChar, status);
+        }
+        
+        // Filter by supplier - find documents that have entries with this supplier
+        if (supplier_id) {
+            query += ' AND EXISTS (SELECT 1 FROM QCR_Entries e WHERE e.document_id = d.id AND e.supplier_id = @supplier_id)';
+            request.input('supplier_id', sql.Int, supplier_id);
+        }
+        
+        // Filter by product name - find documents that have entries with matching product name
+        if (product_name) {
+            query += ' AND EXISTS (SELECT 1 FROM QCR_Entries e WHERE e.document_id = d.id AND e.product_name LIKE @product_name)';
+            request.input('product_name', sql.NVarChar, '%' + product_name + '%');
         }
         
         query += ' ORDER BY d.log_date DESC, d.created_at DESC';

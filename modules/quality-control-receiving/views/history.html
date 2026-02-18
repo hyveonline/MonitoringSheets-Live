@@ -444,6 +444,16 @@
                         <option value="Completed">Completed</option>
                     </select>
                 </div>
+                <div class="form-group">
+                    <label for="supplierFilter">Supplier</label>
+                    <select id="supplierFilter">
+                        <option value="">All Suppliers</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="productFilter">Product</label>
+                    <input type="text" id="productFilter" placeholder="Search product...">
+                </div>
                 <button class="btn btn-primary" onclick="loadDocuments()">🔍 Search</button>
                 <button class="btn btn-secondary" onclick="resetFilters()">↺ Reset</button>
             </div>
@@ -523,6 +533,9 @@
             // Fetch current user first
             await loadCurrentUser();
             
+            // Load filter options
+            await loadFilterOptions();
+            
             // Set default date range (last 30 days)
             const today = new Date();
             const thirtyDaysAgo = new Date(today);
@@ -533,6 +546,24 @@
             
             loadDocuments();
         });
+        
+        // Load filter options (suppliers)
+        async function loadFilterOptions() {
+            try {
+                // Load suppliers
+                const suppliersRes = await fetch('/quality-control-receiving/api/suppliers?_t=' + Date.now());
+                const suppliers = await suppliersRes.json();
+                const supplierSelect = document.getElementById('supplierFilter');
+                suppliers.forEach(s => {
+                    const option = document.createElement('option');
+                    option.value = s.id;
+                    option.textContent = s.supplier_name;
+                    supplierSelect.appendChild(option);
+                });
+            } catch (err) {
+                console.error('Error loading filter options:', err);
+            }
+        }
         
         // Load current user
         async function loadCurrentUser() {
@@ -554,6 +585,8 @@
             const startDate = document.getElementById('startDate').value;
             const endDate = document.getElementById('endDate').value;
             const status = document.getElementById('status').value;
+            const supplierId = document.getElementById('supplierFilter').value;
+            const productName = document.getElementById('productFilter').value;
             
             try {
                 let url = '/quality-control-receiving/api/documents?_t=' + Date.now() + '&';
@@ -562,6 +595,12 @@
                 }
                 if (status) {
                     url += `status=${status}&`;
+                }
+                if (supplierId) {
+                    url += `supplier_id=${supplierId}&`;
+                }
+                if (productName) {
+                    url += `product_name=${encodeURIComponent(productName)}&`;
                 }
                 
                 console.log('Loading documents from:', url);
@@ -820,6 +859,8 @@
             document.getElementById('endDate').value = today.toISOString().split('T')[0];
             document.getElementById('startDate').value = thirtyDaysAgo.toISOString().split('T')[0];
             document.getElementById('status').value = '';
+            document.getElementById('supplierFilter').value = '';
+            document.getElementById('productFilter').value = '';
             
             loadDocuments();
         }
