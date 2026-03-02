@@ -221,6 +221,7 @@ router.post('/batch', requireAuth, requireRole('SuperAuditor', 'Auditor', 'Admin
                 const checklistResult = await transaction.request()
                     .input('session_id', sql.Int, session_id)
                     .input('employee_id', sql.Int, emp.employee_id)
+                    .input('store_id', sql.Int, req.currentUser.store_id || 1)
                     .input('check_date', sql.Date, checkDate)
                     .input('check_time', sql.Time, new Date())
                     .input('shift', sql.NVarChar, shift)
@@ -230,10 +231,10 @@ router.post('/batch', requireAuth, requireRole('SuperAuditor', 'Auditor', 'Admin
                     .input('notes', sql.NVarChar, null)
                     .query(`
                         INSERT INTO HygieneChecklists 
-                            (session_id, employee_id, check_date, check_time, shift, checked_by, overall_pass, is_absent, notes)
+                            (session_id, employee_id, store_id, check_date, check_time, shift, checked_by, overall_pass, is_absent, notes)
                         OUTPUT INSERTED.id
                         VALUES 
-                            (@session_id, @employee_id, @check_date, @check_time, @shift, @checked_by, @overall_pass, @is_absent, @notes)
+                            (@session_id, @employee_id, @store_id, @check_date, @check_time, @shift, @checked_by, @overall_pass, @is_absent, @notes)
                     `);
                 
                 const checklist_id = checklistResult.recordset[0].id;
