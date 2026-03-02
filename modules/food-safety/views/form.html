@@ -877,15 +877,58 @@
             const statusIcon = document.getElementById('auto-status-icon');
             const statusText = document.getElementById('auto-status-text');
             const correctiveGroup = document.getElementById('corrective-action-group');
+            const indicator = document.getElementById('diff-indicator');
             
-            if (!isNaN(testNum) && !isNaN(refNum)) {
+            // Check if reference value is a range (e.g., "200-400", "200 - 400", "200-400 ppm")
+            const rangeMatch = refValue.match(/(\d+\.?\d*)\s*[-–]\s*(\d+\.?\d*)/);
+            
+            if (!isNaN(testNum) && rangeMatch) {
+                // Handle range-based reference values (e.g., Quat Concentration: 200-400 ppm)
+                const minVal = parseFloat(rangeMatch[1]);
+                const maxVal = parseFloat(rangeMatch[2]);
+                
+                document.getElementById('difference').value = ''; // No simple difference for ranges
+                
+                let isPass = testNum >= minVal && testNum <= maxVal;
+                let indicatorMessage = '';
+                
+                if (isPass) {
+                    indicatorMessage = '✓ Within acceptable range (' + minVal + ' - ' + maxVal + ')';
+                    indicator.className = 'diff-indicator within';
+                } else if (testNum < minVal) {
+                    indicatorMessage = '✗ Below minimum (' + testNum + ' < ' + minVal + ')';
+                    indicator.className = 'diff-indicator outside';
+                } else {
+                    indicatorMessage = '✗ Above maximum (' + testNum + ' > ' + maxVal + ')';
+                    indicator.className = 'diff-indicator outside';
+                }
+                
+                indicator.textContent = indicatorMessage;
+                
+                // Auto-set status
+                selectedStatus = isPass ? 'Pass' : 'Fail';
+                document.getElementById('status').value = selectedStatus;
+                
+                statusPending.style.display = 'none';
+                statusDisplay.style.display = 'flex';
+                document.getElementById('manual-status-selector').style.display = 'none';
+                statusDisplay.className = 'auto-status ' + (isPass ? 'pass' : 'fail');
+                statusIcon.textContent = isPass ? '✅' : '❌';
+                statusText.textContent = isPass ? 'Pass' : 'Fail';
+                
+                // Show/hide corrective action
+                if (isPass) {
+                    correctiveGroup.classList.remove('show');
+                } else {
+                    correctiveGroup.classList.add('show');
+                }
+            } else if (!isNaN(testNum) && !isNaN(refNum)) {
                 const diff = testNum - refNum;
                 const diffStr = Math.abs(diff).toFixed(1);
                 document.getElementById('difference').value = diffStr;
                 
                 // Check if within acceptable error and auto-set status
                 const errorMatch = acceptError.match(/[±+-]?\s*(\d+\.?\d*)/);
-                const indicator = document.getElementById('diff-indicator');
                 
                 let isPass = true;
                 let indicatorMessage = '';
@@ -921,6 +964,85 @@
                     } else {
                         indicatorMessage = '✗ Outside acceptable range';
                         indicator.className = 'diff-indicator outside';
+                    }
+                }
+                
+                indicator.textContent = indicatorMessage;
+                
+                // Auto-set status
+                selectedStatus = isPass ? 'Pass' : 'Fail';
+                document.getElementById('status').value = selectedStatus;
+                
+                statusPending.style.display = 'none';
+                statusDisplay.style.display = 'flex';
+                document.getElementById('manual-status-selector').style.display = 'none';
+                statusDisplay.className = 'auto-status ' + (isPass ? 'pass' : 'fail');
+                statusIcon.textContent = isPass ? '✅' : '❌';
+                statusText.textContent = isPass ? 'Pass' : 'Fail';
+                
+                // Show/hide corrective action
+                if (isPass) {
+                    correctiveGroup.classList.remove('show');
+                } else {
+                    correctiveGroup.classList.add('show');
+                }
+            } else if (!isNaN(testNum)) {
+                // Test value is numeric but reference value isn't simple - try to parse it
+                document.getElementById('difference').value = '';
+                
+                // Handle minimum threshold (e.g., ">200", "≥200", ">= 200", "min 200")
+                const minMatch = refValue.match(/(?:>|≥|>=|min(?:imum)?)\s*(\d+\.?\d*)/i);
+                // Handle maximum threshold (e.g., "<400", "≤400", "<= 400", "max 400")
+                const maxMatch = refValue.match(/(?:<|≤|<=|max(?:imum)?)\s*(\d+\.?\d*)/i);
+                
+                let isPass = true;
+                let indicatorMessage = '';
+                
+                if (minMatch) {
+                    const minVal = parseFloat(minMatch[1]);
+                    isPass = testNum >= minVal;
+                    if (isPass) {
+                        indicatorMessage = '✓ Above minimum (' + testNum + ' ≥ ' + minVal + ')';
+                        indicator.className = 'diff-indicator within';
+                    } else {
+                        indicatorMessage = '✗ Below minimum (' + testNum + ' < ' + minVal + ')';
+                        indicator.className = 'diff-indicator outside';
+                    }
+                } else if (maxMatch) {
+                    const maxVal = parseFloat(maxMatch[1]);
+                    isPass = testNum <= maxVal;
+                    if (isPass) {
+                        indicatorMessage = '✓ Below maximum (' + testNum + ' ≤ ' + maxVal + ')';
+                        indicator.className = 'diff-indicator within';
+                    } else {
+                        indicatorMessage = '✗ Above maximum (' + testNum + ' > ' + maxVal + ')';
+                        indicator.className = 'diff-indicator outside';
+                    }
+                } else {
+                    // Extract first number from reference value and use accept_error if available
+                    const extractedNum = refValue.match(/(\d+\.?\d*)/);
+                    if (extractedNum) {
+                        const refNumExtracted = parseFloat(extractedNum[1]);
+                        const diff = Math.abs(testNum - refNumExtracted);
+                        document.getElementById('difference').value = diff.toFixed(1);
+                        
+                        const errorMatch = acceptError.match(/[±+-]?\s*(\d+\.?\d*)/);
+                        if (errorMatch) {
+                            const errorVal = parseFloat(errorMatch[1]);
+                            isPass = diff <= errorVal;
+                            if (isPass) {
+                                indicatorMessage = '✓ Within acceptable range';
+                                indicator.className = 'diff-indicator within';
+                            } else {
+                                indicatorMessage = '✗ Outside acceptable range';
+                                indicator.className = 'diff-indicator outside';
+                            }
+                        } else {
+                            // No error margin specified, just compare values
+                            isPass = testNum === refNumExtracted;
+                            indicatorMessage = isPass ? '✓ Matches reference' : '✗ Does not match reference';
+                            indicator.className = isPass ? 'diff-indicator within' : 'diff-indicator outside';
+                        }
                     }
                 }
                 
