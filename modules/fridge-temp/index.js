@@ -310,7 +310,12 @@ router.get('/api/documents', async (req, res) => {
         }
         
         if (section) {
-            query += ' AND d.section = @section';
+            // Filter by section: find documents that have readings from fridges in the selected section
+            query += ` AND EXISTS (
+                SELECT 1 FROM FridgeTempReadings r 
+                INNER JOIN Fridges f ON r.fridge_id = f.id 
+                WHERE r.document_id = d.id AND f.section = @section
+            )`;
             request.input('section', sql.NVarChar, section);
         }
         
@@ -353,6 +358,7 @@ router.get('/api/documents/check', async (req, res) => {
 // Get single document with readings
 router.get('/api/documents/:id', async (req, res) => {
     try {
+        const { section } = req.query;
         const pool = await getPool();
         
         const docResult = await pool.request()
@@ -363,13 +369,22 @@ router.get('/api/documents/:id', async (req, res) => {
             return res.status(404).json({ error: 'Document not found' });
         }
         
-        const readingsResult = await pool.request()
-            .input('document_id', sql.Int, req.params.id)
-            .query(`SELECT r.*, f.min_temp, f.max_temp 
+        let readingsQuery = `SELECT r.*, f.min_temp, f.max_temp, f.section 
                     FROM FridgeTempReadings r 
                     JOIN Fridges f ON r.fridge_id = f.id
-                    WHERE r.document_id = @document_id 
-                    ORDER BY r.fridge_name`);
+                    WHERE r.document_id = @document_id`;
+        
+        const readingsRequest = pool.request()
+            .input('document_id', sql.Int, req.params.id);
+        
+        if (section) {
+            readingsQuery += ' AND f.section = @section';
+            readingsRequest.input('section', sql.NVarChar, section);
+        }
+        
+        readingsQuery += ' ORDER BY f.section, r.fridge_name';
+        
+        const readingsResult = await readingsRequest.query(readingsQuery);
         
         res.json({
             document: docResult.recordset[0],

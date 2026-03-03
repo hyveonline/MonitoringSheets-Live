@@ -537,7 +537,12 @@
         // View document
         async function viewDocument(id) {
             try {
-                const response = await fetch(`${API_BASE}/documents/${id}`);
+                const section = document.getElementById('filter-section').value;
+                let url = `${API_BASE}/documents/${id}`;
+                if (section) {
+                    url += `?section=${encodeURIComponent(section)}`;
+                }
+                const response = await fetch(url);
                 const data = await response.json();
                 
                 document.getElementById('modal-title').textContent = 
