@@ -479,7 +479,7 @@
         
         let TIME_SLOTS = [];
         let TIME_LABELS = {};
-        let TIME_HOURS = {}; // Map slot to hour (0-23)
+        let TIME_HOURS = {}; // Map slot to hour (0-23) - dynamically populated from labels
         let currentUser = null;
         let fridges = [];
         let existingReadings = {};
@@ -495,15 +495,29 @@
             return `${year}-${month}-${day}`;
         }
         
-        // Time slot to hour mapping
-        const SLOT_HOURS = {
-            '01am': 1, '04am': 4, '07am': 7, '10am': 10,
-            '01pm': 13, '04pm': 16, '07pm': 19, '10pm': 22
-        };
+        // Parse hour from label like "2:00 AM" or "5:00 PM" -> returns 0-23
+        function parseHourFromLabel(label) {
+            if (!label) return null;
+            
+            // Match patterns like "2:00 AM", "11:00 PM", "5:00AM", etc.
+            const match = label.match(/(\d{1,2}):?\d{0,2}\s*(AM|PM|am|pm)/i);
+            if (!match) return null;
+            
+            let hour = parseInt(match[1], 10);
+            const period = match[2].toUpperCase();
+            
+            // Convert to 24-hour format
+            if (period === 'AM') {
+                if (hour === 12) hour = 0; // 12 AM = 0
+            } else { // PM
+                if (hour !== 12) hour += 12; // 1 PM = 13, but 12 PM = 12
+            }
+            
+            return hour;
+        }
         
         // Check if a time slot is within allowed window
-        // Rule: Can ONLY enter data FROM slot time TO slot time + 30 minutes
-        // After 30 minutes, the slot is disabled
+        // Rule: Can enter data FROM slot time TO 30 minutes AFTER slot time
         function isSlotEditable(slot) {
             const selectedDate = document.getElementById('log-date').value;
             const today = getLocalToday();
@@ -518,22 +532,24 @@
             const currentMinutes = now.getMinutes();
             const currentTotalMinutes = currentHour * 60 + currentMinutes;
             
-            const slotHour = SLOT_HOURS[slot];
+            const slotHour = TIME_HOURS[slot];
             if (slotHour === undefined) {
                 console.warn('Unknown slot:', slot);
                 return false;
             }
             
-            const slotStartMinutes = slotHour * 60;        // e.g., 1:00 AM = 60 minutes
-            const slotEndMinutes = slotStartMinutes + 30;  // e.g., 1:30 AM = 90 minutes
+            const slotStartMinutes = slotHour * 60;             // e.g., 2:00 AM = 120 minutes
+            const slotEndMinutes = slotStartMinutes + 30;       // e.g., 2:30 AM = 150 minutes
             
-            // Can edit ONLY if: current time >= slot time AND current time <= slot time + 30 mins
+            // Can edit if: current time >= slot time AND current time <= slot time + 30 mins
             return currentTotalMinutes >= slotStartMinutes && currentTotalMinutes <= slotEndMinutes;
         }
         
         // Check if slot is past the 30-minute window (for warning purposes)
         function isSlotLate(slot) {
-            const slotHour = SLOT_HOURS[slot];
+            const slotHour = TIME_HOURS[slot];
+            if (slotHour === undefined) return false;
+            
             const slotEndMinutes = slotHour * 60 + 30;
             
             const now = new Date();
@@ -606,6 +622,20 @@
                 TIME_SLOTS = data.slots || [];
                 TIME_LABELS = data.labels || {};
                 
+                // Parse hours from labels dynamically
+                TIME_HOURS = {};
+                for (const slot of TIME_SLOTS) {
+                    const label = TIME_LABELS[slot];
+                    const hour = parseHourFromLabel(label);
+                    if (hour !== null) {
+                        TIME_HOURS[slot] = hour;
+                    }
+                }
+                
+                console.log('Time slots loaded:', TIME_SLOTS);
+                console.log('Time labels:', TIME_LABELS);
+                console.log('Time hours (parsed):', TIME_HOURS);
+                
                 // Update table headers dynamically
                 updateTableHeaders();
             } catch (err) {
@@ -613,8 +643,12 @@
                 // Fallback to defaults
                 TIME_SLOTS = ['01am', '04am', '07am', '10am', '01pm', '04pm', '07pm', '10pm'];
                 TIME_LABELS = {
-                    '01am': '1:00 AM', '04am': '4:00 AM', '07am': '7:00 AM', '10am': '10:00 AM',
-                    '01pm': '1:00 PM', '04pm': '4:00 PM', '07pm': '7:00 PM', '10pm': '10:00 PM'
+                    '01am': '2:00 AM', '04am': '5:00 AM', '07am': '8:00 AM', '10am': '11:00 AM',
+                    '01pm': '2:00 PM', '04pm': '5:00 PM', '07pm': '8:00 PM', '10pm': '11:00 PM'
+                };
+                TIME_HOURS = {
+                    '01am': 2, '04am': 5, '07am': 8, '10am': 11,
+                    '01pm': 14, '04pm': 17, '07pm': 20, '10pm': 23
                 };
             }
         }
@@ -752,12 +786,12 @@
                             if (!isToday) {
                                 title = 'Past date - view only';
                             } else if (!editable) {
-                                const slotHour = SLOT_HOURS[slot];
+                                const slotHour = TIME_HOURS[slot];
                                 const now = new Date();
                                 const currentTotalMinutes = now.getHours() * 60 + now.getMinutes();
                                 const slotStartMinutes = slotHour * 60;
                                 if (currentTotalMinutes < slotStartMinutes) {
-                                    title = 'Not yet - wait until slot time';
+                                    title = 'Not yet - wait until ' + (TIME_LABELS[slot] || slot);
                                 } else {
                                     title = 'Window closed - 30 min limit passed';
                                 }
