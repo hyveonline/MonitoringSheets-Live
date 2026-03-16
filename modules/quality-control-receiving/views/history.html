@@ -528,6 +528,47 @@
         let currentUser = null;
         let selectedDocId = null;
         
+        // Helper function to format time values from SQL Server
+        // SQL Server TIME fields come as Date objects or strings
+        function formatTimeValue(timeValue) {
+            if (!timeValue) return '-';
+            
+            // If it's already a string in HH:mm:ss or HH:mm format
+            if (typeof timeValue === 'string') {
+                // Handle ISO date string format (e.g., "1970-01-01T18:30:00.000Z")
+                if (timeValue.includes('T')) {
+                    const date = new Date(timeValue);
+                    const hours = date.getUTCHours().toString().padStart(2, '0');
+                    const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+                    return `${hours}:${minutes}`;
+                }
+                return timeValue.substring(0, 5);
+            }
+            
+            // If it's a Date object
+            if (timeValue instanceof Date) {
+                const hours = timeValue.getUTCHours().toString().padStart(2, '0');
+                const minutes = timeValue.getUTCMinutes().toString().padStart(2, '0');
+                return `${hours}:${minutes}`;
+            }
+            
+            // If it's an object with date properties (SQL Server mssql driver format)
+            if (typeof timeValue === 'object') {
+                try {
+                    const date = new Date(timeValue);
+                    if (!isNaN(date.getTime())) {
+                        const hours = date.getUTCHours().toString().padStart(2, '0');
+                        const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+                        return `${hours}:${minutes}`;
+                    }
+                } catch (e) {
+                    console.error('Error parsing time value:', timeValue, e);
+                }
+            }
+            
+            return '-';
+        }
+        
         // Initialize
         document.addEventListener('DOMContentLoaded', async () => {
             // Fetch current user first
@@ -728,9 +769,9 @@
                                                 <small>Exp: ${entry.product_expiry_date ? new Date(entry.product_expiry_date).toLocaleDateString() : '-'}</small>
                                             </td>
                                             <td>${entry.supplier_display_name || entry.supplier_name || '-'}</td>
-                                            <td>${entry.receiving_time ? entry.receiving_time.substring(0, 5) : '-'}</td>
+                                            <td>${formatTimeValue(entry.receiving_time)}</td>
                                             <td>${entry.receiving_temp !== null ? entry.receiving_temp + '°C' : '-'}</td>
-                                            <td>${entry.storage_time ? entry.storage_time.substring(0, 5) : '-'}</td>
+                                            <td>${formatTimeValue(entry.storage_time)}</td>
                                             <td>${entry.duration_minutes !== null ? entry.duration_minutes + ' min' : '-'}</td>
                                             <td>
                                                 <span class="status-badge ${entry.overall_status === 'Pass' ? 'status-active' : 'status-completed'}">
