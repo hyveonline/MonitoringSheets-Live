@@ -305,8 +305,12 @@
                         <input type="text" id="reference" name="reference" placeholder="e.g., PAS-001">
                     </div>
                     <div class="form-group">
-                        <label>Revision No. / المراجعة</label>
-                        <input type="text" id="revision_no" name="revision_no" placeholder="e.g., 01">
+                        <label>Edition / الإصدار</label>
+                        <input type="text" id="edition" name="edition" placeholder="e.g., 1.0">
+                    </div>
+                    <div class="form-group">
+                        <label>Creation Date / تاريخ الإنشاء</label>
+                        <input type="date" id="creation_date" name="creation_date">
                     </div>
                     <div class="form-group">
                         <label>Last Revision Date / تاريخ المراجعة</label>
@@ -461,7 +465,9 @@
                 if (settings) {
                     document.getElementById('company_name').value = settings.company_name || '';
                     document.getElementById('reference').value = settings.reference || '';
-                    document.getElementById('revision_no').value = settings.revision_no || '';
+                    document.getElementById('edition').value = settings.edition || '';
+                    document.getElementById('creation_date').value = settings.creation_date ? 
+                        settings.creation_date.split('T')[0] : '';
                     document.getElementById('last_revision_date').value = settings.last_revision_date ? 
                         settings.last_revision_date.split('T')[0] : '';
                 }
@@ -474,7 +480,8 @@
             const data = {
                 company_name: document.getElementById('company_name').value,
                 reference: document.getElementById('reference').value,
-                revision_no: document.getElementById('revision_no').value,
+                edition: document.getElementById('edition').value,
+                creation_date: document.getElementById('creation_date').value || null,
                 last_revision_date: document.getElementById('last_revision_date').value || null
             };
             

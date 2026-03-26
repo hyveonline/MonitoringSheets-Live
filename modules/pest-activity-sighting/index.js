@@ -70,12 +70,13 @@ router.get('/api/settings', async (req, res) => {
 router.post('/api/settings', async (req, res) => {
     try {
         const pool = await getConnection();
-        const { company_name, reference, revision_no, last_revision_date } = req.body;
+        const { company_name, reference, edition, creation_date, last_revision_date } = req.body;
         
         const updates = [
             { key: 'company_name', value: company_name },
             { key: 'reference', value: reference },
-            { key: 'revision_no', value: revision_no },
+            { key: 'edition', value: edition },
+            { key: 'creation_date', value: creation_date },
             { key: 'last_revision_date', value: last_revision_date }
         ];
         
