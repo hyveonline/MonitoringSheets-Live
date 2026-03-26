@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Glass & Plastic Inspection Form - FS Monitoring</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f3f4f6;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #0891b2 0%, #06b6d4 100%);
+            color: white;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(8, 145, 178, 0.3);
+        }
+        
+        .header-content {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .header h1 { font-size: 1.5rem; font-weight: 700; }
+        .header-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+        
+        .btn {
+            padding: 0.625rem 1.25rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.875rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+            border: none;
+        }
+        
+        .btn-primary { background: white; color: #0891b2; }
+        .btn-primary:hover { background: #ecfeff; }
+        .btn-secondary { background: rgba(255, 255, 255, 0.15); color: white; border: 1px solid rgba(255, 255, 255, 0.3); }
+        .btn-secondary:hover { background: rgba(255, 255, 255, 0.25); }
+        .btn-success { background: #10b981; color: white; }
+        .btn-success:hover { background: #059669; }
+        .btn-lg { padding: 0.875rem 2rem; font-size: 1rem; }
+        
+        .container { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 1.5rem;
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .card-header h2 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+        
+        .card-header .icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #ecfeff, #cffafe);
+            color: #0891b2;
+        }
+        
+        .card-header .icon svg { width: 20px; height: 20px; }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+        }
+        
+        .form-group label.required::after {
+            content: '*';
+            color: #ef4444;
+            margin-left: 0.25rem;
+        }
+        
+        .form-group input, .form-group select, .form-group textarea {
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.2s;
+            width: 100%;
+        }
+        
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #0891b2;
+            box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.1);
+        }
+        
+        .form-group textarea { resize: vertical; min-height: 80px; }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .yes-no-group {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .yes-no-option {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 1rem 1.5rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+        
+        .yes-no-option:hover { border-color: #0891b2; }
+        
+        .yes-no-option input { display: none; }
+        
+        .yes-no-option.selected.good { 
+            border-color: #10b981; 
+            background: #d1fae5; 
+            color: #065f46;
+        }
+        .yes-no-option.selected.bad { 
+            border-color: #ef4444; 
+            background: #fee2e2; 
+            color: #991b1b;
+        }
+        
+        .yes-no-option .icon { font-size: 1.5rem; }
+        
+        .corrective-action-container {
+            display: none;
+            margin-top: 0.75rem;
+            padding: 1rem;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 8px;
+        }
+        
+        .corrective-action-container.show { display: block; }
+        
+        .corrective-action-container label {
+            color: #991b1b;
+            font-weight: 500;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            padding-top: 1rem;
+            border-top: 1px solid #e5e7eb;
+            margin-top: 1rem;
+        }
+        
+        .alert { padding: 1rem; border-radius: 8px; margin-bottom: 1rem; }
+        .alert-success { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+        .alert-error { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+        
+        .item-hint {
+            font-size: 0.75rem;
+            color: #6b7280;
+            font-style: italic;
+        }
+        
+        @media (max-width: 640px) {
+            .header-content { flex-direction: column; text-align: center; }
+            .form-row { grid-template-columns: 1fr; }
+            .yes-no-group { flex-direction: column; }
+            .form-actions { flex-direction: column; }
+            .btn { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <h1>📋 Inspection Form</h1>
+            <div class="header-actions">
+                <a href="/glass-plastic-inspection" class="btn btn-secondary">← Back</a>
+                <a href="/dashboard" class="btn btn-secondary">🏠 Dashboard</a>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div id="alertContainer"></div>
+        
+        <form id="inspectionForm">
+            <!-- Basic Information -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="8.5" cy="7" r="4"/>
+                            <line x1="20" y1="8" x2="20" y2="14"/>
+                            <line x1="23" y1="11" x2="17" y2="11"/>
+                        </svg>
+                    </div>
+                    <h2>Basic Information</h2>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="filled_by" class="required">Filled By</label>
+                        <input type="text" id="filled_by" name="filled_by" required placeholder="Enter name">
+                    </div>
+                    <div class="form-group">
+                        <label for="document_date" class="required">Date</label>
+                        <input type="date" id="document_date" name="document_date" required>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Location & Item Selection -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                            <circle cx="12" cy="10" r="3"/>
+                        </svg>
+                    </div>
+                    <h2>Location & Item</h2>
+                </div>
+                
+                <div class="form-group">
+                    <label for="location_id" class="required">Location</label>
+                    <select id="location_id" name="location_id" required onchange="loadItemsForLocation()">
+                        <option value="">Select Location</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="item_id" class="required">Glass/Plastic Item</label>
+                    <select id="item_id" name="item_id" required disabled>
+                        <option value="">Select Location First</option>
+                    </select>
+                    <span class="item-hint">Items are filtered based on selected location</span>
+                </div>
+            </div>
+            
+            <!-- Condition Check -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                            <polyline points="22 4 12 14.01 9 11.01"/>
+                        </svg>
+                    </div>
+                    <h2>Condition Check</h2>
+                </div>
+                
+                <div class="form-group">
+                    <label class="required">Condition</label>
+                    <div class="yes-no-group">
+                        <label class="yes-no-option good" onclick="selectCondition(this, true)">
+                            <input type="radio" name="condition_good" value="1">
+                            <span class="icon">✓</span>
+                            <span>Good</span>
+                        </label>
+                        <label class="yes-no-option bad" onclick="selectCondition(this, false)">
+                            <input type="radio" name="condition_good" value="0">
+                            <span class="icon">✗</span>
+                            <span>Bad</span>
+                        </label>
+                    </div>
+                    <div class="corrective-action-container" id="corrective_action_container">
+                        <label for="corrective_action">⚠️ Corrective Action Required</label>
+                        <textarea id="corrective_action" name="corrective_action" placeholder="Describe the corrective action taken..."></textarea>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Comments -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                        </svg>
+                    </div>
+                    <h2>Comments</h2>
+                </div>
+                
+                <div class="form-group">
+                    <label for="comments">Additional Comments</label>
+                    <textarea id="comments" name="comments" placeholder="Enter any additional comments or observations..."></textarea>
+                </div>
+                
+                <div class="form-actions">
+                    <a href="/glass-plastic-inspection" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-success btn-lg">💾 Save Inspection</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    
+    <script>
+        let allItems = [];
+        
+        // Set today's date as default
+        document.getElementById('document_date').value = new Date().toISOString().split('T')[0];
+        
+        // Load user's name from session
+        const userName = sessionStorage.getItem('userName');
+        if (userName) {
+            document.getElementById('filled_by').value = userName;
+        }
+        
+        function showAlert(message, type) {
+            const container = document.getElementById('alertContainer');
+            container.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+            container.scrollIntoView({ behavior: 'smooth' });
+            setTimeout(() => container.innerHTML = '', 5000);
+        }
+        
+        function selectCondition(element, isGood) {
+            // Remove selected class from siblings
+            const parent = element.parentElement;
+            parent.querySelectorAll('.yes-no-option').forEach(opt => opt.classList.remove('selected'));
+            
+            // Add selected class to clicked element
+            element.classList.add('selected');
+            
+            // Check the radio button
+            element.querySelector('input').checked = true;
+            
+            // Show/hide corrective action
+            const container = document.getElementById('corrective_action_container');
+            if (!isGood) {
+                container.classList.add('show');
+            } else {
+                container.classList.remove('show');
+                document.getElementById('corrective_action').value = '';
+            }
+        }
+        
+        async function loadLocations() {
+            try {
+                const response = await fetch('/glass-plastic-inspection/api/locations');
+                const locations = await response.json();
+                const select = document.getElementById('location_id');
+                
+                locations.forEach(location => {
+                    const option = document.createElement('option');
+                    option.value = location.id;
+                    option.textContent = location.location_name + (location.location_code ? ` (${location.location_code})` : '');
+                    select.appendChild(option);
+                });
+            } catch (err) {
+                console.error('Error loading locations:', err);
+            }
+        }
+        
+        async function loadAllItems() {
+            try {
+                const response = await fetch('/glass-plastic-inspection/api/items');
+                allItems = await response.json();
+            } catch (err) {
+                console.error('Error loading items:', err);
+            }
+        }
+        
+        function loadItemsForLocation() {
+            const locationId = document.getElementById('location_id').value;
+            const itemSelect = document.getElementById('item_id');
+            
+            // Clear current options
+            itemSelect.innerHTML = '<option value="">Select Item</option>';
+            
+            if (!locationId) {
+                itemSelect.disabled = true;
+                itemSelect.innerHTML = '<option value="">Select Location First</option>';
+                return;
+            }
+            
+            // Filter items by location
+            const filteredItems = allItems.filter(item => item.location_id == locationId);
+            
+            if (filteredItems.length === 0) {
+                itemSelect.innerHTML = '<option value="">No items for this location</option>';
+                itemSelect.disabled = true;
+                return;
+            }
+            
+            filteredItems.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item.id;
+                option.textContent = item.item_name + (item.item_code ? ` (${item.item_code})` : '');
+                itemSelect.appendChild(option);
+            });
+            
+            itemSelect.disabled = false;
+        }
+        
+        document.getElementById('inspectionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const conditionValue = formData.get('condition_good');
+            
+            if (conditionValue === null) {
+                showAlert('Please select the condition (Good or Bad)', 'error');
+                return;
+            }
+            
+            const data = {
+                filled_by: formData.get('filled_by'),
+                document_date: formData.get('document_date'),
+                location_id: parseInt(formData.get('location_id')),
+                item_id: parseInt(formData.get('item_id')),
+                condition_good: conditionValue === '1',
+                corrective_action: formData.get('corrective_action') || null,
+                comments: formData.get('comments') || null,
+                branch_id: sessionStorage.getItem('branchId') ? parseInt(sessionStorage.getItem('branchId')) : null
+            };
+            
+            // Validation
+            if (!data.filled_by || !data.document_date || !data.location_id || !data.item_id) {
+                showAlert('Please fill in all required fields', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/glass-plastic-inspection/api/documents', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                if (response.ok) {
+                    showAlert('Inspection saved successfully!', 'success');
+                    setTimeout(() => {
+                        window.location.href = '/glass-plastic-inspection';
+                    }, 1500);
+                } else {
+                    const error = await response.json();
+                    showAlert(error.error || 'Failed to save inspection', 'error');
+                }
+            } catch (err) {
+                console.error('Error saving inspection:', err);
+                showAlert('Failed to save inspection. Please try again.', 'error');
+            }
+        });
+        
+        // Initialize
+        loadLocations();
+        loadAllItems();
+    </script>
+</body>
+</html>

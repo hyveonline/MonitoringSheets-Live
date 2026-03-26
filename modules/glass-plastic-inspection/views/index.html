@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Glass & Plastic Inspection - FS Monitoring</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f3f4f6;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #0891b2 0%, #06b6d4 100%);
+            color: white;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(8, 145, 178, 0.3);
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .header h1 { font-size: 1.5rem; font-weight: 700; }
+        .header-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+        
+        .btn {
+            padding: 0.625rem 1.25rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.875rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+            border: none;
+        }
+        
+        .btn-primary { background: white; color: #0891b2; }
+        .btn-primary:hover { background: #ecfeff; }
+        .btn-secondary { background: rgba(255, 255, 255, 0.15); color: white; border: 1px solid rgba(255, 255, 255, 0.3); }
+        .btn-secondary:hover { background: rgba(255, 255, 255, 0.25); }
+        
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem; }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+        
+        .stat-card h3 { font-size: 0.875rem; color: #6b7280; margin-bottom: 0.5rem; }
+        .stat-card .value { font-size: 2rem; font-weight: 700; color: #1f2937; }
+        .stat-card .sub { font-size: 0.75rem; color: #9ca3af; margin-top: 0.25rem; }
+        
+        .stat-card.today { border-left: 4px solid #0891b2; }
+        .stat-card.month { border-left: 4px solid #10b981; }
+        .stat-card.locations { border-left: 4px solid #f59e0b; }
+        .stat-card.issues { border-left: 4px solid #ef4444; }
+        
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .menu-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            text-decoration: none;
+            color: inherit;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .menu-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #0891b2, #06b6d4);
+        }
+        
+        .menu-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(8, 145, 178, 0.2);
+        }
+        
+        .menu-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #ecfeff, #cffafe);
+            color: #0891b2;
+        }
+        
+        .menu-icon svg { width: 32px; height: 32px; }
+        
+        .menu-card h3 { font-size: 1.125rem; font-weight: 600; color: #1f2937; margin-bottom: 0.5rem; }
+        .menu-card p { font-size: 0.875rem; color: #6b7280; }
+        
+        .branch-info {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .branch-info span { color: #6b7280; font-size: 0.875rem; }
+        .branch-info strong { color: #1f2937; }
+        
+        @media (max-width: 640px) {
+            .header-content { flex-direction: column; text-align: center; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <h1>🔍 Glass & Plastic Inspection</h1>
+            <div class="header-actions">
+                <a href="/dashboard" class="btn btn-secondary">🏠 Dashboard</a>
+                <a href="/glass-plastic-inspection/form" class="btn btn-primary">+ New Inspection</a>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="branch-info" id="branchInfo" style="display: none;">
+            <span>📍 Current Branch:</span>
+            <strong id="branchName">Loading...</strong>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card today">
+                <h3>Today's Inspections</h3>
+                <div class="value" id="todayCount">-</div>
+                <div class="sub">inspections completed</div>
+            </div>
+            <div class="stat-card month">
+                <h3>This Month</h3>
+                <div class="value" id="monthCount">-</div>
+                <div class="sub">total inspections</div>
+            </div>
+            <div class="stat-card locations">
+                <h3>Locations</h3>
+                <div class="value" id="locationsCount">-</div>
+                <div class="sub">active locations</div>
+            </div>
+            <div class="stat-card issues">
+                <h3>Issues Found</h3>
+                <div class="value" id="issuesCount">-</div>
+                <div class="sub">this month</div>
+            </div>
+        </div>
+        
+        <div class="menu-grid">
+            <a href="/glass-plastic-inspection/form" class="menu-card">
+                <div class="menu-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 5v14M5 12h14"/>
+                    </svg>
+                </div>
+                <h3>New Inspection</h3>
+                <p>Record a new glass & plastic inspection</p>
+            </a>
+            
+            <a href="/glass-plastic-inspection/history" class="menu-card">
+                <div class="menu-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                </div>
+                <h3>History</h3>
+                <p>View and filter past inspection records</p>
+            </a>
+            
+            <a href="/glass-plastic-inspection/settings" class="menu-card admin-only" style="display: none;">
+                <div class="menu-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                    </svg>
+                </div>
+                <h3>Settings</h3>
+                <p>Manage locations and inspection items</p>
+            </a>
+        </div>
+    </div>
+    
+    <script>
+        async function loadStats() {
+            try {
+                const branchId = sessionStorage.getItem('branchId');
+                const branchName = sessionStorage.getItem('branchName');
+                
+                if (branchName) {
+                    document.getElementById('branchInfo').style.display = 'flex';
+                    document.getElementById('branchName').textContent = branchName;
+                }
+                
+                let url = '/glass-plastic-inspection/api/stats';
+                if (branchId) url += `?branch_id=${branchId}`;
+                
+                const response = await fetch(url);
+                const stats = await response.json();
+                
+                document.getElementById('todayCount').textContent = stats.todayRecords || 0;
+                document.getElementById('monthCount').textContent = stats.monthRecords || 0;
+                document.getElementById('locationsCount').textContent = stats.totalLocations || 0;
+                document.getElementById('issuesCount').textContent = stats.issuesCount || 0;
+            } catch (err) {
+                console.error('Error loading stats:', err);
+            }
+        }
+        
+        function checkAdminAccess() {
+            const userRole = sessionStorage.getItem('userRole');
+            if (userRole === 'admin' || userRole === 'superadmin') {
+                document.querySelectorAll('.admin-only').forEach(el => {
+                    el.style.display = 'flex';
+                });
+            }
+        }
+        
+        loadStats();
+        checkAdminAccess();
+    </script>
+</body>
+</html>
