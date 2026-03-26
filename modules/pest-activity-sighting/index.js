@@ -67,21 +67,22 @@ router.get('/api/settings', async (req, res) => {
     }
 });
 
-router.put('/api/settings', async (req, res) => {
+router.post('/api/settings', async (req, res) => {
     try {
         const pool = await getConnection();
-        const { creation_date, last_revision, edition, reference } = req.body;
+        const { company_name, reference, revision_no, last_revision_date } = req.body;
         
         const updates = [
-            { key: 'creation_date', value: creation_date },
-            { key: 'last_revision', value: last_revision },
-            { key: 'edition', value: edition },
-            { key: 'reference', value: reference }
+            { key: 'company_name', value: company_name },
+            { key: 'reference', value: reference },
+            { key: 'revision_no', value: revision_no },
+            { key: 'last_revision_date', value: last_revision_date }
         ];
         
         for (const update of updates) {
             if (update.value !== undefined) {
-                await pool.request()
+                // Try update first, if no rows affected then insert
+                const result = await pool.request()
                     .input('key', sql.NVarChar, update.key)
                     .input('value', sql.NVarChar, update.value)
                     .query(`
@@ -89,6 +90,16 @@ router.put('/api/settings', async (req, res) => {
                         SET setting_value = @value, updated_at = GETDATE() 
                         WHERE setting_key = @key
                     `);
+                
+                if (result.rowsAffected[0] === 0) {
+                    await pool.request()
+                        .input('key', sql.NVarChar, update.key)
+                        .input('value', sql.NVarChar, update.value)
+                        .query(`
+                            INSERT INTO PAS_Settings (setting_key, setting_value) 
+                            VALUES (@key, @value)
+                        `);
+                }
             }
         }
         
