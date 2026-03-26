@@ -33,6 +33,7 @@ const endProductChecklistModule = require('./modules/end-product-checklist');
 const pasteurizedJuicesModule = require('./modules/pasteurized-juices');
 const trucksDispatchingModule = require('./modules/trucks-dispatching');
 const glassPlasticInspectionModule = require('./modules/glass-plastic-inspection');
+const pestActivitySightingModule = require('./modules/pest-activity-sighting');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -49,7 +50,7 @@ app.use((req, res, next) => {
     const noCacheRoutes = ['/dashboard', '/home', '/admin', '/auditor', '/hygiene-checklist', 
                            '/equipment-calibration', '/frying-oil', '/food-safety', '/dry-store',
                            '/water-quality', '/atp-monitoring', '/hot-holding', '/dry-store-expiry',
-                           '/cooking-cooling', '/fridge-temp', '/veg-fruit-wash', '/quality-control-receiving', '/recipe-verification', '/end-product-checklist', '/pasteurized-juices', '/trucks-dispatching', '/glass-plastic-inspection'];
+                           '/cooking-cooling', '/fridge-temp', '/veg-fruit-wash', '/quality-control-receiving', '/recipe-verification', '/end-product-checklist', '/pasteurized-juices', '/trucks-dispatching', '/glass-plastic-inspection', '/pest-activity-sighting'];
     
     const shouldNotCache = noCacheRoutes.some(route => req.path.startsWith(route));
     
@@ -122,6 +123,9 @@ app.use('/trucks-dispatching', requireAuth, trucksDispatchingModule);
 
 // Glass & Plastic Inspection Module (with /glass-plastic-inspection prefix)
 app.use('/glass-plastic-inspection', requireAuth, glassPlasticInspectionModule);
+
+// Pest Activity Sighting Module (with /pest-activity-sighting prefix)
+app.use('/pest-activity-sighting', requireAuth, pestActivitySightingModule);
 
 // ==========================================
 // Page Routes

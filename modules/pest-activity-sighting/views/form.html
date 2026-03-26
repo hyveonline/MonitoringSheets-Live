@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Pest Activity Sighting Form - FS Monitoring</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f3f4f6;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+            color: white;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(220, 38, 38, 0.3);
+        }
+        
+        .header-content {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .header h1 { font-size: 1.5rem; font-weight: 700; }
+        .header-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+        
+        .btn {
+            padding: 0.625rem 1.25rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.875rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+            border: none;
+        }
+        
+        .btn-primary { background: white; color: #dc2626; }
+        .btn-primary:hover { background: #fef2f2; }
+        .btn-secondary { background: rgba(255, 255, 255, 0.15); color: white; border: 1px solid rgba(255, 255, 255, 0.3); }
+        .btn-secondary:hover { background: rgba(255, 255, 255, 0.25); }
+        .btn-success { background: #10b981; color: white; }
+        .btn-success:hover { background: #059669; }
+        .btn-lg { padding: 0.875rem 2rem; font-size: 1rem; }
+        
+        .container { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 1.5rem;
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .card-header h2 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+        
+        .card-header .subtitle {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-left: 0.5rem;
+        }
+        
+        .card-header .icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #fee2e2, #fecaca);
+            color: #dc2626;
+        }
+        
+        .card-header .icon svg { width: 20px; height: 20px; }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+        }
+        
+        .form-group label.required::after {
+            content: '*';
+            color: #ef4444;
+            margin-left: 0.25rem;
+        }
+        
+        .label-bilingual {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .label-bilingual .ar {
+            font-size: 0.8rem;
+            color: #6b7280;
+            direction: rtl;
+        }
+        
+        .form-group input, .form-group select, .form-group textarea {
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.2s;
+            width: 100%;
+        }
+        
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #dc2626;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+        }
+        
+        .form-group textarea { resize: vertical; min-height: 80px; }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .form-row-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+        
+        .yes-no-group {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .yes-no-option {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+        
+        .yes-no-option:hover { border-color: #dc2626; }
+        
+        .yes-no-option input { display: none; }
+        
+        .yes-no-option.selected.yes { 
+            border-color: #10b981; 
+            background: #d1fae5; 
+            color: #065f46;
+        }
+        .yes-no-option.selected.no { 
+            border-color: #ef4444; 
+            background: #fee2e2; 
+            color: #991b1b;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            padding-top: 1rem;
+            border-top: 1px solid #e5e7eb;
+            margin-top: 1rem;
+        }
+        
+        .alert { padding: 1rem; border-radius: 8px; margin-bottom: 1rem; }
+        .alert-success { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+        .alert-error { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+        
+        @media (max-width: 640px) {
+            .header-content { flex-direction: column; text-align: center; }
+            .form-row, .form-row-3 { grid-template-columns: 1fr; }
+            .yes-no-group { flex-direction: row; }
+            .form-actions { flex-direction: column; }
+            .btn { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <h1>📋 Pest Sighting Form / نموذج رصد الآفات</h1>
+            <div class="header-actions">
+                <a href="/pest-activity-sighting" class="btn btn-secondary">← Back</a>
+                <a href="/dashboard" class="btn btn-secondary">🏠 Dashboard</a>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div id="alertContainer"></div>
+        
+        <form id="pestForm">
+            <!-- Pest Evidence Section -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M12 8v4M12 16h.01"/>
+                        </svg>
+                    </div>
+                    <h2>Pest - Pest Evidence <span class="subtitle">الآفات</span></h2>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="label-bilingual required">
+                            <span>Date</span>
+                            <span class="ar">التاريخ</span>
+                        </label>
+                        <input type="date" id="sighting_date" name="sighting_date" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="label-bilingual">
+                            <span>Time</span>
+                            <span class="ar">الوقت</span>
+                        </label>
+                        <input type="time" id="sighting_time" name="sighting_time">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="label-bilingual">
+                            <span>Location</span>
+                            <span class="ar">المكان</span>
+                        </label>
+                        <select id="location_id" name="location_id">
+                            <option value="">Select Location</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="label-bilingual">
+                            <span>Type</span>
+                            <span class="ar">النوع</span>
+                        </label>
+                        <select id="pest_type_id" name="pest_type_id">
+                            <option value="">Select Pest Type</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="label-bilingual">
+                        <span>Number</span>
+                        <span class="ar">العدد</span>
+                    </label>
+                    <input type="number" id="pest_number" name="pest_number" min="0" placeholder="Number of pests observed">
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="label-bilingual required">
+                            <span>Reported By</span>
+                            <span class="ar">الابلاغ من قبل</span>
+                        </label>
+                        <input type="text" id="reported_by" name="reported_by" required placeholder="Enter name">
+                    </div>
+                    <div class="form-group">
+                        <label class="label-bilingual">
+                            <span>Date Reported</span>
+                            <span class="ar">تاريخ الابلاغ</span>
+                        </label>
+                        <input type="date" id="date_reported" name="date_reported">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="label-bilingual">
+                        <span>Contractor Notified</span>
+                        <span class="ar">ابلاغ المتعهد</span>
+                    </label>
+                    <div class="yes-no-group">
+                        <label class="yes-no-option yes" onclick="selectYesNo(this, 'contractor_notified', true)">
+                            <input type="radio" name="contractor_notified" value="1">
+                            ✓ Yes / نعم
+                        </label>
+                        <label class="yes-no-option no" onclick="selectYesNo(this, 'contractor_notified', false)">
+                            <input type="radio" name="contractor_notified" value="0">
+                            ✗ No / لا
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Action Taken Section -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                            <polyline points="22 4 12 14.01 9 11.01"/>
+                        </svg>
+                    </div>
+                    <h2>Action Taken - to be taken <span class="subtitle">الإجراءات المقررة</span></h2>
+                </div>
+                
+                <div class="form-group">
+                    <label class="label-bilingual">
+                        <span>Action</span>
+                        <span class="ar">الإجراء</span>
+                    </label>
+                    <textarea id="action_taken" name="action_taken" placeholder="Describe action taken or to be taken..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="label-bilingual">
+                        <span>By Whom</span>
+                        <span class="ar">من قبل</span>
+                    </label>
+                    <input type="text" id="action_by_whom" name="action_by_whom" placeholder="Who performed/will perform the action">
+                </div>
+                
+                <div class="form-group">
+                    <label class="label-bilingual">
+                        <span>Results</span>
+                        <span class="ar">النتائج</span>
+                    </label>
+                    <textarea id="action_results" name="action_results" placeholder="Describe the results..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="label-bilingual">
+                        <span>Follow Up - Remarks</span>
+                        <span class="ar">المتابعة والملاحظات</span>
+                    </label>
+                    <textarea id="follow_up_remarks" name="follow_up_remarks" placeholder="Any follow-up or remarks..."></textarea>
+                </div>
+                
+                <div class="form-actions">
+                    <a href="/pest-activity-sighting" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-success btn-lg">💾 Save Report</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    
+    <script>
+        // Set today's date as default
+        document.getElementById('sighting_date').value = new Date().toISOString().split('T')[0];
+        document.getElementById('date_reported').value = new Date().toISOString().split('T')[0];
+        
+        // Set current time
+        const now = new Date();
+        document.getElementById('sighting_time').value = now.toTimeString().slice(0, 5);
+        
+        // Load user's name from session
+        const userName = sessionStorage.getItem('userName');
+        if (userName) {
+            document.getElementById('reported_by').value = userName;
+        }
+        
+        function showAlert(message, type) {
+            const container = document.getElementById('alertContainer');
+            container.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+            container.scrollIntoView({ behavior: 'smooth' });
+            setTimeout(() => container.innerHTML = '', 5000);
+        }
+        
+        function selectYesNo(element, fieldName, isYes) {
+            const parent = element.parentElement;
+            parent.querySelectorAll('.yes-no-option').forEach(opt => opt.classList.remove('selected'));
+            element.classList.add('selected');
+            element.querySelector('input').checked = true;
+        }
+        
+        async function loadLocations() {
+            try {
+                const response = await fetch('/pest-activity-sighting/api/locations');
+                const locations = await response.json();
+                const select = document.getElementById('location_id');
+                
+                locations.forEach(loc => {
+                    const option = document.createElement('option');
+                    option.value = loc.id;
+                    option.textContent = loc.location_en + (loc.location_ar ? ` / ${loc.location_ar}` : '');
+                    select.appendChild(option);
+                });
+            } catch (err) {
+                console.error('Error loading locations:', err);
+            }
+        }
+        
+        async function loadPestTypes() {
+            try {
+                const response = await fetch('/pest-activity-sighting/api/pest-types');
+                const types = await response.json();
+                const select = document.getElementById('pest_type_id');
+                
+                types.forEach(type => {
+                    const option = document.createElement('option');
+                    option.value = type.id;
+                    option.textContent = type.pest_type_en + (type.pest_type_ar ? ` / ${type.pest_type_ar}` : '');
+                    select.appendChild(option);
+                });
+            } catch (err) {
+                console.error('Error loading pest types:', err);
+            }
+        }
+        
+        document.getElementById('pestForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const data = {
+                sighting_date: formData.get('sighting_date'),
+                sighting_time: formData.get('sighting_time') || null,
+                location_id: formData.get('location_id') ? parseInt(formData.get('location_id')) : null,
+                pest_type_id: formData.get('pest_type_id') ? parseInt(formData.get('pest_type_id')) : null,
+                pest_number: formData.get('pest_number') ? parseInt(formData.get('pest_number')) : null,
+                reported_by: formData.get('reported_by'),
+                date_reported: formData.get('date_reported') || null,
+                contractor_notified: formData.get('contractor_notified') === '1',
+                action_taken: formData.get('action_taken') || null,
+                action_by_whom: formData.get('action_by_whom') || null,
+                action_results: formData.get('action_results') || null,
+                follow_up_remarks: formData.get('follow_up_remarks') || null,
+                branch_id: sessionStorage.getItem('branchId') ? parseInt(sessionStorage.getItem('branchId')) : null
+            };
+            
+            if (!data.sighting_date || !data.reported_by) {
+                showAlert('Please fill in all required fields', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/pest-activity-sighting/api/documents', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                if (response.ok) {
+                    showAlert('Report saved successfully!', 'success');
+                    setTimeout(() => {
+                        window.location.href = '/pest-activity-sighting';
+                    }, 1500);
+                } else {
+                    const error = await response.json();
+                    showAlert(error.error || 'Failed to save report', 'error');
+                }
+            } catch (err) {
+                console.error('Error saving report:', err);
+                showAlert('Failed to save report. Please try again.', 'error');
+            }
+        });
+        
+        loadLocations();
+        loadPestTypes();
+    </script>
+</body>
+</html>

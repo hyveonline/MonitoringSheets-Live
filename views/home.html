@@ -315,6 +315,15 @@
             background: linear-gradient(90deg, #0891b2, #06b6d4);
         }
         
+        .app-icon.pest-activity-sighting {
+            background: linear-gradient(135deg, #fee2e2, #fecaca);
+            color: #dc2626;
+        }
+        
+        .app-card.pest-activity-sighting::before {
+            background: linear-gradient(90deg, #dc2626, #ef4444);
+        }
+        
         .app-icon.temperature {
             background: linear-gradient(135deg, #fef3c7, #fde68a);
             color: #d97706;
@@ -1038,6 +1047,29 @@
                     </div>
                 </a>
 
+                <!-- Pest Activity Sighting -->
+                <a href="/pest-activity-sighting" class="app-card pest-activity-sighting">
+                    <div class="app-icon pest-activity-sighting">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M12 8v4"/>
+                            <path d="M12 16h.01"/>
+                        </svg>
+                    </div>
+                    <h3 class="app-title">Pest Activity Sighting</h3>
+                    <p class="app-description">
+                        <strong>Created:</strong> Loading...<br>
+                        <strong>Last Revision:</strong> Loading...<br>
+                        <strong>Edition:</strong> Loading...<br>
+                        <strong>Reference:</strong> Loading...
+                    </p>
+                    <div class="app-arrow">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </a>
+
                 <!-- Cleaning Schedule (Coming Soon) -->
                 <div class="app-card cleaning coming-soon">
                     <div class="app-icon cleaning">
@@ -1161,7 +1193,8 @@
                 { selector: '.app-card.end-product-checklist', path: 'end-product-checklist' },
                 { selector: '.app-card.pasteurized-juices', path: 'pasteurized-juices' },
                 { selector: '.app-card.trucks-dispatching', path: 'trucks-dispatching' },
-                { selector: '.app-card.glass-plastic-inspection', path: 'glass-plastic-inspection' }
+                { selector: '.app-card.glass-plastic-inspection', path: 'glass-plastic-inspection' },
+                { selector: '.app-card.pest-activity-sighting', path: 'pest-activity-sighting' }
             ];
             
             moduleSettings.forEach(({ selector, path }) => {
@@ -1232,7 +1265,8 @@
                 { path: 'end-product-checklist', selector: '.app-card.end-product-checklist' },
                 { path: 'pasteurized-juices', selector: '.app-card.pasteurized-juices' },
                 { path: 'trucks-dispatching', selector: '.app-card.trucks-dispatching' },
-                { path: 'glass-plastic-inspection', selector: '.app-card.glass-plastic-inspection' }
+                { path: 'glass-plastic-inspection', selector: '.app-card.glass-plastic-inspection' },
+                { path: 'pest-activity-sighting', selector: '.app-card.pest-activity-sighting' }
             ];
 
             for (const module of modules) {
