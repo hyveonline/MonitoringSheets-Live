@@ -297,6 +297,15 @@
             background: linear-gradient(90deg, #f59e0b, #fbbf24);
         }
         
+        .app-icon.trucks-dispatching {
+            background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+            color: #6366f1;
+        }
+        
+        .app-card.trucks-dispatching::before {
+            background: linear-gradient(90deg, #6366f1, #818cf8);
+        }
+        
         .app-icon.temperature {
             background: linear-gradient(135deg, #fef3c7, #fde68a);
             color: #d97706;
@@ -972,6 +981,30 @@
                     </div>
                 </a>
 
+                <!-- Trucks Dispatching Monitoring -->
+                <a href="/trucks-dispatching" class="app-card trucks-dispatching">
+                    <div class="app-icon trucks-dispatching">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="1" y="3" width="15" height="13"/>
+                            <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+                            <circle cx="5.5" cy="18.5" r="2.5"/>
+                            <circle cx="18.5" cy="18.5" r="2.5"/>
+                        </svg>
+                    </div>
+                    <h3 class="app-title">Trucks Dispatching Monitoring</h3>
+                    <p class="app-description">
+                        <strong>Created:</strong> Loading...<br>
+                        <strong>Last Revision:</strong> Loading...<br>
+                        <strong>Edition:</strong> Loading...<br>
+                        <strong>Reference:</strong> Loading...
+                    </p>
+                    <div class="app-arrow">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </a>
+
                 <!-- Cleaning Schedule (Coming Soon) -->
                 <div class="app-card cleaning coming-soon">
                     <div class="app-icon cleaning">
@@ -1093,7 +1126,8 @@
                 { selector: '.app-card.quality-control-receiving', path: 'quality-control-receiving' },
                 { selector: '.app-card.recipe-verification', path: 'recipe-verification' },
                 { selector: '.app-card.end-product-checklist', path: 'end-product-checklist' },
-                { selector: '.app-card.pasteurized-juices', path: 'pasteurized-juices' }
+                { selector: '.app-card.pasteurized-juices', path: 'pasteurized-juices' },
+                { selector: '.app-card.trucks-dispatching', path: 'trucks-dispatching' }
             ];
             
             moduleSettings.forEach(({ selector, path }) => {
@@ -1162,7 +1196,8 @@
                 { path: 'quality-control-receiving', selector: '.app-card.quality-control-receiving' },
                 { path: 'recipe-verification', selector: '.app-card.recipe-verification' },
                 { path: 'end-product-checklist', selector: '.app-card.end-product-checklist' },
-                { path: 'pasteurized-juices', selector: '.app-card.pasteurized-juices' }
+                { path: 'pasteurized-juices', selector: '.app-card.pasteurized-juices' },
+                { path: 'trucks-dispatching', selector: '.app-card.trucks-dispatching' }
             ];
 
             for (const module of modules) {

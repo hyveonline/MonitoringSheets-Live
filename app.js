@@ -31,6 +31,7 @@ const qualityControlReceivingModule = require('./modules/quality-control-receivi
 const recipeVerificationModule = require('./modules/recipe-verification');
 const endProductChecklistModule = require('./modules/end-product-checklist');
 const pasteurizedJuicesModule = require('./modules/pasteurized-juices');
+const trucksDispatchingModule = require('./modules/trucks-dispatching');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -47,7 +48,7 @@ app.use((req, res, next) => {
     const noCacheRoutes = ['/dashboard', '/home', '/admin', '/auditor', '/hygiene-checklist', 
                            '/equipment-calibration', '/frying-oil', '/food-safety', '/dry-store',
                            '/water-quality', '/atp-monitoring', '/hot-holding', '/dry-store-expiry',
-                           '/cooking-cooling', '/fridge-temp', '/veg-fruit-wash', '/quality-control-receiving', '/recipe-verification', '/end-product-checklist', '/pasteurized-juices'];
+                           '/cooking-cooling', '/fridge-temp', '/veg-fruit-wash', '/quality-control-receiving', '/recipe-verification', '/end-product-checklist', '/pasteurized-juices', '/trucks-dispatching'];
     
     const shouldNotCache = noCacheRoutes.some(route => req.path.startsWith(route));
     
@@ -114,6 +115,9 @@ app.use('/end-product-checklist', requireAuth, endProductChecklistModule);
 
 // Pasteurized Juices Checklist Module (with /pasteurized-juices prefix)
 app.use('/pasteurized-juices', requireAuth, pasteurizedJuicesModule);
+
+// Trucks Dispatching Module (with /trucks-dispatching prefix)
+app.use('/trucks-dispatching', requireAuth, trucksDispatchingModule);
 
 // ==========================================
 // Page Routes
