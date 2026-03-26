@@ -52,6 +52,34 @@ router.get('/settings', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'settings.html'));
 });
 
+// One-time fix for Arabic encoding - call /pest-activity-sighting/api/fix-arabic once
+router.get('/api/fix-arabic', async (req, res) => {
+    try {
+        const pool = await getConnection();
+        
+        // Fix Pest Types
+        await pool.request().query(`UPDATE PAS_PestTypes SET pest_type_ar = N'نمل' WHERE pest_type_en = 'Ant'`);
+        await pool.request().query(`UPDATE PAS_PestTypes SET pest_type_ar = N'طيور' WHERE pest_type_en = 'Bird'`);
+        await pool.request().query(`UPDATE PAS_PestTypes SET pest_type_ar = N'صرصور' WHERE pest_type_en = 'Cockroach'`);
+        await pool.request().query(`UPDATE PAS_PestTypes SET pest_type_ar = N'ذباب' WHERE pest_type_en = 'Fly'`);
+        await pool.request().query(`UPDATE PAS_PestTypes SET pest_type_ar = N'أخرى' WHERE pest_type_en = 'Other'`);
+        await pool.request().query(`UPDATE PAS_PestTypes SET pest_type_ar = N'قوارض' WHERE pest_type_en = 'Rodent'`);
+        
+        // Fix Locations
+        await pool.request().query(`UPDATE PAS_Locations SET location_ar = N'المطبخ' WHERE location_en = 'Kitchen'`);
+        await pool.request().query(`UPDATE PAS_Locations SET location_ar = N'غرفة التخزين' WHERE location_en = 'Storage Room'`);
+        await pool.request().query(`UPDATE PAS_Locations SET location_ar = N'منطقة الاستلام' WHERE location_en = 'Receiving Area'`);
+        await pool.request().query(`UPDATE PAS_Locations SET location_ar = N'منطقة تناول الطعام' WHERE location_en = 'Dining Area'`);
+        await pool.request().query(`UPDATE PAS_Locations SET location_ar = N'منطقة النفايات' WHERE location_en = 'Waste Area'`);
+        await pool.request().query(`UPDATE PAS_Locations SET location_ar = N'المكتب' WHERE location_en = 'Office'`);
+        
+        res.json({ success: true, message: 'Arabic encoding fixed!' });
+    } catch (err) {
+        console.error('Error fixing Arabic:', err);
+        res.status(500).json({ error: 'Failed to fix Arabic encoding', details: err.message });
+    }
+});
+
 // ==========================================
 // Settings API
 // ==========================================
