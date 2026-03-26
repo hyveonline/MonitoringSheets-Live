@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Pasteurized Juices Settings - FS Monitoring</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f3f4f6;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+            color: white;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(245, 158, 11, 0.3);
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .header h1 { font-size: 1.5rem; font-weight: 700; }
+        .header-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+        
+        .btn {
+            padding: 0.625rem 1.25rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.875rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+            border: none;
+        }
+        
+        .btn-primary { background: white; color: #f59e0b; }
+        .btn-primary:hover { background: #fffbeb; }
+        .btn-secondary { background: rgba(255, 255, 255, 0.15); color: white; border: 1px solid rgba(255, 255, 255, 0.3); }
+        .btn-secondary:hover { background: rgba(255, 255, 255, 0.25); }
+        .btn-success { background: #10b981; color: white; }
+        .btn-success:hover { background: #059669; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-danger:hover { background: #dc2626; }
+        .btn-sm { padding: 0.375rem 0.75rem; font-size: 0.75rem; }
+        
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem; }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 1.5rem;
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .card-header h2 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1f2937;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label { font-size: 0.875rem; font-weight: 500; color: #374151; }
+        
+        .form-group input, .form-group select, .form-group textarea {
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+        
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .item-list {
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .item-row:last-child { border-bottom: none; }
+        .item-row:hover { background: #f9fafb; }
+        
+        .item-info h4 { font-weight: 600; color: #1f2937; margin-bottom: 0.25rem; }
+        .item-info span { font-size: 0.85rem; color: #6b7280; }
+        
+        .item-actions { display: flex; gap: 0.5rem; }
+        
+        .add-item-form {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            background: #f9fafb;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        
+        .add-item-form input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+        }
+        
+        .alert { padding: 1rem; border-radius: 8px; margin-bottom: 1rem; }
+        .alert-success { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+        .alert-error { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+        
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            border-bottom: 1px solid #e5e7eb;
+            margin-bottom: 1.5rem;
+        }
+        
+        .tab {
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-weight: 500;
+            color: #6b7280;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        
+        .tab:hover { color: #f59e0b; }
+        .tab.active { color: #f59e0b; border-bottom-color: #f59e0b; }
+        
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        .empty-state { text-align: center; padding: 2rem; color: #6b7280; }
+        
+        @media (max-width: 640px) {
+            .header-content { flex-direction: column; text-align: center; }
+            .form-row { grid-template-columns: 1fr; }
+            .add-item-form { flex-direction: column; }
+            .tabs { flex-wrap: wrap; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <h1>⚙️ Settings</h1>
+            <div class="header-actions">
+                <a href="/pasteurized-juices" class="btn btn-secondary">← Back</a>
+                <a href="/dashboard" class="btn btn-secondary">🏠 Dashboard</a>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div id="alertContainer"></div>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('general')">General</button>
+            <button class="tab" onclick="switchTab('products')">Products</button>
+        </div>
+        
+        <!-- General Settings Tab -->
+        <div id="generalTab" class="tab-content active">
+            <div class="card">
+                <div class="card-header">
+                    <h2>📋 Document Settings</h2>
+                </div>
+                
+                <form id="settingsForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="creation_date">Creation Date</label>
+                            <input type="date" id="creation_date" name="creation_date">
+                        </div>
+                        <div class="form-group">
+                            <label for="last_revision">Last Revision</label>
+                            <input type="date" id="last_revision" name="last_revision">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="edition">Edition</label>
+                            <input type="text" id="edition" name="edition" placeholder="e.g., 1.0">
+                        </div>
+                        <div class="form-group">
+                            <label for="reference">Reference</label>
+                            <input type="text" id="reference" name="reference" placeholder="e.g., GMRL-PJC-001">
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-success">💾 Save Settings</button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Products Tab -->
+        <div id="productsTab" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2>🍊 Manage Products</h2>
+                </div>
+                
+                <div class="add-item-form">
+                    <input type="text" id="newProductName" placeholder="Product Name (e.g., Orange Juice)">
+                    <input type="text" id="newProductCode" placeholder="Product Code (optional)">
+                    <button class="btn btn-success" onclick="addProduct()">+ Add Product</button>
+                </div>
+                
+                <div class="item-list" id="productsList">
+                    <div class="empty-state">Loading products...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function showAlert(message, type) {
+            const container = document.getElementById('alertContainer');
+            container.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+            setTimeout(() => container.innerHTML = '', 5000);
+        }
+        
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelector(`.tab[onclick="switchTab('${tabName}')"]`).classList.add('active');
+            document.getElementById(tabName + 'Tab').classList.add('active');
+        }
+        
+        async function loadSettings() {
+            try {
+                const response = await fetch('/pasteurized-juices/api/settings');
+                const settings = await response.json();
+                if (settings.creation_date) document.getElementById('creation_date').value = settings.creation_date;
+                if (settings.last_revision) document.getElementById('last_revision').value = settings.last_revision;
+                if (settings.edition) document.getElementById('edition').value = settings.edition;
+                if (settings.reference) document.getElementById('reference').value = settings.reference;
+            } catch (err) {
+                console.error('Error loading settings:', err);
+            }
+        }
+        
+        document.getElementById('settingsForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const settings = {};
+            formData.forEach((value, key) => settings[key] = value);
+            
+            try {
+                const response = await fetch('/pasteurized-juices/api/settings', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(settings)
+                });
+                if (response.ok) {
+                    showAlert('Settings saved successfully!', 'success');
+                } else {
+                    showAlert('Failed to save settings', 'error');
+                }
+            } catch (err) {
+                console.error('Error saving settings:', err);
+                showAlert('Failed to save settings', 'error');
+            }
+        });
+        
+        async function loadProducts() {
+            try {
+                const response = await fetch('/pasteurized-juices/api/products');
+                const products = await response.json();
+                const container = document.getElementById('productsList');
+                
+                if (products.length === 0) {
+                    container.innerHTML = '<div class="empty-state">No products added yet</div>';
+                    return;
+                }
+                
+                container.innerHTML = products.map(product => `
+                    <div class="item-row">
+                        <div class="item-info">
+                            <h4>${product.product_name}</h4>
+                            <span>${product.product_code || 'No code'}</span>
+                        </div>
+                        <div class="item-actions">
+                            <button class="btn btn-sm btn-danger" onclick="deleteProduct(${product.id})">Delete</button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (err) {
+                console.error('Error loading products:', err);
+            }
+        }
+        
+        async function addProduct() {
+            const name = document.getElementById('newProductName').value.trim();
+            const code = document.getElementById('newProductCode').value.trim();
+            
+            if (!name) {
+                showAlert('Please enter a product name', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/pasteurized-juices/api/products', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ product_name: name, product_code: code })
+                });
+                
+                if (response.ok) {
+                    document.getElementById('newProductName').value = '';
+                    document.getElementById('newProductCode').value = '';
+                    loadProducts();
+                    showAlert('Product added successfully!', 'success');
+                } else {
+                    showAlert('Failed to add product', 'error');
+                }
+            } catch (err) {
+                console.error('Error adding product:', err);
+                showAlert('Failed to add product', 'error');
+            }
+        }
+        
+        async function deleteProduct(id) {
+            if (!confirm('Delete this product?')) return;
+            
+            try {
+                const response = await fetch(`/pasteurized-juices/api/products/${id}`, { method: 'DELETE' });
+                if (response.ok) {
+                    loadProducts();
+                    showAlert('Product deleted successfully!', 'success');
+                } else {
+                    showAlert('Failed to delete product', 'error');
+                }
+            } catch (err) {
+                console.error('Error deleting product:', err);
+                showAlert('Failed to delete product', 'error');
+            }
+        }
+        
+        loadSettings();
+        loadProducts();
+    </script>
+</body>
+</html>

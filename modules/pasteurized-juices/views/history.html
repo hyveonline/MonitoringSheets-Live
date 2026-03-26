@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Pasteurized Juices History - FS Monitoring</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f3f4f6;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+            color: white;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(245, 158, 11, 0.3);
+        }
+        
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .header h1 { font-size: 1.5rem; font-weight: 700; }
+        .header-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+        
+        .btn {
+            padding: 0.625rem 1.25rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.875rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+            border: none;
+        }
+        
+        .btn-primary { background: white; color: #f59e0b; }
+        .btn-primary:hover { background: #fffbeb; }
+        .btn-secondary { background: rgba(255, 255, 255, 0.15); color: white; border: 1px solid rgba(255, 255, 255, 0.3); }
+        .btn-secondary:hover { background: rgba(255, 255, 255, 0.25); }
+        .btn-success { background: #10b981; color: white; }
+        .btn-success:hover { background: #059669; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-danger:hover { background: #dc2626; }
+        .btn-sm { padding: 0.375rem 0.75rem; font-size: 0.75rem; }
+        
+        .container { max-width: 1400px; margin: 0 auto; padding: 2rem 1.5rem; }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 1.5rem;
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .card-header h2 { font-size: 1.125rem; font-weight: 600; color: #1f2937; }
+        
+        .filter-bar {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-end;
+            flex-wrap: wrap;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .form-group label { font-size: 0.875rem; font-weight: 500; color: #374151; }
+        
+        .form-group input, .form-group select {
+            padding: 0.625rem;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 0.875rem;
+        }
+        
+        .table-container { overflow-x: auto; }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 900px;
+        }
+        
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        th {
+            background: #f9fafb;
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+        }
+        
+        tr:hover { background: #f9fafb; }
+        
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .status-verified { background: #d1fae5; color: #065f46; }
+        .status-pending { background: #fef3c7; color: #92400e; }
+        
+        .action-buttons { display: flex; gap: 0.5rem; }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #6b7280;
+        }
+        
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            overflow-y: auto;
+        }
+        
+        .modal.show { display: flex; align-items: flex-start; justify-content: center; padding: 2rem; }
+        
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 900px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 10;
+        }
+        
+        .modal-header h3 { font-size: 1.25rem; font-weight: 600; }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6b7280;
+        }
+        
+        .modal-body { padding: 1.5rem; }
+        
+        .detail-section { margin-bottom: 1.5rem; }
+        
+        .detail-section h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #f59e0b;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #fef3c7;
+        }
+        
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .detail-item label {
+            font-size: 0.75rem;
+            color: #6b7280;
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+        
+        .detail-item span { font-weight: 500; color: #1f2937; }
+        
+        .checklist-result {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        
+        .checklist-result:last-child { border-bottom: none; }
+        
+        .result-yes { color: #059669; font-weight: 600; }
+        .result-no { color: #dc2626; font-weight: 600; }
+        .result-na { color: #9ca3af; }
+        
+        .corrective-note {
+            font-size: 0.85rem;
+            color: #dc2626;
+            background: #fef2f2;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            margin-left: 0.5rem;
+        }
+        
+        @media (max-width: 640px) {
+            .header-content { flex-direction: column; text-align: center; }
+            .filter-bar { flex-direction: column; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <h1>📊 Checklist History</h1>
+            <div class="header-actions">
+                <a href="/pasteurized-juices/form" class="btn btn-primary">+ New Checklist</a>
+                <a href="/pasteurized-juices" class="btn btn-secondary">← Back</a>
+                <a href="/dashboard" class="btn btn-secondary">🏠 Dashboard</a>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <!-- Filters -->
+        <div class="card">
+            <div class="card-header">
+                <h2>🔍 Filter Records</h2>
+            </div>
+            <div class="filter-bar">
+                <div class="form-group">
+                    <label for="filterFrom">From Date</label>
+                    <input type="date" id="filterFrom">
+                </div>
+                <div class="form-group">
+                    <label for="filterTo">To Date</label>
+                    <input type="date" id="filterTo">
+                </div>
+                <div class="form-group">
+                    <label for="filterProduct">Product</label>
+                    <select id="filterProduct">
+                        <option value="">All Products</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="filterStatus">Status</label>
+                    <select id="filterStatus">
+                        <option value="">All</option>
+                        <option value="pending">Pending</option>
+                        <option value="verified">Verified</option>
+                    </select>
+                </div>
+                <button class="btn btn-success" onclick="loadDocuments()">Apply Filters</button>
+            </div>
+        </div>
+        
+        <!-- Documents Table -->
+        <div class="card">
+            <div class="card-header">
+                <h2>📋 Checklist Records</h2>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Document #</th>
+                            <th>Prep Date</th>
+                            <th>Product</th>
+                            <th>Filled By</th>
+                            <th>Temp (°C)</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="documentsTable">
+                        <tr>
+                            <td colspan="7">
+                                <div class="empty-state">Loading documents...</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- View Modal -->
+    <div id="viewModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📋 Checklist Details</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+    
+    <script>
+        async function loadProducts() {
+            try {
+                const response = await fetch('/pasteurized-juices/api/products');
+                const products = await response.json();
+                const select = document.getElementById('filterProduct');
+                products.forEach(p => {
+                    const option = document.createElement('option');
+                    option.value = p.id;
+                    option.textContent = p.product_name;
+                    select.appendChild(option);
+                });
+            } catch (err) {
+                console.error('Error loading products:', err);
+            }
+        }
+        
+        async function loadDocuments() {
+            const from = document.getElementById('filterFrom').value;
+            const to = document.getElementById('filterTo').value;
+            const product = document.getElementById('filterProduct').value;
+            const status = document.getElementById('filterStatus').value;
+            
+            let url = '/pasteurized-juices/api/documents?';
+            if (from) url += `from=${from}&`;
+            if (to) url += `to=${to}&`;
+            if (product) url += `product_id=${product}&`;
+            
+            try {
+                const response = await fetch(url);
+                let documents = await response.json();
+                
+                if (status === 'verified') {
+                    documents = documents.filter(d => d.is_verified);
+                } else if (status === 'pending') {
+                    documents = documents.filter(d => !d.is_verified);
+                }
+                
+                renderDocuments(documents);
+            } catch (err) {
+                console.error('Error loading documents:', err);
+            }
+        }
+        
+        function renderDocuments(documents) {
+            const tbody = document.getElementById('documentsTable');
+            
+            if (documents.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state">No records found</div></td></tr>`;
+                return;
+            }
+            
+            tbody.innerHTML = documents.map(doc => `
+                <tr>
+                    <td><strong>${doc.document_number}</strong></td>
+                    <td>${new Date(doc.date_of_preparation).toLocaleDateString()}</td>
+                    <td>${doc.product_name}</td>
+                    <td>${doc.filled_by}</td>
+                    <td>${doc.temp_after_cooling_value !== null ? doc.temp_after_cooling_value + '°C' : '-'}</td>
+                    <td>
+                        <span class="status-badge ${doc.is_verified ? 'status-verified' : 'status-pending'}">
+                            ${doc.is_verified ? '✓ Verified' : 'Pending'}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-sm btn-primary" onclick="viewDocument(${doc.id})">View</button>
+                            ${!doc.is_verified ? `<button class="btn btn-sm btn-success" onclick="verifyDocument(${doc.id})">Verify</button>` : ''}
+                            <button class="btn btn-sm btn-danger" onclick="deleteDocument(${doc.id})">Delete</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        async function viewDocument(id) {
+            try {
+                const response = await fetch(`/pasteurized-juices/api/documents/${id}`);
+                const doc = await response.json();
+                
+                const formatResult = (value, action) => {
+                    if (value === null || value === undefined) return '<span class="result-na">N/A</span>';
+                    const result = value ? '<span class="result-yes">Yes</span>' : '<span class="result-no">No</span>';
+                    const corrective = (!value && action) ? `<span class="corrective-note">${action}</span>` : '';
+                    return result + corrective;
+                };
+                
+                const formatTime = (time) => time ? time.substring(0, 5) : 'N/A';
+                
+                document.getElementById('modalBody').innerHTML = `
+                    <div class="detail-section">
+                        <h4>📋 Basic Information</h4>
+                        <div class="detail-grid">
+                            <div class="detail-item"><label>Document #</label><span>${doc.document_number}</span></div>
+                            <div class="detail-item"><label>Prep Date</label><span>${new Date(doc.date_of_preparation).toLocaleDateString()}</span></div>
+                            <div class="detail-item"><label>Product</label><span>${doc.product_name}</span></div>
+                            <div class="detail-item"><label>Filled By</label><span>${doc.filled_by}</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-section">
+                        <h4>🍎 Fruit Preparation</h4>
+                        <div class="checklist-result"><span>Fruits correctly sorted</span>${formatResult(doc.fruits_correctly_sorted, doc.fruits_correctly_sorted_action)}</div>
+                        <div class="checklist-result"><span>Fruits properly disinfected</span>${formatResult(doc.fruits_properly_disinfected, doc.fruits_properly_disinfected_action)}</div>
+                        <div class="checklist-result"><span>Proper strainers used</span>${formatResult(doc.proper_strainers_used, doc.proper_strainers_used_action)}</div>
+                        <div class="checklist-result"><span>Strainers in good condition</span>${formatResult(doc.strainers_good_condition, doc.strainers_good_condition_action)}</div>
+                        <div class="checklist-result"><span>Juice properly strained</span>${formatResult(doc.juice_properly_strained, doc.juice_properly_strained_action)}</div>
+                        <div class="checklist-result"><span>Quality before pasteurization</span>${formatResult(doc.quality_before_pasteurization, doc.quality_before_pasteurization_action)}</div>
+                    </div>
+                    
+                    <div class="detail-section">
+                        <h4>🌡️ Thermobuttons & Vacuum</h4>
+                        <div class="checklist-result"><span>Thermobuttons in good condition</span>${formatResult(doc.thermobuttons_good_condition, doc.thermobuttons_good_condition_action)}</div>
+                        <div class="checklist-result"><span>Vacuum done properly</span>${formatResult(doc.vacuum_done_properly, doc.vacuum_done_properly_action)}</div>
+                        <div class="detail-grid" style="margin-top: 0.5rem;">
+                            <div class="detail-item"><label>Prog</label><span>${doc.vacuum_prog}</span></div>
+                            <div class="detail-item"><label>Vacuum</label><span>${doc.vacuum_percent}</span></div>
+                            <div class="detail-item"><label>Sealing</label><span>${doc.vacuum_sealing_time}</span></div>
+                            <div class="detail-item"><label>Pressure</label><span>${doc.vacuum_pressure}</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-section">
+                        <h4>🔥 Pasteurization</h4>
+                        <div class="detail-grid">
+                            <div class="detail-item"><label>Pasteurization Date</label><span>${doc.date_of_pasteurization ? new Date(doc.date_of_pasteurization).toLocaleDateString() : 'N/A'}</span></div>
+                        </div>
+                        <div class="checklist-result"><span>Oven on Steam Mode</span>${formatResult(doc.oven_steam_mode, doc.oven_steam_mode_action)}</div>
+                        <div class="detail-grid" style="margin-top: 0.5rem;">
+                            <div class="detail-item"><label>Heat Start</label><span>${formatTime(doc.heat_start_time)}</span></div>
+                            <div class="detail-item"><label>Heat Finish</label><span>${formatTime(doc.heat_finish_time)}</span></div>
+                            <div class="detail-item"><label>Cooling Start</label><span>${formatTime(doc.cooling_start_time)}</span></div>
+                            <div class="detail-item"><label>Cooling Finish</label><span>${formatTime(doc.cooling_finish_time)}</span></div>
+                        </div>
+                        <div class="checklist-result"><span>Pasteurization proper (63°C, 30 mins)</span>${formatResult(doc.pasteurization_proper, doc.pasteurization_proper_action)}</div>
+                    </div>
+                    
+                    <div class="detail-section">
+                        <h4>🌡️ Temperature After Cooling</h4>
+                        <div class="detail-grid">
+                            <div class="detail-item"><label>Temperature</label><span>${doc.temp_after_cooling_value !== null ? doc.temp_after_cooling_value + '°C' : 'N/A'}</span></div>
+                            <div class="detail-item"><label>Status</label><span class="${doc.temp_after_cooling_ok ? 'result-yes' : 'result-no'}">${doc.temp_after_cooling_ok ? 'OK (Below 20°C)' : 'Too High'}</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-section">
+                        <h4>✅ Final Quality Checks</h4>
+                        <div class="checklist-result"><span>Quality after pasteurization</span>${formatResult(doc.quality_after_pasteurization, doc.quality_after_pasteurization_action)}</div>
+                        <div class="checklist-result"><span>Expiry/Production date correct</span>${formatResult(doc.expiry_date_correct, doc.expiry_date_correct_action)}</div>
+                        <div class="checklist-result"><span>Labelling correct</span>${formatResult(doc.labelling_correct, doc.labelling_correct_action)}</div>
+                        <div class="checklist-result"><span>Retention sample taken</span>${formatResult(doc.retention_sample_taken, doc.retention_sample_taken_action)}</div>
+                    </div>
+                    
+                    ${doc.comments ? `<div class="detail-section"><h4>💬 Comments</h4><p>${doc.comments}</p></div>` : ''}
+                    
+                    ${doc.is_verified ? `
+                    <div class="detail-section">
+                        <h4>✓ Verification</h4>
+                        <div class="detail-grid">
+                            <div class="detail-item"><label>Verified By</label><span>${doc.verified_by}</span></div>
+                            <div class="detail-item"><label>Verified At</label><span>${new Date(doc.verified_at).toLocaleString()}</span></div>
+                        </div>
+                    </div>
+                    ` : ''}
+                `;
+                
+                document.getElementById('viewModal').classList.add('show');
+            } catch (err) {
+                console.error('Error loading document:', err);
+            }
+        }
+        
+        function closeModal() {
+            document.getElementById('viewModal').classList.remove('show');
+        }
+        
+        async function verifyDocument(id) {
+            if (!confirm('Verify this checklist?')) return;
+            try {
+                await fetch(`/pasteurized-juices/api/documents/${id}/verify`, { method: 'PUT' });
+                loadDocuments();
+            } catch (err) {
+                console.error('Error verifying:', err);
+            }
+        }
+        
+        async function deleteDocument(id) {
+            if (!confirm('Delete this checklist?')) return;
+            try {
+                await fetch(`/pasteurized-juices/api/documents/${id}`, { method: 'DELETE' });
+                loadDocuments();
+            } catch (err) {
+                console.error('Error deleting:', err);
+            }
+        }
+        
+        document.getElementById('viewModal').addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal')) closeModal();
+        });
+        
+        function setDefaultDateRange() {
+            const today = new Date();
+            const thirtyDaysAgo = new Date(today);
+            thirtyDaysAgo.setDate(today.getDate() - 30);
+            document.getElementById('filterTo').value = today.toISOString().split('T')[0];
+            document.getElementById('filterFrom').value = thirtyDaysAgo.toISOString().split('T')[0];
+        }
+        
+        loadProducts();
+        setDefaultDateRange();
+        loadDocuments();
+    </script>
+</body>
+</html>

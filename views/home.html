@@ -288,6 +288,15 @@
             background: linear-gradient(90deg, #059669, #10b981);
         }
         
+        .app-icon.pasteurized-juices {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            color: #f59e0b;
+        }
+        
+        .app-card.pasteurized-juices::before {
+            background: linear-gradient(90deg, #f59e0b, #fbbf24);
+        }
+        
         .app-icon.temperature {
             background: linear-gradient(135deg, #fef3c7, #fde68a);
             color: #d97706;
@@ -940,6 +949,29 @@
                     </div>
                 </a>
 
+                <!-- Pasteurized Juices Checklist -->
+                <a href="/pasteurized-juices" class="app-card pasteurized-juices">
+                    <div class="app-icon pasteurized-juices">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M8 2h8l4 10H4L8 2z"/>
+                            <path d="M5 12v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8"/>
+                            <circle cx="12" cy="17" r="2"/>
+                        </svg>
+                    </div>
+                    <h3 class="app-title">Pasteurized Juices Checklist</h3>
+                    <p class="app-description">
+                        <strong>Created:</strong> Loading...<br>
+                        <strong>Last Revision:</strong> Loading...<br>
+                        <strong>Edition:</strong> Loading...<br>
+                        <strong>Reference:</strong> Loading...
+                    </p>
+                    <div class="app-arrow">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </a>
+
                 <!-- Cleaning Schedule (Coming Soon) -->
                 <div class="app-card cleaning coming-soon">
                     <div class="app-icon cleaning">
@@ -1060,7 +1092,8 @@
                 { selector: '.app-card.veg-fruit-wash', path: 'veg-fruit-wash' },
                 { selector: '.app-card.quality-control-receiving', path: 'quality-control-receiving' },
                 { selector: '.app-card.recipe-verification', path: 'recipe-verification' },
-                { selector: '.app-card.end-product-checklist', path: 'end-product-checklist' }
+                { selector: '.app-card.end-product-checklist', path: 'end-product-checklist' },
+                { selector: '.app-card.pasteurized-juices', path: 'pasteurized-juices' }
             ];
             
             moduleSettings.forEach(({ selector, path }) => {
@@ -1128,7 +1161,8 @@
                 { path: 'veg-fruit-wash', selector: '.app-card.veg-fruit-wash' },
                 { path: 'quality-control-receiving', selector: '.app-card.quality-control-receiving' },
                 { path: 'recipe-verification', selector: '.app-card.recipe-verification' },
-                { path: 'end-product-checklist', selector: '.app-card.end-product-checklist' }
+                { path: 'end-product-checklist', selector: '.app-card.end-product-checklist' },
+                { path: 'pasteurized-juices', selector: '.app-card.pasteurized-juices' }
             ];
 
             for (const module of modules) {

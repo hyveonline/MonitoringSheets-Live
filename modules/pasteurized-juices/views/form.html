@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Pasteurized Juices Checklist Form - FS Monitoring</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f3f4f6;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+            color: white;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(245, 158, 11, 0.3);
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .header h1 { font-size: 1.5rem; font-weight: 700; }
+        
+        .header-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+        
+        .btn {
+            padding: 0.625rem 1.25rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.875rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+            border: none;
+        }
+        
+        .btn-primary { background: white; color: #f59e0b; }
+        .btn-primary:hover { background: #fffbeb; }
+        .btn-secondary { background: rgba(255, 255, 255, 0.15); color: white; border: 1px solid rgba(255, 255, 255, 0.3); }
+        .btn-secondary:hover { background: rgba(255, 255, 255, 0.25); }
+        .btn-success { background: #10b981; color: white; }
+        .btn-success:hover { background: #059669; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-danger:hover { background: #dc2626; }
+        
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem; }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 1.5rem;
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .card-header h2 { font-size: 1.125rem; font-weight: 600; color: #1f2937; }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .form-group label { font-size: 0.875rem; font-weight: 500; color: #374151; }
+        
+        .form-group input, .form-group select, .form-group textarea {
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+        
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+        }
+        
+        .section-title {
+            background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+            color: white;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            margin: 1.5rem 0 1rem 0;
+        }
+        
+        .checklist-item {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 1rem;
+            padding: 1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            align-items: start;
+        }
+        
+        .checklist-item:hover {
+            border-color: #f59e0b;
+            background: #fffbeb;
+        }
+        
+        .checklist-label {
+            font-weight: 500;
+            color: #1f2937;
+            font-size: 0.95rem;
+        }
+        
+        .checklist-label small {
+            display: block;
+            color: #6b7280;
+            font-weight: 400;
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+        }
+        
+        .checklist-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            min-width: 200px;
+        }
+        
+        .yes-no-select {
+            padding: 0.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .yes-no-select.yes { background: #d1fae5; border-color: #10b981; color: #065f46; }
+        .yes-no-select.no { background: #fee2e2; border-color: #ef4444; color: #991b1b; }
+        
+        .corrective-input {
+            display: none;
+        }
+        
+        .corrective-input.show {
+            display: block;
+        }
+        
+        .corrective-input input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #fecaca;
+            border-radius: 6px;
+            background: #fef2f2;
+            font-size: 0.85rem;
+        }
+        
+        .vacuum-settings {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            padding: 1rem;
+            background: #f9fafb;
+            border-radius: 8px;
+            margin-top: 0.5rem;
+        }
+        
+        .vacuum-item {
+            text-align: center;
+        }
+        
+        .vacuum-item label {
+            display: block;
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-bottom: 0.25rem;
+        }
+        
+        .vacuum-item span {
+            font-weight: 600;
+            color: #1f2937;
+        }
+        
+        .time-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .temp-input-row {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-end;
+        }
+        
+        .temp-input-row .form-group {
+            flex: 1;
+        }
+        
+        .temp-status {
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-weight: 500;
+            text-align: center;
+        }
+        
+        .temp-ok { background: #d1fae5; color: #065f46; }
+        .temp-high { background: #fee2e2; color: #991b1b; }
+        
+        .comments-section {
+            margin-top: 1.5rem;
+        }
+        
+        .comments-section textarea {
+            width: 100%;
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .alert { padding: 1rem; border-radius: 8px; margin-bottom: 1rem; }
+        .alert-success { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+        .alert-error { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+        
+        .submit-section {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        .submit-section .btn {
+            padding: 0.875rem 2rem;
+            font-size: 1rem;
+        }
+        
+        @media (max-width: 640px) {
+            .header-content { flex-direction: column; text-align: center; }
+            .form-row { grid-template-columns: 1fr; }
+            .checklist-item { grid-template-columns: 1fr; }
+            .checklist-controls { width: 100%; }
+            .time-row { grid-template-columns: 1fr; }
+            .vacuum-settings { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <h1>📝 New Pasteurized Juices Checklist</h1>
+            <div class="header-actions">
+                <a href="/pasteurized-juices" class="btn btn-secondary">← Back</a>
+                <a href="/dashboard" class="btn btn-secondary">🏠 Dashboard</a>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div id="alertContainer"></div>
+        
+        <form id="checklistForm">
+            <!-- Basic Info Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>📋 Basic Information</h2>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="filled_by">Filled By *</label>
+                        <input type="text" id="filled_by" name="filled_by" required readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="date_of_preparation">Date of Preparation *</label>
+                        <input type="date" id="date_of_preparation" name="date_of_preparation" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="product_id">Product *</label>
+                        <select id="product_id" name="product_id" required>
+                            <option value="">Select Product...</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Fruit Preparation Section -->
+            <div class="card">
+                <div class="section-title">🍎 Fruit Preparation</div>
+                
+                <div class="checklist-item">
+                    <div class="checklist-label">
+                        Fruits are correctly sorted
+                        <small>Visual inspection of fruit quality and sorting</small>
+                    </div>
+                    <div class="checklist-controls">
+                        <select class="yes-no-select" id="fruits_correctly_sorted" name="fruits_correctly_sorted" onchange="toggleCorrective(this, 'fruits_correctly_sorted_action')">
+                            <option value="">Select...</option>
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                        <div class="corrective-input" id="fruits_correctly_sorted_action_wrapper">
+                            <input type="text" id="fruits_correctly_sorted_action" name="fruits_correctly_sorted_action" placeholder="Corrective action taken...">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="checklist-item">
+                    <div class="checklist-label">
+                        Fruits are properly disinfected
+                        <small>Proper disinfection procedures followed</small>
+                    </div>
+                    <div class="checklist-controls">
+                        <select class="yes-no-select" id="fruits_properly_disinfected" name="fruits_properly_disinfected" onchange="toggleCorrective(this, 'fruits_properly_disinfected_action')">
+                            <option value="">Select...</option>
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                        <div class="corrective-input" id="fruits_properly_disinfected_action_wrapper">
+                            <input type="text" id="fruits_properly_disinfected_action" name="fruits_properly_disinfected_action" placeholder="Corrective action taken...">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="checklist-item">
+                    <div class="checklist-label">
+                        Proper Strainers/filters are used
+                        <small>Mesh size ≤0.4 cm for strawberry/strawberry banana juices, &lt;0.1 cm for other juices</small>
+                    </div>
+                    <div class="checklist-controls">
+                        <select class="yes-no-select" id="proper_strainers_used" name="proper_strainers_used" onchange="toggleCorrective(this, 'proper_strainers_used_action')">
+                            <option value="">Select...</option>
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                        <div class="corrective-input" id="proper_strainers_used_action_wrapper">
+                            <input type="text" id="proper_strainers_used_action" name="proper_strainers_used_action" placeholder="Corrective action taken...">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="checklist-item">
+                    <div class="checklist-label">
+                        Strainers/filters are checked and in good condition
+                        <small>Equipment inspection completed</small>
+                    </div>
+                    <div class="checklist-controls">
+                        <select class="yes-no-select" id="strainers_good_condition" name="strainers_good_condition" onchange="toggleCorrective(this, 'strainers_good_condition_action')">
+                            <option value="">Select...</option>
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                        <div class="corrective-input" id="strainers_good_condition_action_wrapper">
+                            <input type="text" id="strainers_good_condition_action" name="strainers_good_condition_action" placeholder="Corrective action taken...">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="checklist-item">
+                    <div class="checklist-label">
+                        Juice is properly strained before pasteurization
+                        <small>Straining process completed correctly</small>
+                    </div>
+                    <div class="checklist-controls">
+                        <select class="yes-no-select" id="juice_properly_strained" name="juice_properly_strained" onchange="toggleCorrective(this, 'juice_properly_strained_action')">
+                            <option value="">Select...</option>
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                        <div class="corrective-input" id="juice_properly_strained_action_wrapper">
+                            <input type="text" id="juice_properly_strained_action" name="juice_properly_strained_action" placeholder="Corrective action taken...">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="checklist-item">
+                    <div class="checklist-label">
+                        Quality (Tasting) of the Juice before pasteurization is up to standards
+                        <small>Pre-pasteurization quality check</small>
+                    </div>
+                    <div class="checklist-controls">
+                        <select class="yes-no-select" id="quality_before_pasteurization" name="quality_before_pasteurization" onchange="toggleCorrective(this, 'quality_before_pasteurization_action')">
+                            <option value="">Select...</option>
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                        <div class="corrective-input" id="quality_before_pasteurization_action_wrapper">
+                            <input type="text" id="quality_before_pasteurization_action" name="quality_before_pasteurization_action" placeholder="Corrective action taken...">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Thermobuttons & Vacuum Section -->
+            <div class="card">
+                <div class="section-title">🌡️ Thermobuttons & Vacuum</div>
+                
+                <div class="checklist-item">
+                    <div class="checklist-label">
+                        Thermobuttons used are in good condition
+                        <small>Temperature monitoring equipment check</small>
+                    </div>
+                    <div class="checklist-controls">
+                        <select class="yes-no-select" id="thermobuttons_good_condition" name="thermobuttons_good_condition" onchange="toggleCorrective(this, 'thermobuttons_good_condition_action')">
+                            <option value="">Select...</option>
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                        <div class="corrective-input" id="thermobuttons_good_condition_action_wrapper">
+                            <input type="text" id="thermobuttons_good_condition_action" name="thermobuttons_good_condition_action" placeholder="Corrective action taken...">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="checklist-item">
+                    <div class="checklist-label">
+                        Vacuum is done properly
+                        <small>Vacuum sealing process verification</small>
+                    </div>
+                    <div class="checklist-controls">
+                        <select class="yes-no-select" id="vacuum_done_properly" name="vacuum_done_properly" onchange="toggleCorrective(this, 'vacuum_done_properly_action')">
+                            <option value="">Select...</option>
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                        <div class="corrective-input" id="vacuum_done_properly_action_wrapper">
+                            <input type="text" id="vacuum_done_properly_action" name="vacuum_done_properly_action" placeholder="Corrective action taken...">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="vacuum-settings">
+                    <div class="vacuum-item">
+                        <label>Prog</label>
+                        <span>10</span>
+                        <input type="hidden" id="vacuum_prog" name="vacuum_prog" value="10">
+                    </div>
+                    <div class="vacuum-item">
+                        <label>Vacuum</label>
+                        <span>20%</span>
+                        <input type="hidden" id="vacuum_percent" name="vacuum_percent" value="20%">
+                    </div>
+                    <div class="vacuum-item">
+                        <label>Sealing Time</label>
+                        <span>3 sec</span>
+                        <input type="hidden" id="vacuum_sealing_time" name="vacuum_sealing_time" value="3 sec">
+                    </div>
+                    <div class="vacuum-item">
+                        <label>Pressure</label>
+                        <span>-1 bar</span>
+                        <input type="hidden" id="vacuum_pressure" name="vacuum_pressure" value="-1 bar">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Pasteurization Section -->
+            <div class="card">
+                <div class="section-title">🔥 Pasteurization</div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="date_of_pasteurization">Date of Pasteurization</label>
+                        <input type="date" id="date_of_pasteurization" name="date_of_pasteurization">
+                    </div>
+                </div>
+                
+                <div class="checklist-item">
+                    <div class="checklist-label">
+                        Oven is set on the Steam Mode
+                        <small>Equipment setting verification</small>
+                    </div>
+                    <div class="checklist-controls">
+                        <select class="yes-no-select" id="oven_steam_mode" name="oven_steam_mode" onchange="toggleCorrective(this, 'oven_steam_mode_action')">
+                            <option value="">Select...</option>
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                        <div class="corrective-input" id="oven_steam_mode_action_wrapper">
+                            <input type="text" id="oven_steam_mode_action" name="oven_steam_mode_action" placeholder="Corrective action taken...">
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 1.5rem;">
+                    <h3 style="font-size: 1rem; font-weight: 600; color: #374151; margin-bottom: 1rem;">⏱️ Duration of Heat Treatment</h3>
+                    <div class="time-row">
+                        <div class="form-group">
+                            <label for="heat_start_time">Start Time</label>
+                            <input type="time" id="heat_start_time" name="heat_start_time">
+                        </div>
+                        <div class="form-group">
+                            <label for="heat_finish_time">Finish Time</label>
+                            <input type="time" id="heat_finish_time" name="heat_finish_time">
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 1.5rem;">
+                    <h3 style="font-size: 1rem; font-weight: 600; color: #374151; margin-bottom: 1rem;">❄️ Cooling (Ice Bath)</h3>
+                    <div class="time-row">
+                        <div class="form-group">
+                            <label for="cooling_start_time">Start Time</label>
+                            <input type="time" id="cooling_start_time" name="cooling_start_time">
+                        </div>
+                        <div class="form-group">
+                            <label for="cooling_finish_time">Finish Time</label>
+                            <input type="time" id="cooling_finish_time" name="cooling_finish_time">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="checklist-item" style="margin-top: 1.5rem;">
+                    <div class="checklist-label">
+                        Pasteurization is properly done at 63°C for at least 30 mins
+                        <small>Thermobutton reading verification</small>
+                    </div>
+                    <div class="checklist-controls">
+                        <select class="yes-no-select" id="pasteurization_proper" name="pasteurization_proper" onchange="toggleCorrective(this, 'pasteurization_proper_action')">
+                            <option value="">Select...</option>
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                        <div class="corrective-input" id="pasteurization_proper_action_wrapper">
+                            <input type="text" id="pasteurization_proper_action" name="pasteurization_proper_action" placeholder="Corrective action taken...">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Temperature After Cooling Section -->
+            <div class="card">
+                <div class="section-title">🌡️ Temperature After Cooling</div>
+                
+                <div class="temp-input-row">
+                    <div class="form-group">
+                        <label for="temp_after_cooling_value">Temperature (°C) *</label>
+                        <input type="number" step="0.1" id="temp_after_cooling_value" name="temp_after_cooling_value" placeholder="Enter temperature" onchange="checkTemperature()">
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <div id="tempStatus" class="temp-status">Enter temperature</div>
+                        <input type="hidden" id="temp_after_cooling_ok" name="temp_after_cooling_ok">
+                    </div>
+                </div>
+                <small style="color: #6b7280; margin-top: 0.5rem; display: block;">Temperature must be below 20°C</small>
+            </div>
+            
+            <!-- Final Quality Checks Section -->
+            <div class="card">
+                <div class="section-title">✅ Final Quality Checks</div>
+                
+                <div class="checklist-item">
+                    <div class="checklist-label">
+                        Quality (Tasting) of the juice after pasteurization is up to standards
+                        <small>Post-pasteurization quality verification</small>
+                    </div>
+                    <div class="checklist-controls">
+                        <select class="yes-no-select" id="quality_after_pasteurization" name="quality_after_pasteurization" onchange="toggleCorrective(this, 'quality_after_pasteurization_action')">
+                            <option value="">Select...</option>
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                        <div class="corrective-input" id="quality_after_pasteurization_action_wrapper">
+                            <input type="text" id="quality_after_pasteurization_action" name="quality_after_pasteurization_action" placeholder="Corrective action taken...">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="checklist-item">
+                    <div class="checklist-label">
+                        Clear and Correct Expiry and Production Date
+                        <small>Date labelling verification</small>
+                    </div>
+                    <div class="checklist-controls">
+                        <select class="yes-no-select" id="expiry_date_correct" name="expiry_date_correct" onchange="toggleCorrective(this, 'expiry_date_correct_action')">
+                            <option value="">Select...</option>
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                        <div class="corrective-input" id="expiry_date_correct_action_wrapper">
+                            <input type="text" id="expiry_date_correct_action" name="expiry_date_correct_action" placeholder="Corrective action taken...">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="checklist-item">
+                    <div class="checklist-label">
+                        Labelling is correct
+                        <small>Product label verification</small>
+                    </div>
+                    <div class="checklist-controls">
+                        <select class="yes-no-select" id="labelling_correct" name="labelling_correct" onchange="toggleCorrective(this, 'labelling_correct_action')">
+                            <option value="">Select...</option>
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                        <div class="corrective-input" id="labelling_correct_action_wrapper">
+                            <input type="text" id="labelling_correct_action" name="labelling_correct_action" placeholder="Corrective action taken...">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="checklist-item">
+                    <div class="checklist-label">
+                        Retention Sample Taken
+                        <small>Sample retention for quality records</small>
+                    </div>
+                    <div class="checklist-controls">
+                        <select class="yes-no-select" id="retention_sample_taken" name="retention_sample_taken" onchange="toggleCorrective(this, 'retention_sample_taken_action')">
+                            <option value="">Select...</option>
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                        <div class="corrective-input" id="retention_sample_taken_action_wrapper">
+                            <input type="text" id="retention_sample_taken_action" name="retention_sample_taken_action" placeholder="Corrective action taken...">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Comments Section -->
+            <div class="card">
+                <div class="section-title">💬 Comments</div>
+                <div class="comments-section">
+                    <div class="form-group">
+                        <label for="comments">Additional Comments</label>
+                        <textarea id="comments" name="comments" placeholder="Enter any additional comments or observations..."></textarea>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Submit Section -->
+            <div class="submit-section">
+                <button type="button" class="btn btn-secondary" onclick="window.location.href='/pasteurized-juices'">Cancel</button>
+                <button type="submit" class="btn btn-success">💾 Save Checklist</button>
+            </div>
+        </form>
+    </div>
+    
+    <script>
+        // Toggle corrective action input visibility
+        function toggleCorrective(select, actionFieldId) {
+            const wrapper = document.getElementById(actionFieldId + '_wrapper');
+            if (select.value === '0') {
+                wrapper.classList.add('show');
+                select.classList.remove('yes');
+                select.classList.add('no');
+            } else if (select.value === '1') {
+                wrapper.classList.remove('show');
+                select.classList.remove('no');
+                select.classList.add('yes');
+            } else {
+                wrapper.classList.remove('show');
+                select.classList.remove('yes', 'no');
+            }
+        }
+        
+        // Check temperature and update status
+        function checkTemperature() {
+            const tempValue = parseFloat(document.getElementById('temp_after_cooling_value').value);
+            const tempStatus = document.getElementById('tempStatus');
+            const tempOk = document.getElementById('temp_after_cooling_ok');
+            
+            if (isNaN(tempValue)) {
+                tempStatus.textContent = 'Enter temperature';
+                tempStatus.className = 'temp-status';
+                tempOk.value = '';
+                return;
+            }
+            
+            if (tempValue < 20) {
+                tempStatus.textContent = '✓ OK (Below 20°C)';
+                tempStatus.className = 'temp-status temp-ok';
+                tempOk.value = '1';
+            } else {
+                tempStatus.textContent = '✗ Too High (≥20°C)';
+                tempStatus.className = 'temp-status temp-high';
+                tempOk.value = '0';
+            }
+        }
+        
+        // Show alert message
+        function showAlert(message, type) {
+            const container = document.getElementById('alertContainer');
+            container.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+            setTimeout(() => container.innerHTML = '', 5000);
+        }
+        
+        // Load products for dropdown
+        async function loadProducts() {
+            try {
+                const response = await fetch('/pasteurized-juices/api/products');
+                const products = await response.json();
+                const select = document.getElementById('product_id');
+                
+                products.forEach(product => {
+                    const option = document.createElement('option');
+                    option.value = product.id;
+                    option.textContent = product.product_name;
+                    option.dataset.name = product.product_name;
+                    select.appendChild(option);
+                });
+            } catch (err) {
+                console.error('Error loading products:', err);
+                showAlert('Failed to load products', 'error');
+            }
+        }
+        
+        // Load current user
+        async function loadCurrentUser() {
+            try {
+                const response = await fetch('/pasteurized-juices/api/current-user');
+                const user = await response.json();
+                document.getElementById('filled_by').value = user.name;
+            } catch (err) {
+                console.error('Error loading user:', err);
+            }
+        }
+        
+        // Set today's date
+        function setTodayDate() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('date_of_preparation').value = today;
+            document.getElementById('date_of_pasteurization').value = today;
+        }
+        
+        // Form submission
+        document.getElementById('checklistForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const productSelect = document.getElementById('product_id');
+            const selectedOption = productSelect.options[productSelect.selectedIndex];
+            
+            const getValue = (name) => {
+                const val = formData.get(name);
+                if (val === '1') return true;
+                if (val === '0') return false;
+                return null;
+            };
+            
+            const data = {
+                filled_by: formData.get('filled_by'),
+                date_of_preparation: formData.get('date_of_preparation'),
+                product_id: parseInt(formData.get('product_id')),
+                product_name: selectedOption.dataset.name,
+                comments: formData.get('comments'),
+                
+                // Fruit Preparation
+                fruits_correctly_sorted: getValue('fruits_correctly_sorted'),
+                fruits_correctly_sorted_action: formData.get('fruits_correctly_sorted_action'),
+                fruits_properly_disinfected: getValue('fruits_properly_disinfected'),
+                fruits_properly_disinfected_action: formData.get('fruits_properly_disinfected_action'),
+                proper_strainers_used: getValue('proper_strainers_used'),
+                proper_strainers_used_action: formData.get('proper_strainers_used_action'),
+                strainers_good_condition: getValue('strainers_good_condition'),
+                strainers_good_condition_action: formData.get('strainers_good_condition_action'),
+                juice_properly_strained: getValue('juice_properly_strained'),
+                juice_properly_strained_action: formData.get('juice_properly_strained_action'),
+                quality_before_pasteurization: getValue('quality_before_pasteurization'),
+                quality_before_pasteurization_action: formData.get('quality_before_pasteurization_action'),
+                
+                // Thermobuttons & Vacuum
+                thermobuttons_good_condition: getValue('thermobuttons_good_condition'),
+                thermobuttons_good_condition_action: formData.get('thermobuttons_good_condition_action'),
+                vacuum_done_properly: getValue('vacuum_done_properly'),
+                vacuum_done_properly_action: formData.get('vacuum_done_properly_action'),
+                vacuum_prog: formData.get('vacuum_prog'),
+                vacuum_percent: formData.get('vacuum_percent'),
+                vacuum_sealing_time: formData.get('vacuum_sealing_time'),
+                vacuum_pressure: formData.get('vacuum_pressure'),
+                
+                // Pasteurization
+                date_of_pasteurization: formData.get('date_of_pasteurization') || null,
+                oven_steam_mode: getValue('oven_steam_mode'),
+                oven_steam_mode_action: formData.get('oven_steam_mode_action'),
+                heat_start_time: formData.get('heat_start_time') || null,
+                heat_finish_time: formData.get('heat_finish_time') || null,
+                cooling_start_time: formData.get('cooling_start_time') || null,
+                cooling_finish_time: formData.get('cooling_finish_time') || null,
+                pasteurization_proper: getValue('pasteurization_proper'),
+                pasteurization_proper_action: formData.get('pasteurization_proper_action'),
+                
+                // Temperature
+                temp_after_cooling_ok: getValue('temp_after_cooling_ok'),
+                temp_after_cooling_value: formData.get('temp_after_cooling_value') ? parseFloat(formData.get('temp_after_cooling_value')) : null,
+                
+                // Final Quality
+                quality_after_pasteurization: getValue('quality_after_pasteurization'),
+                quality_after_pasteurization_action: formData.get('quality_after_pasteurization_action'),
+                expiry_date_correct: getValue('expiry_date_correct'),
+                expiry_date_correct_action: formData.get('expiry_date_correct_action'),
+                labelling_correct: getValue('labelling_correct'),
+                labelling_correct_action: formData.get('labelling_correct_action'),
+                retention_sample_taken: getValue('retention_sample_taken'),
+                retention_sample_taken_action: formData.get('retention_sample_taken_action')
+            };
+            
+            try {
+                const response = await fetch('/pasteurized-juices/api/documents', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                if (response.ok) {
+                    showAlert('Checklist saved successfully!', 'success');
+                    setTimeout(() => {
+                        window.location.href = '/pasteurized-juices';
+                    }, 1500);
+                } else {
+                    const error = await response.json();
+                    showAlert(error.error || 'Failed to save checklist', 'error');
+                }
+            } catch (err) {
+                console.error('Error saving checklist:', err);
+                showAlert('Failed to save checklist', 'error');
+            }
+        });
+        
+        // Initialize
+        loadProducts();
+        loadCurrentUser();
+        setTodayDate();
+    </script>
+</body>
+</html>
