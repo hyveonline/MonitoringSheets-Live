@@ -1301,9 +1301,9 @@
                 if (description) {
                     description.innerHTML = `
                         <strong>Created:</strong> ${settings.creation_date || '2026-01-15'}<br>
-                        <strong>Last Revision:</strong> ${settings.last_revision_date || '2026-01-15'}<br>
+                        <strong>Last Revision:</strong> ${settings.last_revision_date || settings.last_revision || '2026-01-15'}<br>
                         <strong>Edition:</strong> ${settings.edition || '1.0'}<br>
-                        <strong>Reference:</strong> ${settings.company_name || 'GMRL Group'}
+                        <strong>Reference:</strong> ${settings.reference || settings.company_name || 'GMRL Group'}
                     `;
                 }
                 
