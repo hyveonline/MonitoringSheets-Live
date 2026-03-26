@@ -279,6 +279,15 @@
             background: linear-gradient(90deg, #7c3aed, #8b5cf6);
         }
         
+        .app-icon.end-product-checklist {
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+            color: #059669;
+        }
+        
+        .app-card.end-product-checklist::before {
+            background: linear-gradient(90deg, #059669, #10b981);
+        }
+        
         .app-icon.temperature {
             background: linear-gradient(135deg, #fef3c7, #fde68a);
             color: #d97706;
@@ -908,6 +917,29 @@
                     </div>
                 </a>
 
+                <!-- End-Product Checklist -->
+                <a href="/end-product-checklist" class="app-card end-product-checklist">
+                    <div class="app-icon end-product-checklist">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                            <line x1="12" y1="22.08" x2="12" y2="12"/>
+                        </svg>
+                    </div>
+                    <h3 class="app-title">End-Product Checklist</h3>
+                    <p class="app-description">
+                        <strong>Created:</strong> Loading...<br>
+                        <strong>Last Revision:</strong> Loading...<br>
+                        <strong>Edition:</strong> Loading...<br>
+                        <strong>Reference:</strong> Loading...
+                    </p>
+                    <div class="app-arrow">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </a>
+
                 <!-- Cleaning Schedule (Coming Soon) -->
                 <div class="app-card cleaning coming-soon">
                     <div class="app-icon cleaning">
@@ -1027,7 +1059,8 @@
                 { selector: '.app-card.fridge-temp', path: 'fridge-temp' },
                 { selector: '.app-card.veg-fruit-wash', path: 'veg-fruit-wash' },
                 { selector: '.app-card.quality-control-receiving', path: 'quality-control-receiving' },
-                { selector: '.app-card.recipe-verification', path: 'recipe-verification' }
+                { selector: '.app-card.recipe-verification', path: 'recipe-verification' },
+                { selector: '.app-card.end-product-checklist', path: 'end-product-checklist' }
             ];
             
             moduleSettings.forEach(({ selector, path }) => {
@@ -1094,7 +1127,8 @@
                 { path: 'fridge-temp', selector: '.app-card.fridge-temp' },
                 { path: 'veg-fruit-wash', selector: '.app-card.veg-fruit-wash' },
                 { path: 'quality-control-receiving', selector: '.app-card.quality-control-receiving' },
-                { path: 'recipe-verification', selector: '.app-card.recipe-verification' }
+                { path: 'recipe-verification', selector: '.app-card.recipe-verification' },
+                { path: 'end-product-checklist', selector: '.app-card.end-product-checklist' }
             ];
 
             for (const module of modules) {

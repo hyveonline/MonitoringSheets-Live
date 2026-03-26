@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>End-Product Checklist Form - FS Monitoring</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f3f4f6;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            color: white;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(5, 150, 105, 0.3);
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .header h1 { font-size: 1.5rem; font-weight: 700; }
+        
+        .header-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+        
+        .btn {
+            padding: 0.625rem 1.25rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.875rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+            border: none;
+        }
+        
+        .btn-primary { background: white; color: #059669; }
+        .btn-primary:hover { background: #ecfdf5; }
+        .btn-secondary { background: rgba(255, 255, 255, 0.15); color: white; border: 1px solid rgba(255, 255, 255, 0.3); }
+        .btn-secondary:hover { background: rgba(255, 255, 255, 0.25); }
+        .btn-success { background: #10b981; color: white; }
+        .btn-success:hover { background: #059669; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-danger:hover { background: #dc2626; }
+        
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem; }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 1.5rem;
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .card-header h2 { font-size: 1.125rem; font-weight: 600; color: #1f2937; }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .form-group label { font-size: 0.875rem; font-weight: 500; color: #374151; }
+        
+        .form-group input, .form-group select, .form-group textarea {
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+        
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #059669;
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+        }
+        
+        .section-title {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            color: white;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            margin: 1.5rem 0 1rem 0;
+        }
+        
+        .checklist-item {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 1rem;
+            padding: 1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            align-items: start;
+        }
+        
+        .checklist-item:hover {
+            border-color: #059669;
+            background: #f0fdf4;
+        }
+        
+        .checklist-label {
+            font-weight: 500;
+            color: #1f2937;
+            font-size: 0.95rem;
+        }
+        
+        .checklist-label small {
+            display: block;
+            color: #6b7280;
+            font-weight: 400;
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+        }
+        
+        .checklist-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            min-width: 200px;
+        }
+        
+        .yes-no-select {
+            padding: 0.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .yes-no-select.yes { background: #d1fae5; border-color: #10b981; color: #065f46; }
+        .yes-no-select.no { background: #fee2e2; border-color: #ef4444; color: #991b1b; }
+        
+        .corrective-input {
+            display: none;
+        }
+        
+        .corrective-input.show {
+            display: block;
+        }
+        
+        .corrective-input input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #fecaca;
+            border-radius: 6px;
+            background: #fef2f2;
+            font-size: 0.85rem;
+        }
+        
+        .corrective-input input::placeholder {
+            color: #9ca3af;
+        }
+        
+        .date-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        
+        .checkbox-item:hover {
+            border-color: #059669;
+            background: #f0fdf4;
+        }
+        
+        .checkbox-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: #059669;
+        }
+        
+        .checkbox-item label {
+            font-weight: 500;
+            color: #1f2937;
+            cursor: pointer;
+        }
+        
+        .comments-section {
+            margin-top: 1.5rem;
+        }
+        
+        .comments-section textarea {
+            width: 100%;
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .alert { padding: 1rem; border-radius: 8px; margin-bottom: 1rem; }
+        .alert-success { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+        .alert-error { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+        
+        .submit-section {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        .submit-section .btn {
+            padding: 0.875rem 2rem;
+            font-size: 1rem;
+        }
+        
+        @media (max-width: 640px) {
+            .header-content { flex-direction: column; text-align: center; }
+            .form-row { grid-template-columns: 1fr; }
+            .checklist-item { grid-template-columns: 1fr; }
+            .checklist-controls { width: 100%; }
+            .date-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <h1>📝 New End-Product Checklist</h1>
+            <div class="header-actions">
+                <a href="/end-product-checklist" class="btn btn-secondary">← Back</a>
+                <a href="/dashboard" class="btn btn-secondary">🏠 Dashboard</a>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div id="alertContainer"></div>
+        
+        <form id="checklistForm">
+            <!-- Basic Info Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>📋 Basic Information</h2>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="filled_by">Filled By *</label>
+                        <input type="text" id="filled_by" name="filled_by" required readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="log_date">Date *</label>
+                        <input type="date" id="log_date" name="log_date" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="branch_id">Branch *</label>
+                        <select id="branch_id" name="branch_id" required>
+                            <option value="">Select Branch...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="product_text">Product *</label>
+                        <input type="text" id="product_text" name="product_text" placeholder="Enter product name" required>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Raw Material Section -->
+            <div class="card">
+                <div class="section-title">🥩 Raw Material</div>
+                
+                <div class="checklist-item">
+                    <div class="checklist-label">
+                        Appearance is Good
+                        <small>Visual inspection of raw material appearance</small>
+                    </div>
+                    <div class="checklist-controls">
+                        <select class="yes-no-select" id="raw_appearance_good" name="raw_appearance_good" onchange="toggleCorrective(this, 'raw_appearance_action')">
+                            <option value="">Select...</option>
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                        <div class="corrective-input" id="raw_appearance_action_wrapper">
+                            <input type="text" id="raw_appearance_action" name="raw_appearance_action" placeholder="Corrective action taken...">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="checklist-item">
+                    <div class="checklist-label">
+                        Temperature of Raw Material (°C)
+                        <small>Temperature within acceptable range</small>
+                    </div>
+                    <div class="checklist-controls">
+                        <select class="yes-no-select" id="raw_temperature_ok" name="raw_temperature_ok" onchange="toggleCorrective(this, 'raw_temperature_action')">
+                            <option value="">Select...</option>
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                        <div class="corrective-input" id="raw_temperature_action_wrapper">
+                            <input type="text" id="raw_temperature_action" name="raw_temperature_action" placeholder="Corrective action taken...">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="date-row" style="margin-top: 1rem;">
+                    <div class="form-group">
+                        <label for="raw_production_date">Production Date</label>
+                        <input type="date" id="raw_production_date" name="raw_production_date">
+                    </div>
+                    <div class="form-group">
+                        <label for="raw_expiry_date">Expiry Date</label>
+                        <input type="date" id="raw_expiry_date" name="raw_expiry_date">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Visual Inspection Section -->
+            <div class="card">
+                <div class="section-title">👁️ Visual Inspection</div>
+                
+                <div class="checklist-item">
+                    <div class="checklist-label">
+                        Work Area Cleanliness
+                        <small>Work area is clean and sanitized</small>
+                    </div>
+                    <div class="checklist-controls">
+                        <select class="yes-no-select" id="visual_work_area_clean" name="visual_work_area_clean" onchange="toggleCorrective(this, 'visual_work_area_action')">
+                            <option value="">Select...</option>
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                        <div class="corrective-input" id="visual_work_area_action_wrapper">
+                            <input type="text" id="visual_work_area_action" name="visual_work_area_action" placeholder="Corrective action taken...">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="checklist-item">
+                    <div class="checklist-label">
+                        Proper Handling of Food
+                        <small>Hairnet, gloves, and proper hygiene practices</small>
+                    </div>
+                    <div class="checklist-controls">
+                        <select class="yes-no-select" id="visual_food_handling" name="visual_food_handling" onchange="toggleCorrective(this, 'visual_food_handling_action')">
+                            <option value="">Select...</option>
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                        <div class="corrective-input" id="visual_food_handling_action_wrapper">
+                            <input type="text" id="visual_food_handling_action" name="visual_food_handling_action" placeholder="Corrective action taken...">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="checklist-item">
+                    <div class="checklist-label">
+                        Overall Appearance of Ingredients
+                        <small>Fresh, no discoloration</small>
+                    </div>
+                    <div class="checklist-controls">
+                        <select class="yes-no-select" id="visual_ingredients_appearance" name="visual_ingredients_appearance" onchange="toggleCorrective(this, 'visual_ingredients_action')">
+                            <option value="">Select...</option>
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                        <div class="corrective-input" id="visual_ingredients_action_wrapper">
+                            <input type="text" id="visual_ingredients_action" name="visual_ingredients_action" placeholder="Corrective action taken...">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Food Portion Section -->
+            <div class="card">
+                <div class="section-title">⚖️ Food Portion</div>
+                
+                <div class="checklist-item">
+                    <div class="checklist-label">
+                        Correct Weight is Applied
+                        <small>Food portions match specifications</small>
+                    </div>
+                    <div class="checklist-controls">
+                        <select class="yes-no-select" id="food_correct_weight" name="food_correct_weight" onchange="toggleCorrective(this, 'food_correct_weight_action')">
+                            <option value="">Select...</option>
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                        <div class="corrective-input" id="food_correct_weight_action_wrapper">
+                            <input type="text" id="food_correct_weight_action" name="food_correct_weight_action" placeholder="Corrective action taken...">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="checklist-item">
+                    <div class="checklist-label">
+                        Cutleries are Present
+                        <small>Required cutleries included with the product</small>
+                    </div>
+                    <div class="checklist-controls">
+                        <select class="yes-no-select" id="food_cutleries_present" name="food_cutleries_present" onchange="toggleCorrective(this, 'food_cutleries_action')">
+                            <option value="">Select...</option>
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                        <div class="corrective-input" id="food_cutleries_action_wrapper">
+                            <input type="text" id="food_cutleries_action" name="food_cutleries_action" placeholder="Corrective action taken...">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Packaging Section -->
+            <div class="card">
+                <div class="section-title">📦 Packaging</div>
+                
+                <div class="checklist-item">
+                    <div class="checklist-label">
+                        Correct Packaging is Used
+                        <small>Appropriate packaging for the product type</small>
+                    </div>
+                    <div class="checklist-controls">
+                        <select class="yes-no-select" id="pkg_correct_packaging" name="pkg_correct_packaging" onchange="toggleCorrective(this, 'pkg_correct_packaging_action')">
+                            <option value="">Select...</option>
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                        <div class="corrective-input" id="pkg_correct_packaging_action_wrapper">
+                            <input type="text" id="pkg_correct_packaging_action" name="pkg_correct_packaging_action" placeholder="Corrective action taken...">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="checklist-item">
+                    <div class="checklist-label">
+                        Packaging is Clean
+                        <small>No contamination or damage to packaging</small>
+                    </div>
+                    <div class="checklist-controls">
+                        <select class="yes-no-select" id="pkg_clean" name="pkg_clean" onchange="toggleCorrective(this, 'pkg_clean_action')">
+                            <option value="">Select...</option>
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                        <div class="corrective-input" id="pkg_clean_action_wrapper">
+                            <input type="text" id="pkg_clean_action" name="pkg_clean_action" placeholder="Corrective action taken...">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="checklist-item">
+                    <div class="checklist-label">
+                        Correct Label/Sticker is Used
+                        <small>Clear label, correct flavor, correct calories</small>
+                    </div>
+                    <div class="checklist-controls">
+                        <select class="yes-no-select" id="pkg_correct_label" name="pkg_correct_label" onchange="toggleCorrective(this, 'pkg_correct_label_action')">
+                            <option value="">Select...</option>
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                        <div class="corrective-input" id="pkg_correct_label_action_wrapper">
+                            <input type="text" id="pkg_correct_label_action" name="pkg_correct_label_action" placeholder="Corrective action taken...">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="checklist-item">
+                    <div class="checklist-label">
+                        Correct Shelf Life
+                        <small>Expiry date properly calculated and displayed</small>
+                    </div>
+                    <div class="checklist-controls">
+                        <select class="yes-no-select" id="pkg_correct_shelf_life" name="pkg_correct_shelf_life" onchange="toggleCorrective(this, 'pkg_correct_shelf_life_action')">
+                            <option value="">Select...</option>
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                        <div class="corrective-input" id="pkg_correct_shelf_life_action_wrapper">
+                            <input type="text" id="pkg_correct_shelf_life_action" name="pkg_correct_shelf_life_action" placeholder="Corrective action taken...">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="checklist-item">
+                    <div class="checklist-label">
+                        Packaging is Sealed Properly
+                        <small>Primary and secondary packaging (if present) sealed correctly</small>
+                    </div>
+                    <div class="checklist-controls">
+                        <select class="yes-no-select" id="pkg_sealed_properly" name="pkg_sealed_properly" onchange="toggleCorrective(this, 'pkg_sealed_properly_action')">
+                            <option value="">Select...</option>
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                        <div class="corrective-input" id="pkg_sealed_properly_action_wrapper">
+                            <input type="text" id="pkg_sealed_properly_action" name="pkg_sealed_properly_action" placeholder="Corrective action taken...">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- End Product Section -->
+            <div class="card">
+                <div class="section-title">🎯 End Product</div>
+                
+                <div class="checklist-item">
+                    <div class="checklist-label">
+                        Overall Presentation
+                        <small>Products arranged and packaged appealingly</small>
+                    </div>
+                    <div class="checklist-controls">
+                        <select class="yes-no-select" id="end_overall_presentation" name="end_overall_presentation" onchange="toggleCorrective(this, 'end_overall_presentation_action')">
+                            <option value="">Select...</option>
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                        <div class="corrective-input" id="end_overall_presentation_action_wrapper">
+                            <input type="text" id="end_overall_presentation_action" name="end_overall_presentation_action" placeholder="Corrective action taken...">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="checklist-item">
+                    <div class="checklist-label">
+                        Tasting
+                        <small>Product taste verification passed</small>
+                    </div>
+                    <div class="checklist-controls">
+                        <select class="yes-no-select" id="end_tasting" name="end_tasting" onchange="toggleCorrective(this, 'end_tasting_action')">
+                            <option value="">Select...</option>
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                        <div class="corrective-input" id="end_tasting_action_wrapper">
+                            <input type="text" id="end_tasting_action" name="end_tasting_action" placeholder="Corrective action taken...">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Retention Section -->
+            <div class="card">
+                <div class="section-title">🔒 Retention</div>
+                
+                <div class="checkbox-item" onclick="document.getElementById('retention_taken').click()">
+                    <input type="checkbox" id="retention_taken" name="retention_taken" onclick="event.stopPropagation()">
+                    <label for="retention_taken">Retention Sample Taken</label>
+                </div>
+            </div>
+            
+            <!-- Comments Section -->
+            <div class="card">
+                <div class="section-title">💬 Comments</div>
+                <div class="comments-section">
+                    <div class="form-group">
+                        <label for="comments">Additional Comments</label>
+                        <textarea id="comments" name="comments" placeholder="Enter any additional comments or observations..."></textarea>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Submit Section -->
+            <div class="submit-section">
+                <button type="button" class="btn btn-secondary" onclick="window.location.href='/end-product-checklist'">Cancel</button>
+                <button type="submit" class="btn btn-success">💾 Save Checklist</button>
+            </div>
+        </form>
+    </div>
+    
+    <script>
+        // Toggle corrective action input visibility
+        function toggleCorrective(select, actionFieldId) {
+            const wrapper = document.getElementById(actionFieldId + '_wrapper');
+            if (select.value === '0') {
+                wrapper.classList.add('show');
+                select.classList.remove('yes');
+                select.classList.add('no');
+            } else if (select.value === '1') {
+                wrapper.classList.remove('show');
+                select.classList.remove('no');
+                select.classList.add('yes');
+            } else {
+                wrapper.classList.remove('show');
+                select.classList.remove('yes', 'no');
+            }
+        }
+        
+        // Show alert message
+        function showAlert(message, type) {
+            const container = document.getElementById('alertContainer');
+            container.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+            setTimeout(() => container.innerHTML = '', 5000);
+        }
+        
+        // Load branches for dropdown
+        async function loadBranches() {
+            try {
+                const response = await fetch('/end-product-checklist/api/branches');
+                const branches = await response.json();
+                const select = document.getElementById('branch_id');
+                
+                branches.forEach(branch => {
+                    const option = document.createElement('option');
+                    option.value = branch.id;
+                    option.textContent = branch.branch_name;
+                    option.dataset.name = branch.branch_name;
+                    select.appendChild(option);
+                });
+            } catch (err) {
+                console.error('Error loading branches:', err);
+                showAlert('Failed to load branches', 'error');
+            }
+        }
+        
+        // Load current user
+        async function loadCurrentUser() {
+            try {
+                const response = await fetch('/end-product-checklist/api/current-user');
+                const user = await response.json();
+                document.getElementById('filled_by').value = user.name;
+            } catch (err) {
+                console.error('Error loading user:', err);
+            }
+        }
+        
+        // Set today's date
+        function setTodayDate() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('log_date').value = today;
+        }
+        
+        // Form submission
+        document.getElementById('checklistForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const branchSelect = document.getElementById('branch_id');
+            const selectedOption = branchSelect.options[branchSelect.selectedIndex];
+            
+            const data = {
+                log_date: formData.get('log_date'),
+                filled_by: formData.get('filled_by'),
+                branch_id: parseInt(formData.get('branch_id')),
+                branch_name: selectedOption.dataset.name,
+                product_text: formData.get('product_text'),
+                comments: formData.get('comments'),
+                
+                // Raw Material
+                raw_appearance_good: formData.get('raw_appearance_good') === '1' ? true : formData.get('raw_appearance_good') === '0' ? false : null,
+                raw_appearance_action: formData.get('raw_appearance_action'),
+                raw_temperature_ok: formData.get('raw_temperature_ok') === '1' ? true : formData.get('raw_temperature_ok') === '0' ? false : null,
+                raw_temperature_action: formData.get('raw_temperature_action'),
+                raw_production_date: formData.get('raw_production_date') || null,
+                raw_expiry_date: formData.get('raw_expiry_date') || null,
+                
+                // Visual Inspection
+                visual_work_area_clean: formData.get('visual_work_area_clean') === '1' ? true : formData.get('visual_work_area_clean') === '0' ? false : null,
+                visual_work_area_action: formData.get('visual_work_area_action'),
+                visual_food_handling: formData.get('visual_food_handling') === '1' ? true : formData.get('visual_food_handling') === '0' ? false : null,
+                visual_food_handling_action: formData.get('visual_food_handling_action'),
+                visual_ingredients_appearance: formData.get('visual_ingredients_appearance') === '1' ? true : formData.get('visual_ingredients_appearance') === '0' ? false : null,
+                visual_ingredients_action: formData.get('visual_ingredients_action'),
+                
+                // Food Portion
+                food_correct_weight: formData.get('food_correct_weight') === '1' ? true : formData.get('food_correct_weight') === '0' ? false : null,
+                food_correct_weight_action: formData.get('food_correct_weight_action'),
+                food_cutleries_present: formData.get('food_cutleries_present') === '1' ? true : formData.get('food_cutleries_present') === '0' ? false : null,
+                food_cutleries_action: formData.get('food_cutleries_action'),
+                
+                // Packaging
+                pkg_correct_packaging: formData.get('pkg_correct_packaging') === '1' ? true : formData.get('pkg_correct_packaging') === '0' ? false : null,
+                pkg_correct_packaging_action: formData.get('pkg_correct_packaging_action'),
+                pkg_clean: formData.get('pkg_clean') === '1' ? true : formData.get('pkg_clean') === '0' ? false : null,
+                pkg_clean_action: formData.get('pkg_clean_action'),
+                pkg_correct_label: formData.get('pkg_correct_label') === '1' ? true : formData.get('pkg_correct_label') === '0' ? false : null,
+                pkg_correct_label_action: formData.get('pkg_correct_label_action'),
+                pkg_correct_shelf_life: formData.get('pkg_correct_shelf_life') === '1' ? true : formData.get('pkg_correct_shelf_life') === '0' ? false : null,
+                pkg_correct_shelf_life_action: formData.get('pkg_correct_shelf_life_action'),
+                pkg_sealed_properly: formData.get('pkg_sealed_properly') === '1' ? true : formData.get('pkg_sealed_properly') === '0' ? false : null,
+                pkg_sealed_properly_action: formData.get('pkg_sealed_properly_action'),
+                
+                // End Product
+                end_overall_presentation: formData.get('end_overall_presentation') === '1' ? true : formData.get('end_overall_presentation') === '0' ? false : null,
+                end_overall_presentation_action: formData.get('end_overall_presentation_action'),
+                end_tasting: formData.get('end_tasting') === '1' ? true : formData.get('end_tasting') === '0' ? false : null,
+                end_tasting_action: formData.get('end_tasting_action'),
+                
+                // Retention
+                retention_taken: document.getElementById('retention_taken').checked
+            };
+            
+            try {
+                const response = await fetch('/end-product-checklist/api/documents', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                if (response.ok) {
+                    showAlert('Checklist saved successfully!', 'success');
+                    setTimeout(() => {
+                        window.location.href = '/end-product-checklist';
+                    }, 1500);
+                } else {
+                    const error = await response.json();
+                    showAlert(error.error || 'Failed to save checklist', 'error');
+                }
+            } catch (err) {
+                console.error('Error saving checklist:', err);
+                showAlert('Failed to save checklist', 'error');
+            }
+        });
+        
+        // Initialize
+        loadBranches();
+        loadCurrentUser();
+        setTodayDate();
+    </script>
+</body>
+</html>

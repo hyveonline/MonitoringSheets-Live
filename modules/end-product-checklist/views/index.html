@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>End-Product Checklist - FS Monitoring</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f3f4f6;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            color: white;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(5, 150, 105, 0.3);
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .header-user {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+        
+        .user-name {
+            font-weight: 500;
+        }
+        
+        .btn {
+            padding: 0.625rem 1.25rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.875rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+            border: none;
+        }
+        
+        .btn-primary {
+            background: white;
+            color: #059669;
+        }
+        
+        .btn-primary:hover {
+            background: #ecfdf5;
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #059669;
+        }
+        
+        .stat-label {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+        
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .menu-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .menu-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .menu-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .menu-icon.new { background: linear-gradient(135deg, #dbeafe, #bfdbfe); color: #2563eb; }
+        .menu-icon.history { background: linear-gradient(135deg, #dcfce7, #bbf7d0); color: #16a34a; }
+        .menu-icon.settings { background: linear-gradient(135deg, #fef3c7, #fde68a); color: #d97706; }
+        
+        .menu-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #1f2937;
+        }
+        
+        .menu-description {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        
+        .info-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+        
+        .info-card h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .checklist-items {
+            list-style: none;
+        }
+        
+        .checklist-items li {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: #374151;
+        }
+        
+        .checklist-items li:last-child {
+            border-bottom: none;
+        }
+        
+        .checklist-items li::before {
+            content: '✓';
+            width: 24px;
+            height: 24px;
+            background: #d1fae5;
+            color: #059669;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.75rem;
+            flex-shrink: 0;
+        }
+        
+        @media (max-width: 640px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .menu-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <h1>📦 End-Product Checklist</h1>
+            <div class="header-user">
+                <div class="user-avatar" id="userAvatar">?</div>
+                <span class="user-name" id="userName">Loading...</span>
+                <a href="/dashboard" class="btn btn-secondary">🏠 Dashboard</a>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <!-- Stats Cards -->
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card">
+                <div class="stat-value" id="todayCount">-</div>
+                <div class="stat-label">Today's Checklists</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" style="color: #f59e0b;" id="pendingCount">-</div>
+                <div class="stat-label">Pending Verification</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" style="color: #10b981;" id="verifiedCount">-</div>
+                <div class="stat-label">Verified This Week</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" style="color: #3b82f6;" id="totalBranches">-</div>
+                <div class="stat-label">Active Branches</div>
+            </div>
+        </div>
+        
+        <!-- Menu Grid -->
+        <div class="menu-grid">
+            <a href="/end-product-checklist/form" class="menu-card">
+                <div class="menu-icon new">📝</div>
+                <h3 class="menu-title">New Checklist</h3>
+                <p class="menu-description">Create a new end-product quality checklist</p>
+            </a>
+            
+            <a href="/end-product-checklist/history" class="menu-card">
+                <div class="menu-icon history">📊</div>
+                <h3 class="menu-title">View History</h3>
+                <p class="menu-description">Browse and review past checklists</p>
+            </a>
+            
+            <a href="/end-product-checklist/settings" class="menu-card">
+                <div class="menu-icon settings">⚙️</div>
+                <h3 class="menu-title">Settings</h3>
+                <p class="menu-description">Manage branches, products, and settings</p>
+            </a>
+        </div>
+        
+        <!-- Info Card -->
+        <div class="info-card">
+            <h2>📋 Checklist Sections</h2>
+            <ul class="checklist-items">
+                <li>Raw Material - Appearance, temperature, production & expiry dates</li>
+                <li>Visual Inspection - Work area cleanliness, food handling, ingredient appearance</li>
+                <li>Food Portion - Correct weight, cutleries present</li>
+                <li>Packaging - Correct packaging, cleanliness, labels, shelf life, sealing</li>
+                <li>End Product - Overall presentation, tasting verification</li>
+                <li>Retention - Sample retention documentation</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        // Load current user
+        async function loadCurrentUser() {
+            try {
+                const response = await fetch('/end-product-checklist/api/current-user');
+                const user = await response.json();
+                document.getElementById('userName').textContent = user.name;
+                document.getElementById('userAvatar').textContent = user.name.charAt(0).toUpperCase();
+            } catch (err) {
+                console.error('Error loading user:', err);
+            }
+        }
+        
+        // Load stats
+        async function loadStats() {
+            try {
+                const response = await fetch('/end-product-checklist/api/stats');
+                const stats = await response.json();
+                document.getElementById('todayCount').textContent = stats.todayCount || 0;
+                document.getElementById('pendingCount').textContent = stats.pendingCount || 0;
+                document.getElementById('verifiedCount').textContent = stats.verifiedCount || 0;
+                document.getElementById('totalBranches').textContent = stats.totalBranches || 0;
+            } catch (err) {
+                console.error('Error loading stats:', err);
+            }
+        }
+        
+        // Initialize
+        loadCurrentUser();
+        loadStats();
+    </script>
+</body>
+</html>
