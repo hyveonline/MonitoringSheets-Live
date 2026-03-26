@@ -26,6 +26,12 @@ async function getConnection() {
     }
 }
 
+// Middleware to ensure UTF-8 encoding for API responses
+router.use('/api', (req, res, next) => {
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    next();
+});
+
 // ==========================================
 // Page Routes
 // ==========================================
