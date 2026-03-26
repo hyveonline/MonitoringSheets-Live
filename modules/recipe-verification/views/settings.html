@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Recipe Verification Settings - FS Monitoring</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f3f4f6;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%);
+            color: white;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(124, 58, 237, 0.3);
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .header h1 { font-size: 1.5rem; font-weight: 700; }
+        
+        .header-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+        
+        .btn {
+            padding: 0.625rem 1.25rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.875rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+            border: none;
+        }
+        
+        .btn-primary { background: white; color: #7c3aed; }
+        .btn-primary:hover { background: #f5f3ff; }
+        .btn-secondary { background: rgba(255, 255, 255, 0.15); color: white; border: 1px solid rgba(255, 255, 255, 0.3); }
+        .btn-secondary:hover { background: rgba(255, 255, 255, 0.25); }
+        .btn-success { background: #10b981; color: white; }
+        .btn-success:hover { background: #059669; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-danger:hover { background: #dc2626; }
+        .btn-sm { padding: 0.375rem 0.75rem; font-size: 0.75rem; }
+        
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem; }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 1.5rem;
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .card-header h2 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1f2937;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+        }
+        
+        .form-group input, .form-group select, .form-group textarea {
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+        
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #7c3aed;
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .item-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+        
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: #f9fafb;
+            border-bottom: 1px solid #e5e7eb;
+            cursor: pointer;
+        }
+        
+        .item-header:hover { background: #f3f4f6; }
+        
+        .item-header h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1f2937;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .item-meta {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            font-size: 0.75rem;
+        }
+        
+        .tasting-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        
+        .tasting-enabled { background: #d1fae5; color: #065f46; }
+        .tasting-disabled { background: #fee2e2; color: #991b1b; }
+        
+        .item-body {
+            padding: 1rem;
+            display: none;
+        }
+        
+        .item-body.expanded { display: block; }
+        
+        .ingredients-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 0.5rem;
+        }
+        
+        .ingredients-table th, .ingredients-table td {
+            padding: 0.5rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 0.85rem;
+        }
+        
+        .ingredients-table th {
+            background: #f9fafb;
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        .ingredients-table input {
+            padding: 0.4rem;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            width: 80px;
+            font-size: 0.85rem;
+        }
+        
+        .ingredients-table .name-input { width: 200px; }
+        .ingredients-table .unit-input { width: 60px; }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active { display: flex; }
+        
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-header h3 { font-size: 1.25rem; font-weight: 600; }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6b7280;
+        }
+        
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        
+        .alert-success { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+        .alert-error { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+        
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: #6b7280;
+        }
+        
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+        }
+        
+        .checkbox-label input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #7c3aed;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <h1>⚙️ Recipe Verification Settings</h1>
+            <div class="header-actions">
+                <a href="/recipe-verification" class="btn btn-secondary">← Back</a>
+                <a href="/dashboard" class="btn btn-secondary">🏠 Dashboard</a>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div id="alertContainer"></div>
+        
+        <!-- Document Information Card -->
+        <div class="card">
+            <div class="card-header">
+                <h2>📄 Document Information</h2>
+                <button class="btn btn-success btn-sm" onclick="saveDocumentInfo()">💾 Save</button>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="creationDate">Creation Date</label>
+                    <input type="date" id="creationDate">
+                </div>
+                <div class="form-group">
+                    <label for="lastRevision">Last Revision</label>
+                    <input type="date" id="lastRevision">
+                </div>
+                <div class="form-group">
+                    <label for="edition">Edition</label>
+                    <input type="text" id="edition" placeholder="e.g., 1.0">
+                </div>
+                <div class="form-group">
+                    <label for="reference">Reference</label>
+                    <input type="text" id="reference" placeholder="e.g., GMRL-RV-001">
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recipe Items Management Card -->
+        <div class="card">
+            <div class="card-header">
+                <h2>🍽️ Recipe Items & Ingredients</h2>
+                <button class="btn btn-success" onclick="showAddItemModal()">➕ Add Recipe Item</button>
+            </div>
+            
+            <p style="color: #6b7280; margin-bottom: 1rem; font-size: 0.875rem;">
+                Click on a recipe item to expand and manage its ingredients with weight ranges.
+            </p>
+            
+            <div id="itemsList">
+                <div class="empty-state">
+                    <p>No recipe items configured yet.<br>Click "Add Recipe Item" to create your first item.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add/Edit Recipe Item Modal -->
+    <div class="modal" id="itemModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="itemModalTitle">Add Recipe Item</h3>
+                <button class="modal-close" onclick="closeItemModal()">×</button>
+            </div>
+            <form id="itemForm">
+                <input type="hidden" id="itemId">
+                <div class="form-group">
+                    <label for="itemName">Item Name *</label>
+                    <input type="text" id="itemName" required placeholder="e.g., Tuna Sandwich">
+                </div>
+                <div class="form-group">
+                    <label for="itemTasting">Tasting Criteria (for reference)</label>
+                    <textarea id="itemTasting" rows="2" placeholder="e.g., Fresh taste, proper seasoning"></textarea>
+                </div>
+                <p style="color: #6b7280; font-size: 0.85rem; margin-top: 0.5rem;">
+                    <strong>Note:</strong> Tasting is configured per ingredient. Add ingredients after creating the item.
+                </p>
+            </form>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeItemModal()">Cancel</button>
+                <button class="btn btn-success" onclick="saveItem()">💾 Save</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add Ingredient Modal -->
+    <div class="modal" id="ingredientModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="ingredientModalTitle">Add Ingredient</h3>
+                <button class="modal-close" onclick="closeIngredientModal()">×</button>
+            </div>
+            <form id="ingredientForm">
+                <input type="hidden" id="ingredientId">
+                <input type="hidden" id="ingredientRecipeItemId">
+                <div class="form-group">
+                    <label for="ingredientName">Ingredient Name *</label>
+                    <input type="text" id="ingredientName" required placeholder="e.g., Brown Bread">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="ingredientWeightMin">Weight Min (Recipe MOP)</label>
+                        <input type="number" step="0.01" id="ingredientWeightMin" placeholder="e.g., 45">
+                    </div>
+                    <div class="form-group">
+                        <label for="ingredientWeightMax">Weight Max (Recipe MOP)</label>
+                        <input type="number" step="0.01" id="ingredientWeightMax" placeholder="e.g., 55">
+                    </div>
+                    <div class="form-group">
+                        <label for="ingredientUnit">Unit</label>
+                        <select id="ingredientUnit">
+                            <option value="g">g (grams)</option>
+                            <option value="kg">kg (kilograms)</option>
+                            <option value="ml">ml (milliliters)</option>
+                            <option value="L">L (liters)</option>
+                            <option value="pcs">pcs (pieces)</option>
+                            <option value="tbsp">tbsp (tablespoon)</option>
+                            <option value="tsp">tsp (teaspoon)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-top: 1rem;">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="ingredientTastingEnabled">
+                        <span>Enable Tasting for this Ingredient</span>
+                    </label>
+                    <small style="color: #6b7280;">If unchecked, tasting will show as "N/A" in the form for this ingredient</small>
+                </div>
+            </form>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeIngredientModal()">Cancel</button>
+                <button class="btn btn-success" onclick="saveIngredient()">💾 Save</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Delete Confirmation Modal -->
+    <div class="modal" id="deleteModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirm Delete</h3>
+                <button class="modal-close" onclick="closeDeleteModal()">×</button>
+            </div>
+            <p id="deleteMessage">Are you sure you want to delete this item?</p>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+                <button class="btn btn-danger" onclick="confirmDelete()">🗑️ Delete</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const API_BASE = '/recipe-verification/api';
+        let deleteCallback = null;
+        let expandedItems = {};
+        
+        function showAlert(message, type = 'success') {
+            const container = document.getElementById('alertContainer');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+            container.appendChild(alert);
+            setTimeout(() => alert.remove(), 5000);
+        }
+        
+        // Load settings
+        async function loadSettings() {
+            try {
+                const response = await fetch(`${API_BASE}/settings?t=${Date.now()}`, {cache: 'no-store'});
+                const settings = await response.json();
+                
+                // Settings is now an object (not array)
+                document.getElementById('creationDate').value = settings.creation_date || '';
+                document.getElementById('lastRevision').value = settings.last_revision || settings.last_revision_date || '';
+                document.getElementById('edition').value = settings.edition || '';
+                document.getElementById('reference').value = settings.reference || settings.company_name || '';
+            } catch (error) {
+                console.error('Error loading settings:', error);
+            }
+        }
+        
+        async function saveDocumentInfo() {
+            try {
+                const settings = {
+                    creation_date: document.getElementById('creationDate').value,
+                    last_revision: document.getElementById('lastRevision').value,
+                    last_revision_date: document.getElementById('lastRevision').value, // For dashboard
+                    edition: document.getElementById('edition').value,
+                    reference: document.getElementById('reference').value,
+                    company_name: document.getElementById('reference').value // For dashboard
+                };
+                
+                const response = await fetch(`${API_BASE}/settings`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(settings)
+                });
+                
+                if (response.ok) {
+                    showAlert('Document information saved!');
+                } else {
+                    throw new Error('Failed to save');
+                }
+            } catch (error) {
+                showAlert('Failed to save document information', 'error');
+            }
+        }
+        
+        // Load recipe items with ingredients
+        async function loadItems() {
+            try {
+                const response = await fetch(`${API_BASE}/recipe-items?t=${Date.now()}`, {cache: 'no-store'});
+                const items = await response.json();
+                
+                const container = document.getElementById('itemsList');
+                
+                if (!items.length) {
+                    container.innerHTML = `<div class="empty-state"><p>No recipe items configured yet.<br>Click "Add Recipe Item" to create your first item.</p></div>`;
+                    return;
+                }
+                
+                let html = '';
+                for (const item of items) {
+                    const isExpanded = expandedItems[item.id];
+                    const tastingClass = item.tasting_enabled ? 'tasting-enabled' : 'tasting-disabled';
+                    const tastingText = item.tasting_enabled ? 'Tasting Enabled' : 'Tasting N/A';
+                    
+                    html += `
+                        <div class="item-card">
+                            <div class="item-header" onclick="toggleItem(${item.id})">
+                                <h4>
+                                    <span>${isExpanded ? '▼' : '▶'}</span>
+                                    ${escapeHtml(item.item_name)}
+                                </h4>
+                                <div class="item-meta">
+                                    <span class="tasting-badge ${tastingClass}">${tastingText}</span>
+                                    <button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); editItem(${item.id})">✏️ Edit</button>
+                                    <button class="btn btn-danger btn-sm" onclick="event.stopPropagation(); deleteItem(${item.id})">🗑️</button>
+                                </div>
+                            </div>
+                            <div class="item-body ${isExpanded ? 'expanded' : ''}" id="item-body-${item.id}">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                    <strong>📦 Ingredients with Weight Ranges (Recipe as Per MOP/System)</strong>
+                                    <button class="btn btn-success btn-sm" onclick="showAddIngredientModal(${item.id})">➕ Add Ingredient</button>
+                                </div>
+                                <div id="ingredients-${item.id}">Loading...</div>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                container.innerHTML = html;
+                
+                // Load ingredients for expanded items
+                for (const item of items) {
+                    if (expandedItems[item.id]) {
+                        loadIngredients(item.id);
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading items:', error);
+                showAlert('Failed to load recipe items', 'error');
+            }
+        }
+        
+        // Toggle item expansion
+        function toggleItem(itemId) {
+            expandedItems[itemId] = !expandedItems[itemId];
+            const body = document.getElementById(`item-body-${itemId}`);
+            if (body) {
+                body.classList.toggle('expanded');
+                if (expandedItems[itemId]) {
+                    loadIngredients(itemId);
+                }
+            }
+            loadItems();
+        }
+        
+        // Load ingredients for an item
+        async function loadIngredients(itemId) {
+            try {
+                const response = await fetch(`${API_BASE}/recipe-items/${itemId}/ingredients?t=${Date.now()}`, {cache: 'no-store'});
+                const ingredients = await response.json();
+                
+                const container = document.getElementById(`ingredients-${itemId}`);
+                if (!container) return;
+                
+                if (!ingredients.length) {
+                    container.innerHTML = '<p style="color: #9ca3af; font-style: italic;">No ingredients configured. Add ingredients with weight ranges.</p>';
+                    return;
+                }
+                
+                container.innerHTML = `
+                    <table class="ingredients-table">
+                        <thead>
+                            <tr>
+                                <th>Ingredient Name</th>
+                                <th>Weight Min</th>
+                                <th>Weight Max</th>
+                                <th>Unit</th>
+                                <th>Tasting</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${ingredients.map(ing => `
+                                <tr>
+                                    <td>${escapeHtml(ing.ingredient_name)}</td>
+                                    <td>${ing.weight_min !== null ? ing.weight_min : '-'}</td>
+                                    <td>${ing.weight_max !== null ? ing.weight_max : '-'}</td>
+                                    <td>${ing.unit || 'g'}</td>
+                                    <td>${ing.tasting_enabled !== false ? '<span style="color: #10b981;">✓ Yes</span>' : '<span style="color: #6b7280;">N/A</span>'}</td>
+                                    <td>
+                                        <button class="btn btn-primary btn-sm" onclick="editIngredient(${ing.id}, ${itemId})">✏️</button>
+                                        <button class="btn btn-danger btn-sm" onclick="deleteIngredient(${ing.id}, ${itemId})">🗑️</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            } catch (error) {
+                console.error('Error loading ingredients:', error);
+            }
+        }
+        
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // Recipe Item Modal functions
+        function showAddItemModal() {
+            document.getElementById('itemModalTitle').textContent = 'Add Recipe Item';
+            document.getElementById('itemForm').reset();
+            document.getElementById('itemId').value = '';
+            document.getElementById('itemModal').classList.add('active');
+        }
+        
+        function closeItemModal() {
+            document.getElementById('itemModal').classList.remove('active');
+        }
+        
+        async function editItem(id) {
+            try {
+                const response = await fetch(`${API_BASE}/recipe-items/${id}`);
+                const item = await response.json();
+                
+                document.getElementById('itemModalTitle').textContent = 'Edit Recipe Item';
+                document.getElementById('itemId').value = item.id;
+                document.getElementById('itemName').value = item.item_name;
+                document.getElementById('itemTasting').value = item.tasting_criteria || '';
+                
+                document.getElementById('itemModal').classList.add('active');
+            } catch (error) {
+                showAlert('Failed to load item details', 'error');
+            }
+        }
+        
+        async function saveItem() {
+            const id = document.getElementById('itemId').value;
+            const data = {
+                item_name: document.getElementById('itemName').value,
+                ingredients: 'See individual ingredients', // Placeholder
+                tasting_criteria: document.getElementById('itemTasting').value
+            };
+            
+            if (!data.item_name) {
+                showAlert('Please enter an item name', 'error');
+                return;
+            }
+            
+            try {
+                const url = id ? `${API_BASE}/recipe-items/${id}` : `${API_BASE}/recipe-items`;
+                const method = id ? 'PUT' : 'POST';
+                
+                const response = await fetch(url, {
+                    method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                if (response.ok) {
+                    closeItemModal();
+                    loadItems();
+                    showAlert(id ? 'Recipe item updated!' : 'Recipe item added!');
+                    
+                    // Auto-expand new item
+                    if (!id) {
+                        const newItem = await response.json();
+                        expandedItems[newItem.id] = true;
+                        loadItems();
+                    }
+                } else {
+                    throw new Error('Failed to save');
+                }
+            } catch (error) {
+                showAlert('Failed to save recipe item', 'error');
+            }
+        }
+        
+        function deleteItem(id) {
+            document.getElementById('deleteMessage').textContent = 'Are you sure you want to delete this recipe item and all its ingredients?';
+            deleteCallback = async () => {
+                try {
+                    await fetch(`${API_BASE}/recipe-items/${id}`, { method: 'DELETE' });
+                    loadItems();
+                    showAlert('Recipe item deleted!');
+                } catch (error) {
+                    showAlert('Failed to delete item', 'error');
+                }
+            };
+            document.getElementById('deleteModal').classList.add('active');
+        }
+        
+        // Ingredient Modal functions
+        function showAddIngredientModal(itemId) {
+            document.getElementById('ingredientModalTitle').textContent = 'Add Ingredient';
+            document.getElementById('ingredientForm').reset();
+            document.getElementById('ingredientId').value = '';
+            document.getElementById('ingredientRecipeItemId').value = itemId;
+            document.getElementById('ingredientUnit').value = 'g';
+            document.getElementById('ingredientTastingEnabled').checked = true; // Default to enabled
+            document.getElementById('ingredientModal').classList.add('active');
+        }
+        
+        function closeIngredientModal() {
+            document.getElementById('ingredientModal').classList.remove('active');
+        }
+        
+        async function editIngredient(id, itemId) {
+            try {
+                const response = await fetch(`${API_BASE}/recipe-items/${itemId}/ingredients`);
+                const ingredients = await response.json();
+                const ing = ingredients.find(i => i.id === id);
+                
+                if (!ing) throw new Error('Ingredient not found');
+                
+                document.getElementById('ingredientModalTitle').textContent = 'Edit Ingredient';
+                document.getElementById('ingredientId').value = ing.id;
+                document.getElementById('ingredientRecipeItemId').value = itemId;
+                document.getElementById('ingredientName').value = ing.ingredient_name;
+                document.getElementById('ingredientWeightMin').value = ing.weight_min || '';
+                document.getElementById('ingredientWeightMax').value = ing.weight_max || '';
+                document.getElementById('ingredientUnit').value = ing.unit || 'g';
+                document.getElementById('ingredientTastingEnabled').checked = ing.tasting_enabled !== false;
+                
+                document.getElementById('ingredientModal').classList.add('active');
+            } catch (error) {
+                showAlert('Failed to load ingredient details', 'error');
+            }
+        }
+        
+        async function saveIngredient() {
+            const id = document.getElementById('ingredientId').value;
+            const itemId = document.getElementById('ingredientRecipeItemId').value;
+            const data = {
+                ingredient_name: document.getElementById('ingredientName').value,
+                weight_min: document.getElementById('ingredientWeightMin').value || null,
+                weight_max: document.getElementById('ingredientWeightMax').value || null,
+                unit: document.getElementById('ingredientUnit').value,
+                tasting_enabled: document.getElementById('ingredientTastingEnabled').checked
+            };
+            
+            if (!data.ingredient_name) {
+                showAlert('Please enter an ingredient name', 'error');
+                return;
+            }
+            
+            try {
+                let url, method;
+                if (id) {
+                    url = `${API_BASE}/ingredients/${id}`;
+                    method = 'PUT';
+                } else {
+                    url = `${API_BASE}/recipe-items/${itemId}/ingredients`;
+                    method = 'POST';
+                }
+                
+                const response = await fetch(url, {
+                    method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                if (response.ok) {
+                    closeIngredientModal();
+                    loadIngredients(itemId);
+                    showAlert(id ? 'Ingredient updated!' : 'Ingredient added!');
+                } else {
+                    throw new Error('Failed to save');
+                }
+            } catch (error) {
+                showAlert('Failed to save ingredient', 'error');
+            }
+        }
+        
+        function deleteIngredient(id, itemId) {
+            document.getElementById('deleteMessage').textContent = 'Are you sure you want to delete this ingredient?';
+            deleteCallback = async () => {
+                try {
+                    await fetch(`${API_BASE}/ingredients/${id}`, { method: 'DELETE' });
+                    loadIngredients(itemId);
+                    showAlert('Ingredient deleted!');
+                } catch (error) {
+                    showAlert('Failed to delete ingredient', 'error');
+                }
+            };
+            document.getElementById('deleteModal').classList.add('active');
+        }
+        
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.remove('active');
+            deleteCallback = null;
+        }
+        
+        function confirmDelete() {
+            if (deleteCallback) {
+                deleteCallback();
+            }
+            closeDeleteModal();
+        }
+        
+        // Initialize
+        loadSettings();
+        loadItems();
+    </script>
+</body>
+</html>

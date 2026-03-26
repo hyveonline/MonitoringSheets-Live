@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Recipe Verification Form - FS Monitoring</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f3f4f6;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%);
+            color: white;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(124, 58, 237, 0.3);
+        }
+        
+        .header-content {
+            max-width: 1600px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .header h1 { font-size: 1.5rem; font-weight: 700; }
+        
+        .header-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+        
+        .btn {
+            padding: 0.625rem 1.25rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.875rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+            border: none;
+        }
+        
+        .btn-primary { background: white; color: #7c3aed; }
+        .btn-primary:hover { background: #f5f3ff; }
+        .btn-secondary { background: rgba(255, 255, 255, 0.15); color: white; border: 1px solid rgba(255, 255, 255, 0.3); }
+        .btn-secondary:hover { background: rgba(255, 255, 255, 0.25); }
+        .btn-success { background: #10b981; color: white; }
+        .btn-success:hover { background: #059669; }
+        
+        .container { max-width: 1600px; margin: 0 auto; padding: 2rem 1.5rem; }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 1.5rem;
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .card-header h2 { font-size: 1.125rem; font-weight: 600; color: #1f2937; }
+        
+        .filter-bar {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-end;
+            flex-wrap: wrap;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .form-group label { font-size: 0.875rem; font-weight: 500; color: #374151; }
+        
+        .form-group input, .form-group select, .form-group textarea {
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+        
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #7c3aed;
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+        }
+        
+        .document-info {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        .document-info .info-item { display: flex; gap: 0.5rem; align-items: center; }
+        .document-info .label { font-size: 0.75rem; color: #6b7280; text-transform: uppercase; }
+        .document-info .value { font-weight: 600; color: #1f2937; }
+        
+        .table-container { overflow-x: auto; }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1400px;
+        }
+        
+        th, td {
+            padding: 0.5rem 0.4rem;
+            text-align: center;
+            border: 1px solid #e5e7eb;
+            font-size: 0.75rem;
+        }
+        
+        th {
+            background: #7c3aed;
+            color: white;
+            font-weight: 600;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            position: sticky;
+            top: 0;
+        }
+        
+        th.section-header { background: #6d28d9; }
+        
+        .item-header-row {
+            background: #f5f3ff !important;
+        }
+        
+        .item-header-row td {
+            font-weight: 700;
+            color: #7c3aed;
+            text-align: left;
+            font-size: 0.85rem;
+        }
+        
+        tr:nth-child(even) { background: #f9fafb; }
+        tr:hover { background: #f5f3ff; }
+        
+        td input[type="text"], td input[type="number"] {
+            width: 100%;
+            padding: 0.4rem;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            transition: all 0.2s;
+        }
+        
+        td input:focus {
+            outline: none;
+            border-color: #7c3aed;
+            box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.1);
+        }
+        
+        .ingredient-name {
+            font-weight: 500;
+            color: #1f2937;
+            text-align: left;
+            padding-left: 1rem;
+        }
+        
+        .weight-range {
+            font-size: 0.7rem;
+            color: #6b7280;
+            background: #f3f4f6;
+            padding: 0.3rem 0.5rem;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+        
+        .yes-no-select {
+            width: 100%;
+            padding: 0.4rem;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+        
+        .yes-no-select.yes { background: #d1fae5; border-color: #10b981; color: #065f46; }
+        .yes-no-select.no { background: #fee2e2; border-color: #ef4444; color: #991b1b; }
+        
+        .corrective-input { display: none; margin-top: 0.25rem; }
+        .corrective-input.show { display: block; }
+        .corrective-input input { background: #fef2f2; border-color: #fecaca; font-size: 0.7rem; }
+        
+        .na-cell {
+            color: #9ca3af;
+            font-style: italic;
+            font-weight: 500;
+            background: #f3f4f6;
+        }
+        
+        .tasting-cell { background: #f0fdf4; }
+        .tasting-cell.na { background: #f3f4f6; }
+        
+        .status-badge {
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.65rem;
+            font-weight: 600;
+        }
+        
+        .status-pass { background: #d1fae5; color: #065f46; }
+        .status-pending { background: #fef3c7; color: #92400e; }
+        .status-review { background: #fee2e2; color: #991b1b; }
+        
+        .alert { padding: 1rem; border-radius: 8px; margin-bottom: 1rem; }
+        .alert-success { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+        .alert-error { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+        
+        .comments-section {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        .comments-section textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            min-height: 80px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: #6b7280;
+        }
+        
+        @media (max-width: 768px) {
+            .header-content { flex-direction: column; text-align: center; }
+            .filter-bar { flex-direction: column; width: 100%; }
+            .form-group { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div><h1>📋 Recipe Verification Checklist</h1></div>
+            <div class="header-actions">
+                <button class="btn btn-primary" onclick="handleSave(event)">💾 Save All</button>
+                <a href="/recipe-verification" class="btn btn-secondary">← Back</a>
+                <a href="/dashboard" class="btn btn-secondary">🏠 Dashboard</a>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div id="alertContainer"></div>
+        
+        <!-- Date Selection Card -->
+        <div class="card">
+            <div class="filter-bar">
+                <div class="form-group">
+                    <label for="logDate">📅 Date</label>
+                    <input type="date" id="logDate">
+                </div>
+                <div class="form-group">
+                    <label for="filledBy">👤 Filled By</label>
+                    <input type="text" id="filledBy" readonly>
+                </div>
+                <button class="btn btn-success" onclick="createOrLoadDocument()">📋 Load/Create Document</button>
+            </div>
+            
+            <div class="document-info" id="documentInfo" style="display: none;">
+                <div class="info-item">
+                    <span class="label">Date:</span>
+                    <span class="value" id="documentDate">-</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Document #:</span>
+                    <span class="value" id="documentNumber">-</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Status:</span>
+                    <span class="value" id="documentStatus">-</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Ingredients:</span>
+                    <span class="value" id="entryCount">0</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recipe Verification Table Card -->
+        <div class="card" id="entriesCard" style="display: none;">
+            <div class="card-header">
+                <h2>📝 Recipe Verification Entries</h2>
+            </div>
+            
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th rowspan="2" style="min-width: 40px;">#</th>
+                            <th rowspan="2" style="min-width: 180px;">Item Name / Ingredient</th>
+                            <th rowspan="2" style="min-width: 100px;">Overall Quality<br>(Freshness, Appearance,<br>Color, Odor, Cut)</th>
+                            <th colspan="2" class="section-header">Ingredients Weight/Quantity</th>
+                            <th rowspan="2" style="min-width: 80px;">Tasting</th>
+                            <th rowspan="2" style="min-width: 90px;">Packaging<br>is Clean</th>
+                            <th rowspan="2" style="min-width: 90px;">Correct<br>Packaging Used</th>
+                            <th rowspan="2" style="min-width: 90px;">Correct<br>Shelf-life</th>
+                            <th rowspan="2" style="min-width: 90px;">Retention<br>Sample Taken</th>
+                            <th rowspan="2" style="min-width: 60px;">Status</th>
+                        </tr>
+                        <tr>
+                            <th style="min-width: 100px;">Recipe as Per<br>MOP/System</th>
+                            <th style="min-width: 100px;">On-Site<br>Verification</th>
+                        </tr>
+                    </thead>
+                    <tbody id="entriesTableBody">
+                        <tr><td colspan="11" class="empty-state">No recipe items configured. Go to Settings first.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="comments-section">
+                <div class="form-group">
+                    <label for="generalComments">📝 General Comments</label>
+                    <textarea id="generalComments" rows="3" placeholder="Enter any general comments..."></textarea>
+                </div>
+            </div>
+            
+            <!-- Submit Button -->
+            <div style="margin-top: 1.5rem; display: flex; justify-content: center; gap: 1rem;">
+                <button class="btn btn-success" style="padding: 1rem 3rem; font-size: 1.1rem;" onclick="handleSave(event)">
+                    💾 Save & Submit
+                </button>
+                <button class="btn btn-secondary" style="padding: 1rem 2rem; font-size: 1rem;" onclick="handleClearNew(event)">
+                    🔄 Clear & Start New
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const API_BASE = '/recipe-verification/api';
+        let currentDocument = null;
+        let currentUser = null;
+        let allIngredients = [];
+        let entries = [];
+        
+        // Format date as "DD MMM YYYY"
+        function formatDate(dateStr) {
+            if (!dateStr) return '-';
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('en-GB', { 
+                day: '2-digit', month: 'short', year: 'numeric' 
+            });
+        }
+        
+        function showAlert(message, type = 'success') {
+            const container = document.getElementById('alertContainer');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+            container.appendChild(alert);
+            setTimeout(() => alert.remove(), 5000);
+        }
+        
+        async function loadCurrentUser() {
+            try {
+                const response = await fetch(`${API_BASE}/current-user`);
+                currentUser = await response.json();
+                document.getElementById('filledBy').value = currentUser.name || 'Unknown User';
+            } catch (error) {
+                console.error('Error loading user:', error);
+            }
+        }
+        
+        // Load all ingredients with weight ranges
+        async function loadAllIngredients() {
+            try {
+                const response = await fetch(`${API_BASE}/ingredients?t=${Date.now()}`, {cache: 'no-store'});
+                if (!response.ok) throw new Error('Failed to fetch');
+                allIngredients = await response.json();
+                if (!Array.isArray(allIngredients)) allIngredients = [];
+                console.log('Loaded ingredients:', allIngredients);
+            } catch (error) {
+                console.error('Error loading ingredients:', error);
+                allIngredients = [];
+            }
+        }
+        
+        async function createOrLoadDocument() {
+            const logDate = document.getElementById('logDate').value;
+            if (!logDate) {
+                showAlert('Please select a date', 'error');
+                return;
+            }
+            
+            // Clear old data first
+            entries = [];
+            currentDocument = null;
+            document.getElementById('entriesCard').style.display = 'none';
+            document.getElementById('documentInfo').style.display = 'none';
+            document.getElementById('generalComments').value = '';
+            
+            // Reload ingredients to get fresh data
+            await loadAllIngredients();
+            
+            try {
+                const searchResponse = await fetch(`${API_BASE}/documents?date=${logDate}&t=${Date.now()}`, {cache: 'no-store'});
+                const documents = await searchResponse.json();
+                
+                if (Array.isArray(documents) && documents.length > 0) {
+                    currentDocument = documents[0];
+                    await loadEntries();
+                    showAlert('Existing document loaded!');
+                } else {
+                    const createResponse = await fetch(`${API_BASE}/documents`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            log_date: logDate,
+                            filled_by: currentUser?.name || 'Unknown User'
+                        })
+                    });
+                    
+                    if (createResponse.ok) {
+                        currentDocument = await createResponse.json();
+                        await createEntriesForAllIngredients();
+                        showAlert('New document created - all fields are blank!');
+                    } else {
+                        throw new Error('Failed to create document');
+                    }
+                }
+                
+                updateDocumentInfo();
+                document.getElementById('entriesCard').style.display = 'block';
+                renderTable();
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('Failed to create/load document', 'error');
+            }
+        }
+        
+        // Clear form and start new
+        function clearAndStartNew() {
+            if (!confirm('Are you sure you want to clear all data and start fresh? Unsaved changes will be lost.')) {
+                return;
+            }
+            
+            // Reset everything
+            entries = [];
+            currentDocument = null;
+            document.getElementById('entriesCard').style.display = 'none';
+            document.getElementById('documentInfo').style.display = 'none';
+            document.getElementById('generalComments').value = '';
+            document.getElementById('logDate').valueAsDate = new Date();
+            
+            showAlert('Form cleared. Select a date and click Load/Create to begin.');
+        }
+        
+        async function createEntriesForAllIngredients() {
+            entries = [];
+            for (const ing of allIngredients) {
+                try {
+                    const response = await fetch(`${API_BASE}/entries`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            document_id: currentDocument.id,
+                            recipe_item_id: ing.recipe_item_id,
+                            ingredient_id: ing.id,
+                            item_name: ing.item_name,
+                            ingredients: ing.ingredient_name,
+                            weight_min: ing.weight_min,
+                            weight_max: ing.weight_max,
+                            weight_unit: ing.unit,
+                            tasting_criteria: ing.tasting_criteria,
+                            tasting_enabled: ing.tasting_enabled !== false
+                        })
+                    });
+                    
+                    if (response.ok) {
+                        const newEntry = await response.json();
+                        newEntry._ing = ing;
+                        entries.push(newEntry);
+                    }
+                } catch (error) {
+                    console.error('Error creating entry:', error);
+                }
+            }
+        }
+        
+        function updateDocumentInfo() {
+            if (!currentDocument) return;
+            document.getElementById('documentInfo').style.display = 'flex';
+            document.getElementById('documentDate').textContent = formatDate(currentDocument.log_date);
+            document.getElementById('documentNumber').textContent = currentDocument.document_number;
+            document.getElementById('documentStatus').textContent = currentDocument.status;
+            document.getElementById('entryCount').textContent = entries.length;
+            document.getElementById('generalComments').value = currentDocument.comments || '';
+        }
+        
+        async function loadEntries() {
+            if (!currentDocument) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/entries?document_id=${currentDocument.id}&t=${Date.now()}`, {cache: 'no-store'});
+                const data = await response.json();
+                entries = Array.isArray(data) ? data : [];
+                
+                // Match with ingredients for tasting_enabled and weight values
+                entries.forEach(entry => {
+                    // Try to find by ingredient_id first, then by name match
+                    let ing = null;
+                    if (entry.ingredient_id) {
+                        ing = allIngredients.find(i => i.id === entry.ingredient_id);
+                    }
+                    // Fallback: match by item_name and ingredient name
+                    if (!ing && entry.ingredients) {
+                        ing = allIngredients.find(i => 
+                            i.item_name === entry.item_name && 
+                            i.ingredient_name === entry.ingredients
+                        );
+                    }
+                    if (ing) {
+                        entry._ing = ing;
+                        // Copy weight values from ingredient if not set in entry
+                        if (entry.weight_min === null) entry.weight_min = ing.weight_min;
+                        if (entry.weight_max === null) entry.weight_max = ing.weight_max;
+                        if (!entry.weight_unit) entry.weight_unit = ing.unit;
+                    }
+                });
+                console.log('Loaded entries:', entries);
+            } catch (error) {
+                console.error('Error loading entries:', error);
+                entries = [];
+            }
+        }
+        
+        function renderTable() {
+            const tbody = document.getElementById('entriesTableBody');
+            
+            if (entries.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="11" class="empty-state">No ingredients configured. Go to <a href="/recipe-verification/settings">Settings</a> to add items and ingredients first.</td></tr>`;
+                return;
+            }
+            
+            // Group by item
+            const grouped = {};
+            entries.forEach(entry => {
+                const key = entry.recipe_item_id || entry.item_name;
+                if (!grouped[key]) {
+                    grouped[key] = {
+                        item_name: entry.item_name,
+                        entries: []
+                    };
+                }
+                grouped[key].entries.push(entry);
+            });
+            
+            let html = '';
+            let rowNum = 0;
+            
+            Object.values(grouped).forEach(group => {
+                html += `<tr class="item-header-row"><td colspan="11">📦 ${escapeHtml(group.item_name)}</td></tr>`;
+                
+                group.entries.forEach(entry => {
+                    rowNum++;
+                    const statusClass = entry.overall_status === 'Pass' ? 'status-pass' : 
+                                       entry.overall_status === 'Needs Review' ? 'status-review' : 'status-pending';
+                    
+                    // Use weight values from entry first, then fall back to _ing (ingredient data)
+                    const weightMin = entry.weight_min !== null && entry.weight_min !== undefined ? entry.weight_min : entry._ing?.weight_min;
+                    const weightMax = entry.weight_max !== null && entry.weight_max !== undefined ? entry.weight_max : entry._ing?.weight_max;
+                    const weightUnit = entry.weight_unit || entry._ing?.unit || 'g';
+                    
+                    // Build weight range display
+                    let weightRange = '-';
+                    if (weightMin !== null && weightMin !== undefined && weightMax !== null && weightMax !== undefined) {
+                        weightRange = `${weightMin} - ${weightMax} ${weightUnit}`;
+                    } else if (weightMin !== null && weightMin !== undefined) {
+                        weightRange = `≥ ${weightMin} ${weightUnit}`;
+                    } else if (weightMax !== null && weightMax !== undefined) {
+                        weightRange = `≤ ${weightMax} ${weightUnit}`;
+                    }
+                    
+                    // Tasting enabled per ingredient (not per item)
+                    const tastingEnabled = entry._ing?.tasting_enabled !== false;
+                    
+                    html += `
+                        <tr data-entry-id="${entry.id}">
+                            <td>${rowNum}</td>
+                            <td class="ingredient-name">${escapeHtml(entry.ingredients)}</td>
+                            <td>${renderYesNoField(entry, 'overall_quality')}</td>
+                            <td><span class="weight-range">${weightRange}</span></td>
+                            <td>
+                                <input type="number" step="0.01" value="${entry.onsite_verification_weight || ''}" 
+                                       onchange="updateField(${entry.id}, 'onsite_verification_weight', this.value)"
+                                       placeholder="Actual">
+                            </td>
+                            <td class="tasting-cell ${tastingEnabled ? '' : 'na'}">
+                                ${tastingEnabled ? renderYesNoField(entry, 'tasting_result', true) : '<span class="na-cell">N/A</span>'}
+                            </td>
+                            <td>${renderYesNoField(entry, 'packaging_clean')}</td>
+                            <td>${renderYesNoField(entry, 'correct_packaging')}</td>
+                            <td>${renderYesNoField(entry, 'correct_shelf_life')}</td>
+                            <td>${renderYesNoField(entry, 'retention_sample')}</td>
+                            <td><span class="status-badge ${statusClass}">${entry.overall_status || 'Pending'}</span></td>
+                        </tr>
+                    `;
+                });
+            });
+            
+            tbody.innerHTML = html;
+            document.getElementById('entryCount').textContent = entries.length;
+        }
+        
+        function renderYesNoField(entry, field, isTasting = false) {
+            const value = entry[field];
+            const actionValue = entry[field + '_action'] || '';
+            const selectClass = value === true ? 'yes' : value === false ? 'no' : '';
+            const showAction = value === false;
+            
+            return `
+                <div>
+                    <select class="yes-no-select ${selectClass}" onchange="setYesNo(${entry.id}, '${field}', this.value, this)">
+                        <option value="" ${value === null || value === undefined ? 'selected' : ''}>-</option>
+                        <option value="yes" ${value === true ? 'selected' : ''}>Yes</option>
+                        <option value="no" ${value === false ? 'selected' : ''}>No</option>
+                    </select>
+                    ${!isTasting ? `
+                        <div class="corrective-input ${showAction ? 'show' : ''}" id="action-${entry.id}-${field}">
+                            <input type="text" placeholder="Corrective action..." value="${escapeHtml(actionValue)}"
+                                   onchange="updateField(${entry.id}, '${field}_action', this.value)">
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+        
+        function setYesNo(entryId, field, value, selectEl) {
+            const entry = entries.find(e => e.id === entryId);
+            if (!entry) return;
+            
+            if (value === 'yes') {
+                entry[field] = true;
+                selectEl.className = 'yes-no-select yes';
+            } else if (value === 'no') {
+                entry[field] = false;
+                selectEl.className = 'yes-no-select no';
+            } else {
+                entry[field] = null;
+                selectEl.className = 'yes-no-select';
+            }
+            
+            const actionDiv = document.getElementById(`action-${entryId}-${field}`);
+            if (actionDiv) {
+                if (value === 'no') {
+                    actionDiv.classList.add('show');
+                } else {
+                    actionDiv.classList.remove('show');
+                    entry[field + '_action'] = null;
+                }
+            }
+            
+            updateEntryStatus(entry);
+        }
+        
+        function updateField(entryId, field, value) {
+            const entry = entries.find(e => e.id === entryId);
+            if (entry) entry[field] = value;
+        }
+        
+        function updateEntryStatus(entry) {
+            const fields = ['overall_quality', 'packaging_clean', 'correct_packaging', 'correct_shelf_life', 'retention_sample'];
+            
+            let hasNo = false;
+            let allFilled = true;
+            
+            fields.forEach(field => {
+                if (entry[field] === null || entry[field] === undefined) allFilled = false;
+                if (entry[field] === false) hasNo = true;
+            });
+            
+            if (!allFilled) entry.overall_status = 'Pending';
+            else if (hasNo) entry.overall_status = 'Needs Review';
+            else entry.overall_status = 'Pass';
+            
+            const row = document.querySelector(`tr[data-entry-id="${entry.id}"]`);
+            if (row) {
+                const badge = row.querySelector('.status-badge');
+                badge.textContent = entry.overall_status;
+                badge.className = 'status-badge ' + 
+                    (entry.overall_status === 'Pass' ? 'status-pass' : 
+                     entry.overall_status === 'Needs Review' ? 'status-review' : 'status-pending');
+            }
+        }
+        
+        async function saveAllEntries() {
+            if (!currentDocument) {
+                showAlert('No document loaded', 'error');
+                return;
+            }
+            
+            // Show saving indicator on all save buttons
+            const saveBtns = document.querySelectorAll('button[onclick="handleSave(event)"]');
+            const originalTexts = [];
+            saveBtns.forEach((btn, i) => {
+                originalTexts[i] = btn.innerHTML;
+                btn.innerHTML = '⏳ Saving...';
+                btn.disabled = true;
+            });
+            
+            try {
+                // Save document comments
+                const docResponse = await fetch(`${API_BASE}/documents/${currentDocument.id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ comments: document.getElementById('generalComments').value })
+                }).catch(err => {
+                    console.warn('Document save warning:', err);
+                    return { ok: true }; // Continue anyway
+                });
+                
+                let savedCount = 0;
+                let errors = 0;
+                
+                // Save entries one by one
+                for (const entry of entries) {
+                    updateEntryStatus(entry);
+                    try {
+                        const response = await fetch(`${API_BASE}/entries/${entry.id}`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(entry)
+                        });
+                        if (response.ok) {
+                            savedCount++;
+                        } else {
+                            errors++;
+                        }
+                    } catch (entryErr) {
+                        console.warn('Entry save warning:', entryErr);
+                        errors++;
+                    }
+                }
+                
+                saveBtns.forEach(btn => btn.innerHTML = '✅ Saved!');
+                if (errors > 0) {
+                    showAlert(`Saved ${savedCount} entries (${errors} had issues)`, 'error');
+                } else {
+                    showAlert(`All ${savedCount} entries saved successfully!`);
+                }
+                renderTable();
+                
+                // Scroll to top to show success message
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                
+                // Reset buttons after 2 seconds
+                setTimeout(() => {
+                    saveBtns.forEach((btn, i) => {
+                        btn.innerHTML = originalTexts[i];
+                        btn.disabled = false;
+                    });
+                }, 2000);
+                
+            } catch (error) {
+                console.error('Error saving:', error);
+                showAlert('Failed to save entries', 'error');
+                saveBtns.forEach((btn, i) => {
+                    btn.innerHTML = originalTexts[i];
+                    btn.disabled = false;
+                });
+            }
+        }
+        
+        // Event handler wrappers (prevent async return to event system)
+        function handleSave(event) {
+            if (event) event.preventDefault();
+            saveAllEntries(); // Don't await - fire and forget
+        }
+        
+        function handleClearNew(event) {
+            if (event) event.preventDefault();
+            clearAndStartNew();
+        }
+        
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // Initialize
+        document.getElementById('logDate').valueAsDate = new Date();
+        loadCurrentUser();
+        loadAllIngredients();
+    </script>
+</body>
+</html>

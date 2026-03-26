@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Recipe Verification Checklist - FS Monitoring</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f3f4f6;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%);
+            color: white;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(124, 58, 237, 0.3);
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .header-user {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+        
+        .user-name {
+            font-weight: 500;
+        }
+        
+        .btn {
+            padding: 0.625rem 1.25rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.875rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+            border: none;
+        }
+        
+        .btn-primary {
+            background: white;
+            color: #7c3aed;
+        }
+        
+        .btn-primary:hover {
+            background: #f5f3ff;
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+        
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .menu-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .menu-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .menu-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .menu-icon.new { background: linear-gradient(135deg, #dbeafe, #bfdbfe); color: #2563eb; }
+        .menu-icon.history { background: linear-gradient(135deg, #dcfce7, #bbf7d0); color: #16a34a; }
+        .menu-icon.settings { background: linear-gradient(135deg, #fef3c7, #fde68a); color: #d97706; }
+        
+        .menu-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #1f2937;
+        }
+        
+        .menu-description {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        
+        .info-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+        
+        .info-card h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .checklist-items {
+            list-style: none;
+        }
+        
+        .checklist-items li {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: #374151;
+        }
+        
+        .checklist-items li:last-child {
+            border-bottom: none;
+        }
+        
+        .checklist-items li::before {
+            content: '✓';
+            width: 24px;
+            height: 24px;
+            background: #ede9fe;
+            color: #7c3aed;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.75rem;
+            flex-shrink: 0;
+        }
+        
+        @media (max-width: 640px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .menu-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <h1>📋 Recipe Verification Checklist</h1>
+            <div class="header-user">
+                <div class="user-avatar" id="userAvatar">?</div>
+                <span class="user-name" id="userName">Loading...</span>
+                <a href="/dashboard" class="btn btn-secondary">🏠 Dashboard</a>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <!-- Stats Cards -->
+        <div class="stats-grid" id="statsGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+            <div class="stat-card" style="background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                <div style="font-size: 2rem; font-weight: 700; color: #7c3aed;" id="todayCount">-</div>
+                <div style="color: #6b7280; font-size: 0.875rem;">Today's Documents</div>
+            </div>
+            <div class="stat-card" style="background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                <div style="font-size: 2rem; font-weight: 700; color: #f59e0b;" id="pendingCount">-</div>
+                <div style="color: #6b7280; font-size: 0.875rem;">Pending Verification</div>
+            </div>
+            <div class="stat-card" style="background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                <div style="font-size: 2rem; font-weight: 700; color: #10b981;" id="verifiedCount">-</div>
+                <div style="color: #6b7280; font-size: 0.875rem;">Verified This Week</div>
+            </div>
+            <div class="stat-card" style="background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                <div style="font-size: 2rem; font-weight: 700; color: #3b82f6;" id="totalItems">-</div>
+                <div style="color: #6b7280; font-size: 0.875rem;">Recipe Items</div>
+            </div>
+        </div>
+        
+        <div class="menu-grid">
+            <a href="/recipe-verification/form" class="menu-card">
+                <div class="menu-icon new">📝</div>
+                <h3 class="menu-title">New Entry</h3>
+                <p class="menu-description">Create or update recipe verification records</p>
+            </a>
+            
+            <a href="/recipe-verification/history" class="menu-card">
+                <div class="menu-icon history">📊</div>
+                <h3 class="menu-title">View History</h3>
+                <p class="menu-description">Review past verification documents</p>
+            </a>
+            
+            <a href="/recipe-verification/settings" class="menu-card">
+                <div class="menu-icon settings">⚙️</div>
+                <h3 class="menu-title">Settings</h3>
+                <p class="menu-description">Configure recipe items and ingredients</p>
+            </a>
+        </div>
+        
+        <div class="info-card">
+            <h2>📋 Checklist Items</h2>
+            <ul class="checklist-items">
+                <li>Date & Item Selection</li>
+                <li>Item Name & Ingredients (Predefined)</li>
+                <li>Overall Quality of Ingredients (Freshness, Appearance, Color, Odor, Cut Properly)</li>
+                <li>Ingredients Weight/Quantity - Recipe as Per MOP/System</li>
+                <li>Ingredients Weight/Quantity - On-Site Verification</li>
+                <li>Tasting Evaluation</li>
+                <li>Packaging is Clean</li>
+                <li>Correct Packaging is Used</li>
+                <li>Correct Shelf-life</li>
+                <li>Retention Sample Taken</li>
+                <li>Comments & Corrective Actions</li>
+                <li>Filled By & Signature</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        const API_BASE = '/recipe-verification/api';
+        
+        // Load current user
+        async function loadCurrentUser() {
+            try {
+                const response = await fetch(`${API_BASE}/current-user?t=${Date.now()}`, {cache: 'no-store'});
+                const user = await response.json();
+                
+                document.getElementById('userName').textContent = user.name || 'User';
+                document.getElementById('userAvatar').textContent = (user.name || 'U').charAt(0).toUpperCase();
+            } catch (error) {
+                console.error('Error loading user:', error);
+            }
+        }
+        
+        // Load stats
+        async function loadStats() {
+            try {
+                // Get today's date and week dates
+                const today = new Date().toISOString().split('T')[0];
+                const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+                
+                // Fetch documents for stats
+                const docsResponse = await fetch(`${API_BASE}/documents?from=${weekAgo}&to=${today}&t=${Date.now()}`, {cache: 'no-store'});
+                const docs = await docsResponse.json();
+                
+                // Calculate stats
+                const todayDocs = docs.filter(d => d.log_date && d.log_date.substring(0, 10) === today);
+                const pendingDocs = docs.filter(d => !d.is_verified);
+                const verifiedDocs = docs.filter(d => d.is_verified);
+                
+                document.getElementById('todayCount').textContent = todayDocs.length;
+                document.getElementById('pendingCount').textContent = pendingDocs.length;
+                document.getElementById('verifiedCount').textContent = verifiedDocs.length;
+                
+                // Fetch recipe items count
+                const itemsResponse = await fetch(`${API_BASE}/recipe-items?t=${Date.now()}`, {cache: 'no-store'});
+                const items = await itemsResponse.json();
+                document.getElementById('totalItems').textContent = items.length;
+                
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+        
+        loadCurrentUser();
+        loadStats();
+    </script>
+</body>
+</html>

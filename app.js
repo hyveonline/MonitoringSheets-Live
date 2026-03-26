@@ -28,6 +28,7 @@ const cookingCoolingModule = require('./modules/cooking-cooling');
 const fridgeTempModule = require('./modules/fridge-temp');
 const vegFruitWashModule = require('./modules/veg-fruit-wash');
 const qualityControlReceivingModule = require('./modules/quality-control-receiving');
+const recipeVerificationModule = require('./modules/recipe-verification');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -44,7 +45,7 @@ app.use((req, res, next) => {
     const noCacheRoutes = ['/dashboard', '/home', '/admin', '/auditor', '/hygiene-checklist', 
                            '/equipment-calibration', '/frying-oil', '/food-safety', '/dry-store',
                            '/water-quality', '/atp-monitoring', '/hot-holding', '/dry-store-expiry',
-                           '/cooking-cooling', '/fridge-temp', '/veg-fruit-wash', '/quality-control-receiving'];
+                           '/cooking-cooling', '/fridge-temp', '/veg-fruit-wash', '/quality-control-receiving', '/recipe-verification'];
     
     const shouldNotCache = noCacheRoutes.some(route => req.path.startsWith(route));
     
@@ -102,6 +103,9 @@ app.use('/veg-fruit-wash', requireAuth, vegFruitWashModule);
 
 // Quality Control Receiving Checklist Module (Form 13) (with /quality-control-receiving prefix)
 app.use('/quality-control-receiving', requireAuth, qualityControlReceivingModule);
+
+// Recipe Verification Checklist Module (with /recipe-verification prefix)
+app.use('/recipe-verification', requireAuth, recipeVerificationModule);
 
 // ==========================================
 // Page Routes

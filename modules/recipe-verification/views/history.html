@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Recipe Verification History - FS Monitoring</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f3f4f6;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%);
+            color: white;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(124, 58, 237, 0.3);
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 0.625rem 1.25rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.875rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+            border: none;
+        }
+        
+        .btn-primary {
+            background: white;
+            color: #7c3aed;
+        }
+        
+        .btn-primary:hover {
+            background: #f5f3ff;
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+        
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #059669;
+        }
+        
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+        
+        .btn-sm {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.75rem;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 1.5rem;
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .card-header h2 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+        
+        .filter-bar {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-end;
+            flex-wrap: wrap;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .form-group label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+        }
+        
+        .form-group input, .form-group select {
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #7c3aed;
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+        }
+        
+        .documents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .document-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        
+        .document-card:hover {
+            border-color: #7c3aed;
+            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.15);
+        }
+        
+        .document-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        
+        .document-number {
+            font-weight: 600;
+            color: #1f2937;
+        }
+        
+        .document-date {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #7c3aed;
+            margin-bottom: 0.5rem;
+        }
+        
+        .document-meta {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 0.5rem;
+        }
+        
+        .document-stats {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
+        
+        .stat-label {
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+        
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .status-active {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .status-completed {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .status-verified {
+            background: #ede9fe;
+            color: #5b21b6;
+        }
+        
+        .document-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 1200px;
+            width: 95%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-table-wrapper {
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-header h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6b7280;
+        }
+        
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        .detail-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+        }
+        
+        .detail-table th, .detail-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .detail-table th {
+            background: #f9fafb;
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        .check-pass {
+            color: #10b981;
+        }
+        
+        .check-fail {
+            color: #ef4444;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #6b7280;
+        }
+        
+        .empty-state svg {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+        
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+        
+        @media (max-width: 640px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .filter-bar {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .form-group {
+                width: 100%;
+            }
+            
+            .documents-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <h1>📊 Recipe Verification History</h1>
+            <div class="header-actions">
+                <a href="/recipe-verification/form" class="btn btn-primary">📝 New Entry</a>
+                <a href="/recipe-verification" class="btn btn-secondary">← Back</a>
+                <a href="/dashboard" class="btn btn-secondary">🏠 Dashboard</a>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <!-- Alert Messages -->
+        <div id="alertContainer"></div>
+        
+        <!-- Filter Card -->
+        <div class="card">
+            <div class="filter-bar">
+                <div class="form-group">
+                    <label for="fromDate">From Date</label>
+                    <input type="date" id="fromDate">
+                </div>
+                <div class="form-group">
+                    <label for="toDate">To Date</label>
+                    <input type="date" id="toDate">
+                </div>
+                <div class="form-group">
+                    <label for="statusFilter">Status</label>
+                    <select id="statusFilter">
+                        <option value="">All</option>
+                        <option value="Active">Active</option>
+                        <option value="Completed">Completed</option>
+                    </select>
+                </div>
+                <button class="btn btn-success" onclick="searchDocuments()">🔍 Search</button>
+            </div>
+        </div>
+        
+        <!-- Documents Grid -->
+        <div id="documentsContainer" class="documents-grid">
+            <div class="empty-state">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                    <line x1="16" y1="13" x2="8" y2="13"/>
+                    <line x1="16" y1="17" x2="8" y2="17"/>
+                    <polyline points="10 9 9 9 8 9"/>
+                </svg>
+                <p>No documents found.<br>Use the filters above to search or create a new document.</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Document Detail Modal -->
+    <div class="modal" id="detailModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Document Details</h3>
+                <button class="modal-close" onclick="closeDetailModal()">×</button>
+            </div>
+            <div id="modalContent">
+                <!-- Content will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeDetailModal()">Close</button>
+                <button class="btn btn-success" id="verifyBtn" onclick="verifyDocument()" style="display: none;">✓ Verify Document</button>
+                <button class="btn btn-danger" id="unverifyBtn" onclick="unverifyDocument()" style="display: none;">✗ Unverify Document</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const API_BASE = '/recipe-verification/api';
+        let currentDocumentId = null;
+        let currentDocument = null;
+        let userRole = 'User';
+        let canVerify = false;
+        
+        // Load current user info
+        async function loadCurrentUser() {
+            try {
+                const response = await fetch(`${API_BASE}/current-user?t=${Date.now()}`, {cache: 'no-store'});
+                const user = await response.json();
+                userRole = user.role || 'User';
+                // Case-insensitive role check
+                const normalizedRole = userRole.toLowerCase();
+                canVerify = ['admin', 'superauditor'].includes(normalizedRole);
+                console.log('User role:', userRole, 'Normalized:', normalizedRole, 'Can verify:', canVerify);
+                
+                // Debug: show role in header (temporary)
+                const headerActions = document.querySelector('.header-actions');
+                if (headerActions) {
+                    const roleSpan = document.createElement('span');
+                    roleSpan.style.cssText = 'background: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.75rem;';
+                    roleSpan.textContent = `Role: ${userRole} ${canVerify ? '(Can Verify)' : ''}`;
+                    headerActions.appendChild(roleSpan);
+                }
+            } catch (error) {
+                console.error('Error loading user:', error);
+                canVerify = false;
+            }
+        }
+        
+        // Format date as "DD MMM YYYY"
+        function formatDate(dateStr) {
+            if (!dateStr) return '-';
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('en-GB', { 
+                day: '2-digit', month: 'short', year: 'numeric' 
+            });
+        }
+        
+        // Format datetime as "DD MMM YYYY, HH:MM"
+        function formatDateTime(dateStr) {
+            if (!dateStr) return '-';
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('en-GB', { 
+                day: '2-digit', month: 'short', year: 'numeric',
+                hour: '2-digit', minute: '2-digit'
+            });
+        }
+        
+        // Show alert message
+        function showAlert(message, type = 'success') {
+            const container = document.getElementById('alertContainer');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+            container.appendChild(alert);
+            setTimeout(() => alert.remove(), 5000);
+        }
+        
+        // Initialize dates
+        function initDates() {
+            const today = new Date();
+            const lastMonth = new Date(today);
+            lastMonth.setMonth(lastMonth.getMonth() - 1);
+            
+            // Include a week into the future for advance entries
+            const nextWeek = new Date(today);
+            nextWeek.setDate(nextWeek.getDate() + 7);
+            
+            document.getElementById('fromDate').valueAsDate = lastMonth;
+            document.getElementById('toDate').valueAsDate = nextWeek;
+        }
+        
+        // Search documents
+        async function searchDocuments() {
+            const fromDate = document.getElementById('fromDate').value;
+            const toDate = document.getElementById('toDate').value;
+            const status = document.getElementById('statusFilter').value;
+            
+            try {
+                let url = `${API_BASE}/documents?from=${fromDate}&to=${toDate}&t=${Date.now()}`;
+                if (status) url += `&status=${status}`;
+                
+                const response = await fetch(url, {cache: 'no-store'});
+                const documents = await response.json();
+                
+                renderDocuments(documents);
+            } catch (error) {
+                console.error('Error searching documents:', error);
+                showAlert('Failed to search documents', 'error');
+            }
+        }
+        
+        // Render documents grid
+        function renderDocuments(documents) {
+            const container = document.getElementById('documentsContainer');
+            
+            if (documents.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1 / -1;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/>
+                            <line x1="16" y1="17" x2="8" y2="17"/>
+                        </svg>
+                        <p>No documents found for the selected criteria.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = documents.map(doc => {
+                const formattedDate = formatDate(doc.log_date);
+                
+                const statusClass = doc.is_verified ? 'status-verified' : 
+                                   doc.status === 'Completed' ? 'status-completed' : 'status-active';
+                const statusText = doc.is_verified ? 'Verified' : doc.status;
+                
+                return `
+                    <div class="document-card" onclick="viewDocument(${doc.id})">
+                        <div class="document-header">
+                            <div>
+                                <div class="document-number">${escapeHtml(doc.document_number)}</div>
+                                <div class="document-date">${formattedDate}</div>
+                            </div>
+                            <span class="status-badge ${statusClass}">${statusText}</span>
+                        </div>
+                        <div class="document-meta">
+                            👤 Filled by: ${escapeHtml(doc.filled_by)}
+                        </div>
+                        ${doc.is_verified ? `<div class="document-meta">✓ Verified by: ${escapeHtml(doc.verified_by)}</div>` : ''}
+                        <div class="document-stats">
+                            <div class="stat">
+                                <div class="stat-value">${doc.entry_count || 0}</div>
+                                <div class="stat-label">Items</div>
+                            </div>
+                        </div>
+                        <div class="document-actions">
+                            <button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); viewDocument(${doc.id})">👁️ View</button>
+                            <a href="/recipe-verification/form?date=${doc.log_date}" class="btn btn-secondary btn-sm" onclick="event.stopPropagation();">✏️ Edit</a>
+                            <button class="btn btn-danger btn-sm" onclick="event.stopPropagation(); deleteDocument(${doc.id})">🗑️</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // View document details
+        async function viewDocument(docId) {
+            currentDocumentId = docId;
+            
+            try {
+                const response = await fetch(`${API_BASE}/documents/${docId}?t=${Date.now()}`, {cache: 'no-store'});
+                const doc = await response.json();
+                
+                const formattedDate = formatDate(doc.log_date);
+                
+                document.getElementById('modalTitle').textContent = `${doc.document_number} - ${formattedDate}`;
+                
+                let content = `
+                    <div style="margin-bottom: 1rem;">
+                        <p><strong>Filled By:</strong> ${escapeHtml(doc.filled_by)}</p>
+                        <p><strong>Status:</strong> ${doc.status}</p>
+                        ${doc.is_verified ? `<p><strong>Verified By:</strong> ${escapeHtml(doc.verified_by)} on ${formatDateTime(doc.verified_at)}</p>` : ''}
+                        ${doc.comments ? `<p><strong>Comments:</strong> ${escapeHtml(doc.comments)}</p>` : ''}
+                    </div>
+                `;
+                
+                if (doc.entries && doc.entries.length > 0) {
+                    // Group entries by recipe item
+                    const groupedEntries = {};
+                    doc.entries.forEach(entry => {
+                        const key = entry.item_name || 'Other';
+                        if (!groupedEntries[key]) {
+                            groupedEntries[key] = [];
+                        }
+                        groupedEntries[key].push(entry);
+                    });
+                    
+                    content += `<div class="modal-table-wrapper">
+                        <table class="detail-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 40px;">#</th>
+                                    <th>Ingredient</th>
+                                    <th>Quality</th>
+                                    <th>Recipe Weight</th>
+                                    <th>On-Site Weight</th>
+                                    <th>Tasting</th>
+                                    <th>Packaging</th>
+                                    <th>Shelf-life</th>
+                                    <th>Retention</th>
+                                    <th>Corrective Actions</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                    `;
+                    
+                    let rowNum = 0;
+                    Object.keys(groupedEntries).forEach(itemName => {
+                        // Item header row
+                        content += `
+                            <tr style="background: #f5f3ff;">
+                                <td colspan="11" style="font-weight: bold; color: #7c3aed;">📦 ${escapeHtml(itemName)}</td>
+                            </tr>
+                        `;
+                        
+                        // Ingredient rows
+                        groupedEntries[itemName].forEach(entry => {
+                            rowNum++;
+                            
+                            // Weight range display
+                            let weightRange = '-';
+                            if (entry.weight_min !== null && entry.weight_max !== null) {
+                                weightRange = `${entry.weight_min}-${entry.weight_max} ${entry.weight_unit || 'g'}`;
+                            } else if (entry.weight_min !== null) {
+                                weightRange = `≥${entry.weight_min} ${entry.weight_unit || 'g'}`;
+                            } else if (entry.weight_max !== null) {
+                                weightRange = `≤${entry.weight_max} ${entry.weight_unit || 'g'}`;
+                            }
+                            
+                            // Handle both boolean and numeric (1/0) values from database
+                            const yesNo = (val) => {
+                                if (val === true || val === 1) return '<span class="check-pass">✓ Yes</span>';
+                                if (val === false || val === 0) return '<span class="check-fail">✗ No</span>';
+                                return '-';
+                            };
+                            
+                            const statusClass = entry.overall_status === 'Pass' ? 'status-completed' : 
+                                               entry.overall_status === 'Needs Review' ? 'status-active' : '';
+                            
+                            // Check tasting enabled (handle both boolean and numeric)
+                            const tastingDisabled = entry.tasting_enabled === false || entry.tasting_enabled === 0;
+                            
+                            // Collect corrective actions
+                            let actions = [];
+                            if (entry.overall_quality_action) actions.push(`Quality: ${entry.overall_quality_action}`);
+                            if (entry.packaging_clean_action) actions.push(`Packaging: ${entry.packaging_clean_action}`);
+                            if (entry.correct_packaging_action) actions.push(`Correct Pkg: ${entry.correct_packaging_action}`);
+                            if (entry.correct_shelf_life_action) actions.push(`Shelf-life: ${entry.correct_shelf_life_action}`);
+                            if (entry.retention_sample_action) actions.push(`Retention: ${entry.retention_sample_action}`);
+                            const actionsText = actions.length > 0 ? actions.join('<br>') : '-';
+                            
+                            content += `
+                                <tr>
+                                    <td>${rowNum}</td>
+                                    <td>${escapeHtml(entry.ingredients)}</td>
+                                    <td>${yesNo(entry.overall_quality)}</td>
+                                    <td>${weightRange}</td>
+                                    <td>${entry.onsite_verification_weight || '-'}</td>
+                                    <td>${tastingDisabled ? '<span style="color: #9ca3af;">N/A</span>' : yesNo(entry.tasting_result)}</td>
+                                    <td>${yesNo(entry.packaging_clean)}</td>
+                                    <td>${yesNo(entry.correct_shelf_life)}</td>
+                                    <td>${yesNo(entry.retention_sample)}</td>
+                                    <td style="font-size: 0.8rem; color: #ef4444; max-width: 200px;">${actionsText}</td>
+                                    <td>
+                                        <span class="status-badge ${statusClass}">
+                                            ${entry.overall_status || 'Pending'}
+                                        </span>
+                                    </td>
+                                </tr>
+                            `;
+                        });
+                    });
+                    
+                    // Summary
+                    const totalEntries = doc.entries.length;
+                    const passCount = doc.entries.filter(e => e.overall_status === 'Pass').length;
+                    const reviewCount = doc.entries.filter(e => e.overall_status === 'Needs Review').length;
+                    const pendingCount = doc.entries.filter(e => !e.overall_status || e.overall_status === 'Pending').length;
+                    
+                    content += '</tbody></table></div>';
+                    
+                    content += `
+                        <div style="display: flex; gap: 2rem; justify-content: center; margin-top: 1.5rem; padding: 1rem; background: #f9fafb; border-radius: 8px;">
+                            <div style="text-align: center;">
+                                <div style="font-size: 1.5rem; font-weight: 700; color: #1f2937;">${totalEntries}</div>
+                                <div style="font-size: 0.75rem; color: #6b7280;">Total Items</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 1.5rem; font-weight: 700; color: #10b981;">${passCount}</div>
+                                <div style="font-size: 0.75rem; color: #6b7280;">Passed</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 1.5rem; font-weight: 700; color: #ef4444;">${reviewCount}</div>
+                                <div style="font-size: 0.75rem; color: #6b7280;">Needs Review</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 1.5rem; font-weight: 700; color: #f59e0b;">${pendingCount}</div>
+                                <div style="font-size: 0.75rem; color: #6b7280;">Pending</div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    content += '<p style="text-align: center; color: #6b7280;">No entries in this document.</p>';
+                }
+                
+                document.getElementById('modalContent').innerHTML = content;
+                
+                // Show/hide verify/unverify buttons based on role and status
+                const verifyBtn = document.getElementById('verifyBtn');
+                const unverifyBtn = document.getElementById('unverifyBtn');
+                
+                currentDocument = doc;
+                
+                if (canVerify) {
+                    // Admin and SuperAuditor can verify/unverify
+                    if (doc.is_verified) {
+                        verifyBtn.style.display = 'none';
+                        unverifyBtn.style.display = 'inline-flex';
+                    } else {
+                        verifyBtn.style.display = 'inline-flex';
+                        unverifyBtn.style.display = 'none';
+                    }
+                } else {
+                    // Other users cannot verify/unverify
+                    verifyBtn.style.display = 'none';
+                    unverifyBtn.style.display = 'none';
+                }
+                
+                document.getElementById('detailModal').classList.add('active');
+            } catch (error) {
+                console.error('Error loading document:', error);
+                showAlert('Failed to load document details', 'error');
+            }
+        }
+        
+        // Close detail modal
+        function closeDetailModal() {
+            document.getElementById('detailModal').classList.remove('active');
+            currentDocumentId = null;
+            currentDocument = null;
+        }
+        
+        // Verify document
+        async function verifyDocument() {
+            if (!currentDocumentId) return;
+            if (!canVerify) {
+                showAlert('You do not have permission to verify documents', 'error');
+                return;
+            }
+            
+            if (!confirm('Are you sure you want to verify this document?')) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/documents/${currentDocumentId}/verify`, {
+                    method: 'POST'
+                });
+                
+                if (response.ok) {
+                    closeDetailModal();
+                    searchDocuments();
+                    showAlert('Document verified successfully!');
+                } else if (response.status === 403) {
+                    showAlert('You do not have permission to verify documents', 'error');
+                } else {
+                    throw new Error('Failed to verify');
+                }
+            } catch (error) {
+                console.error('Error verifying document:', error);
+                showAlert('Failed to verify document', 'error');
+            }
+        }
+        
+        // Unverify document
+        async function unverifyDocument() {
+            if (!currentDocumentId) return;
+            if (!canVerify) {
+                showAlert('You do not have permission to unverify documents', 'error');
+                return;
+            }
+            
+            if (!confirm('Are you sure you want to unverify this document?')) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/documents/${currentDocumentId}/unverify`, {
+                    method: 'POST'
+                });
+                
+                if (response.ok) {
+                    closeDetailModal();
+                    searchDocuments();
+                    showAlert('Document unverified successfully!');
+                } else if (response.status === 403) {
+                    showAlert('You do not have permission to unverify documents', 'error');
+                } else {
+                    throw new Error('Failed to unverify');
+                }
+            } catch (error) {
+                console.error('Error unverifying document:', error);
+                showAlert('Failed to unverify document', 'error');
+            }
+        }
+        
+        // Delete document
+        async function deleteDocument(docId) {
+            if (!confirm('Are you sure you want to delete this document? This action cannot be undone.')) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/documents/${docId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    searchDocuments();
+                    showAlert('Document deleted!');
+                } else {
+                    throw new Error('Failed to delete');
+                }
+            } catch (error) {
+                console.error('Error deleting document:', error);
+                showAlert('Failed to delete document', 'error');
+            }
+        }
+        
+        // Escape HTML
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // Initialize
+        async function init() {
+            await loadCurrentUser();
+            initDates();
+            searchDocuments();
+        }
+        init();
+    </script>
+</body>
+</html>

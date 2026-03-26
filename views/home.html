@@ -270,6 +270,15 @@
             background: linear-gradient(90deg, #059669, #10b981);
         }
         
+        .app-icon.recipe-verification {
+            background: linear-gradient(135deg, #ede9fe, #ddd6fe);
+            color: #7c3aed;
+        }
+        
+        .app-card.recipe-verification::before {
+            background: linear-gradient(90deg, #7c3aed, #8b5cf6);
+        }
+        
         .app-icon.temperature {
             background: linear-gradient(135deg, #fef3c7, #fde68a);
             color: #d97706;
@@ -875,6 +884,30 @@
                     </div>
                 </a>
 
+                <!-- Recipe Verification Checklist -->
+                <a href="/recipe-verification" class="app-card recipe-verification">
+                    <div class="app-icon recipe-verification">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/>
+                            <rect x="9" y="3" width="6" height="4" rx="2"/>
+                            <path d="M9 12h6"/>
+                            <path d="M9 16h6"/>
+                        </svg>
+                    </div>
+                    <h3 class="app-title">Recipe Verification Checklist</h3>
+                    <p class="app-description">
+                        <strong>Created:</strong> Loading...<br>
+                        <strong>Last Revision:</strong> Loading...<br>
+                        <strong>Edition:</strong> Loading...<br>
+                        <strong>Reference:</strong> Loading...
+                    </p>
+                    <div class="app-arrow">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </a>
+
                 <!-- Cleaning Schedule (Coming Soon) -->
                 <div class="app-card cleaning coming-soon">
                     <div class="app-icon cleaning">
@@ -993,7 +1026,8 @@
                 { selector: '.app-card.cooking-cooling', path: 'cooking-cooling' },
                 { selector: '.app-card.fridge-temp', path: 'fridge-temp' },
                 { selector: '.app-card.veg-fruit-wash', path: 'veg-fruit-wash' },
-                { selector: '.app-card.quality-control-receiving', path: 'quality-control-receiving' }
+                { selector: '.app-card.quality-control-receiving', path: 'quality-control-receiving' },
+                { selector: '.app-card.recipe-verification', path: 'recipe-verification' }
             ];
             
             moduleSettings.forEach(({ selector, path }) => {
@@ -1059,7 +1093,8 @@
                 { path: 'cooking-cooling', selector: '.app-card.cooking-cooling' },
                 { path: 'fridge-temp', selector: '.app-card.fridge-temp' },
                 { path: 'veg-fruit-wash', selector: '.app-card.veg-fruit-wash' },
-                { path: 'quality-control-receiving', selector: '.app-card.quality-control-receiving' }
+                { path: 'quality-control-receiving', selector: '.app-card.quality-control-receiving' },
+                { path: 'recipe-verification', selector: '.app-card.recipe-verification' }
             ];
 
             for (const module of modules) {
