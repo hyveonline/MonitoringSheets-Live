@@ -809,11 +809,11 @@
             document.getElementById('device-name').value = selectedReference.name;
             document.getElementById('method-used').value = selectedReference.method_used || '';
             
-            // Check if equipment is probe thermometer or hygrometer (user must enter reference value)
+            // Check if equipment is probe thermometer, hygrometer, or thermo button (user must enter reference value)
             const refValueInput = document.getElementById('reference-value');
             const refValueRequired = document.getElementById('ref-value-required');
             const equipmentName = selectedReference.name.toLowerCase();
-            const requiresManualEntry = equipmentName.includes('thermometer') || equipmentName.includes('hygrometer');
+            const requiresManualEntry = equipmentName.includes('thermometer') || equipmentName.includes('hygrometer') || equipmentName.includes('thermo') || equipmentName.includes('button');
             
             if (requiresManualEntry) {
                 // Probe thermometer/hygrometer: user must enter reference value manually
