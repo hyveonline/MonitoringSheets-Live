@@ -195,17 +195,49 @@
             white-space: nowrap;
         }
         
-        .yes-no-select {
-            width: 100%;
-            padding: 0.4rem;
-            border: 1px solid #d1d5db;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            cursor: pointer;
+        .yes-no-checkbox {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            align-items: center;
         }
         
-        .yes-no-select.yes { background: #d1fae5; border-color: #10b981; color: #065f46; }
-        .yes-no-select.no { background: #fee2e2; border-color: #ef4444; color: #991b1b; }
+        .yes-no-checkbox label {
+            display: flex;
+            align-items: center;
+            gap: 0.2rem;
+            cursor: pointer;
+            font-size: 0.7rem;
+            font-weight: 500;
+            padding: 0.3rem 0.5rem;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        
+        .yes-no-checkbox label.yes-label {
+            color: #6b7280;
+        }
+        
+        .yes-no-checkbox label.no-label {
+            color: #6b7280;
+        }
+        
+        .yes-no-checkbox label.yes-label.checked {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .yes-no-checkbox label.no-label.checked {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .yes-no-checkbox input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: #7c3aed;
+        }
         
         .corrective-input { display: none; margin-top: 0.25rem; }
         .corrective-input.show { display: block; }
@@ -643,16 +675,24 @@
         function renderYesNoField(entry, field, isTasting = false) {
             const value = entry[field];
             const actionValue = entry[field + '_action'] || '';
-            const selectClass = value === true ? 'yes' : value === false ? 'no' : '';
+            const yesChecked = value === true;
+            const noChecked = value === false;
             const showAction = value === false;
             
             return `
                 <div>
-                    <select class="yes-no-select ${selectClass}" onchange="setYesNo(${entry.id}, '${field}', this.value, this)">
-                        <option value="" ${value === null || value === undefined ? 'selected' : ''}>-</option>
-                        <option value="yes" ${value === true ? 'selected' : ''}>Yes</option>
-                        <option value="no" ${value === false ? 'selected' : ''}>No</option>
-                    </select>
+                    <div class="yes-no-checkbox">
+                        <label class="yes-label ${yesChecked ? 'checked' : ''}">
+                            <input type="checkbox" ${yesChecked ? 'checked' : ''}
+                                   onchange="setYesNoCheckbox(${entry.id}, '${field}', 'yes', this)">
+                            Yes
+                        </label>
+                        <label class="no-label ${noChecked ? 'checked' : ''}">
+                            <input type="checkbox" ${noChecked ? 'checked' : ''}
+                                   onchange="setYesNoCheckbox(${entry.id}, '${field}', 'no', this)">
+                            No
+                        </label>
+                    </div>
                     ${!isTasting ? `
                         <div class="corrective-input ${showAction ? 'show' : ''}" id="action-${entry.id}-${field}">
                             <input type="text" placeholder="Corrective action..." value="${escapeHtml(actionValue)}"
@@ -663,24 +703,41 @@
             `;
         }
         
-        function setYesNo(entryId, field, value, selectEl) {
+        function setYesNoCheckbox(entryId, field, value, checkboxEl) {
             const entry = entries.find(e => e.id === entryId);
             if (!entry) return;
             
+            const container = checkboxEl.closest('.yes-no-checkbox');
+            const yesLabel = container.querySelector('.yes-label');
+            const noLabel = container.querySelector('.no-label');
+            const yesCheckbox = yesLabel.querySelector('input');
+            const noCheckbox = noLabel.querySelector('input');
+            
             if (value === 'yes') {
-                entry[field] = true;
-                selectEl.className = 'yes-no-select yes';
+                if (checkboxEl.checked) {
+                    entry[field] = true;
+                    noCheckbox.checked = false;
+                    yesLabel.classList.add('checked');
+                    noLabel.classList.remove('checked');
+                } else {
+                    entry[field] = null;
+                    yesLabel.classList.remove('checked');
+                }
             } else if (value === 'no') {
-                entry[field] = false;
-                selectEl.className = 'yes-no-select no';
-            } else {
-                entry[field] = null;
-                selectEl.className = 'yes-no-select';
+                if (checkboxEl.checked) {
+                    entry[field] = false;
+                    yesCheckbox.checked = false;
+                    noLabel.classList.add('checked');
+                    yesLabel.classList.remove('checked');
+                } else {
+                    entry[field] = null;
+                    noLabel.classList.remove('checked');
+                }
             }
             
             const actionDiv = document.getElementById(`action-${entryId}-${field}`);
             if (actionDiv) {
-                if (value === 'no') {
+                if (entry[field] === false) {
                     actionDiv.classList.add('show');
                 } else {
                     actionDiv.classList.remove('show');
