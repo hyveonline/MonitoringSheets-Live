@@ -517,7 +517,7 @@
         }
         
         // Check if a time slot is within allowed window
-        // Rule: Can enter data FROM slot time TO 30 minutes AFTER slot time
+        // Rule: Allow editing anytime for today's date
         function isSlotEditable(slot) {
             const selectedDate = document.getElementById('log-date').value;
             const today = getLocalToday();
@@ -527,22 +527,8 @@
                 return false;
             }
             
-            const now = new Date();
-            const currentHour = now.getHours();
-            const currentMinutes = now.getMinutes();
-            const currentTotalMinutes = currentHour * 60 + currentMinutes;
-            
-            const slotHour = TIME_HOURS[slot];
-            if (slotHour === undefined) {
-                console.warn('Unknown slot:', slot);
-                return false;
-            }
-            
-            const slotStartMinutes = slotHour * 60;             // e.g., 2:00 AM = 120 minutes
-            const slotEndMinutes = slotStartMinutes + 30;       // e.g., 2:30 AM = 150 minutes
-            
-            // Can edit if: current time >= slot time AND current time <= slot time + 30 mins
-            return currentTotalMinutes >= slotStartMinutes && currentTotalMinutes <= slotEndMinutes;
+            // Allow editing any slot for today
+            return true;
         }
         
         // Check if slot is past the 30-minute window (for warning purposes)
