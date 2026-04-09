@@ -604,8 +604,9 @@
             // Can't edit if verified
             if (reading.verified_by) return false;
             
+            const role = (currentUser.role || '').toLowerCase();
             // Admins and SuperAuditors can edit any
-            if (['Admin', 'SuperAuditor'].includes(currentUser.role)) return true;
+            if (['admin', 'superauditor'].includes(role)) return true;
             
             // Others can only edit their own
             return reading.filled_by === currentUser.name;
@@ -615,16 +616,18 @@
             // Already verified
             if (reading.verified_by) return false;
             
+            const role = (currentUser.role || '').toLowerCase();
             // Only Admins and SuperAuditors can verify
-            return ['Admin', 'SuperAuditor'].includes(currentUser.role);
+            return ['admin', 'superauditor'].includes(role);
         }
 
         function canDelete(reading) {
             // Can't delete if verified
             if (reading.verified_by) return false;
             
+            const role = (currentUser.role || '').toLowerCase();
             // Only Admins can delete
-            return currentUser.role === 'Admin';
+            return role === 'admin';
         }
 
         function renderReadings() {
