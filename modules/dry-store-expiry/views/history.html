@@ -558,7 +558,11 @@
                 if (status) params.append('status', status);
                 
                 const response = await fetch(`/dry-store-expiry/api/readings?${params}`);
-                readings = await response.json();
+                if (!response.ok) {
+                    throw new Error(`Server returned ${response.status}`);
+                }
+                const data = await response.json();
+                readings = Array.isArray(data) ? data : [];
                 
                 renderReadings();
             } catch (error) {
@@ -567,7 +571,7 @@
                     <div class="empty-state">
                         <i class="fas fa-exclamation-triangle"></i>
                         <h3>Error Loading Data</h3>
-                        <p>Please try again later.</p>
+                        <p>${error.message || 'Please try again later.'}</p>
                     </div>
                 `;
             }

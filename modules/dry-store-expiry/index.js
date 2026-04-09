@@ -165,13 +165,41 @@ router.delete('/api/sections/:id', async (req, res) => {
     }
 });
 
-// API: Get all readings
+// API: Get all readings (with items included)
 router.get('/api/readings', async (req, res) => {
     try {
         const pool = await sql.connect(dbConfig);
-        const result = await pool.request()
-            .query('SELECT * FROM DryStoreExpiryReadings ORDER BY log_date DESC, created_at DESC');
-        res.json(result.recordset);
+        
+        // Build query with optional filters
+        let query = 'SELECT * FROM DryStoreExpiryReadings WHERE 1=1';
+        const request = pool.request();
+        
+        if (req.query.date) {
+            query += ' AND log_date = @date';
+            request.input('date', sql.Date, req.query.date);
+        }
+        if (req.query.section) {
+            query += ' AND section = @section';
+            request.input('section', sql.NVarChar, req.query.section);
+        }
+        if (req.query.status) {
+            query += ' AND overall_status = @status';
+            request.input('status', sql.NVarChar, req.query.status);
+        }
+        
+        query += ' ORDER BY log_date DESC, created_at DESC';
+        const result = await request.query(query);
+        
+        // Include items for each reading
+        const readings = result.recordset;
+        for (const reading of readings) {
+            const itemsResult = await pool.request()
+                .input('rid', sql.Int, reading.id)
+                .query('SELECT * FROM DryStoreExpiryItems WHERE reading_id = @rid ORDER BY id');
+            reading.items = itemsResult.recordset;
+        }
+        
+        res.json(readings);
     } catch (err) {
         console.error('Error fetching readings:', err);
         res.status(500).json({ error: 'Failed to fetch readings' });
