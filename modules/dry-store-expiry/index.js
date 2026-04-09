@@ -72,6 +72,14 @@ router.get('/uploads/:filename', (req, res) => {
     }
 });
 
+// Prevent caching on all API routes
+router.use('/api', (req, res, next) => {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+    res.set('Pragma', 'no-cache');
+    res.set('Expires', '0');
+    next();
+});
+
 // ==========================================
 // API Routes - Settings
 // ==========================================
@@ -79,11 +87,6 @@ router.get('/uploads/:filename', (req, res) => {
 // Get settings
 router.get('/api/settings', async (req, res) => {
     try {
-        // Prevent caching
-        res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
-        res.set('Expires', '-1');
-        res.set('Pragma', 'no-cache');
-        
         const pool = await sql.connect(dbConfig);
         const result = await pool.request()
             .query(`SELECT * FROM DryStoreExpirySettings`);
