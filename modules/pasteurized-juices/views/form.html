@@ -156,17 +156,41 @@
             min-width: 200px;
         }
         
-        .yes-no-select {
-            padding: 0.5rem;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            font-size: 0.875rem;
-            cursor: pointer;
-            transition: all 0.2s;
+        .yes-no-checkbox {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
         }
         
-        .yes-no-select.yes { background: #d1fae5; border-color: #10b981; color: #065f46; }
-        .yes-no-select.no { background: #fee2e2; border-color: #ef4444; color: #991b1b; }
+        .yes-no-checkbox label {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            padding: 0.4rem 0.6rem;
+            border-radius: 6px;
+            transition: all 0.2s;
+            color: #6b7280;
+        }
+        
+        .yes-no-checkbox label.yes-label.checked {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .yes-no-checkbox label.no-label.checked {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .yes-no-checkbox input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #f59e0b;
+        }
         
         .corrective-input {
             display: none;
@@ -324,11 +348,11 @@
                         <small>Visual inspection of fruit quality and sorting</small>
                     </div>
                     <div class="checklist-controls">
-                        <select class="yes-no-select" id="fruits_correctly_sorted" name="fruits_correctly_sorted" onchange="toggleCorrective(this, 'fruits_correctly_sorted_action')">
-                            <option value="">Select...</option>
-                            <option value="1">Yes</option>
-                            <option value="0">No</option>
-                        </select>
+                        <input type="hidden" id="fruits_correctly_sorted" name="fruits_correctly_sorted" value="">
+                        <div class="yes-no-checkbox">
+                            <label class="yes-label"><input type="checkbox" onchange="setYesNoCheckbox('fruits_correctly_sorted', 'yes', this)"> Yes</label>
+                            <label class="no-label"><input type="checkbox" onchange="setYesNoCheckbox('fruits_correctly_sorted', 'no', this)"> No</label>
+                        </div>
                         <div class="corrective-input" id="fruits_correctly_sorted_action_wrapper">
                             <input type="text" id="fruits_correctly_sorted_action" name="fruits_correctly_sorted_action" placeholder="Corrective action taken...">
                         </div>
@@ -341,11 +365,11 @@
                         <small>Proper disinfection procedures followed</small>
                     </div>
                     <div class="checklist-controls">
-                        <select class="yes-no-select" id="fruits_properly_disinfected" name="fruits_properly_disinfected" onchange="toggleCorrective(this, 'fruits_properly_disinfected_action')">
-                            <option value="">Select...</option>
-                            <option value="1">Yes</option>
-                            <option value="0">No</option>
-                        </select>
+                        <input type="hidden" id="fruits_properly_disinfected" name="fruits_properly_disinfected" value="">
+                        <div class="yes-no-checkbox">
+                            <label class="yes-label"><input type="checkbox" onchange="setYesNoCheckbox('fruits_properly_disinfected', 'yes', this)"> Yes</label>
+                            <label class="no-label"><input type="checkbox" onchange="setYesNoCheckbox('fruits_properly_disinfected', 'no', this)"> No</label>
+                        </div>
                         <div class="corrective-input" id="fruits_properly_disinfected_action_wrapper">
                             <input type="text" id="fruits_properly_disinfected_action" name="fruits_properly_disinfected_action" placeholder="Corrective action taken...">
                         </div>
@@ -358,11 +382,11 @@
                         <small>Mesh size ≤0.4 cm for strawberry/strawberry banana juices, &lt;0.1 cm for other juices</small>
                     </div>
                     <div class="checklist-controls">
-                        <select class="yes-no-select" id="proper_strainers_used" name="proper_strainers_used" onchange="toggleCorrective(this, 'proper_strainers_used_action')">
-                            <option value="">Select...</option>
-                            <option value="1">Yes</option>
-                            <option value="0">No</option>
-                        </select>
+                        <input type="hidden" id="proper_strainers_used" name="proper_strainers_used" value="">
+                        <div class="yes-no-checkbox">
+                            <label class="yes-label"><input type="checkbox" onchange="setYesNoCheckbox('proper_strainers_used', 'yes', this)"> Yes</label>
+                            <label class="no-label"><input type="checkbox" onchange="setYesNoCheckbox('proper_strainers_used', 'no', this)"> No</label>
+                        </div>
                         <div class="corrective-input" id="proper_strainers_used_action_wrapper">
                             <input type="text" id="proper_strainers_used_action" name="proper_strainers_used_action" placeholder="Corrective action taken...">
                         </div>
@@ -375,11 +399,11 @@
                         <small>Equipment inspection completed</small>
                     </div>
                     <div class="checklist-controls">
-                        <select class="yes-no-select" id="strainers_good_condition" name="strainers_good_condition" onchange="toggleCorrective(this, 'strainers_good_condition_action')">
-                            <option value="">Select...</option>
-                            <option value="1">Yes</option>
-                            <option value="0">No</option>
-                        </select>
+                        <input type="hidden" id="strainers_good_condition" name="strainers_good_condition" value="">
+                        <div class="yes-no-checkbox">
+                            <label class="yes-label"><input type="checkbox" onchange="setYesNoCheckbox('strainers_good_condition', 'yes', this)"> Yes</label>
+                            <label class="no-label"><input type="checkbox" onchange="setYesNoCheckbox('strainers_good_condition', 'no', this)"> No</label>
+                        </div>
                         <div class="corrective-input" id="strainers_good_condition_action_wrapper">
                             <input type="text" id="strainers_good_condition_action" name="strainers_good_condition_action" placeholder="Corrective action taken...">
                         </div>
@@ -392,11 +416,11 @@
                         <small>Straining process completed correctly</small>
                     </div>
                     <div class="checklist-controls">
-                        <select class="yes-no-select" id="juice_properly_strained" name="juice_properly_strained" onchange="toggleCorrective(this, 'juice_properly_strained_action')">
-                            <option value="">Select...</option>
-                            <option value="1">Yes</option>
-                            <option value="0">No</option>
-                        </select>
+                        <input type="hidden" id="juice_properly_strained" name="juice_properly_strained" value="">
+                        <div class="yes-no-checkbox">
+                            <label class="yes-label"><input type="checkbox" onchange="setYesNoCheckbox('juice_properly_strained', 'yes', this)"> Yes</label>
+                            <label class="no-label"><input type="checkbox" onchange="setYesNoCheckbox('juice_properly_strained', 'no', this)"> No</label>
+                        </div>
                         <div class="corrective-input" id="juice_properly_strained_action_wrapper">
                             <input type="text" id="juice_properly_strained_action" name="juice_properly_strained_action" placeholder="Corrective action taken...">
                         </div>
@@ -409,11 +433,11 @@
                         <small>Pre-pasteurization quality check</small>
                     </div>
                     <div class="checklist-controls">
-                        <select class="yes-no-select" id="quality_before_pasteurization" name="quality_before_pasteurization" onchange="toggleCorrective(this, 'quality_before_pasteurization_action')">
-                            <option value="">Select...</option>
-                            <option value="1">Yes</option>
-                            <option value="0">No</option>
-                        </select>
+                        <input type="hidden" id="quality_before_pasteurization" name="quality_before_pasteurization" value="">
+                        <div class="yes-no-checkbox">
+                            <label class="yes-label"><input type="checkbox" onchange="setYesNoCheckbox('quality_before_pasteurization', 'yes', this)"> Yes</label>
+                            <label class="no-label"><input type="checkbox" onchange="setYesNoCheckbox('quality_before_pasteurization', 'no', this)"> No</label>
+                        </div>
                         <div class="corrective-input" id="quality_before_pasteurization_action_wrapper">
                             <input type="text" id="quality_before_pasteurization_action" name="quality_before_pasteurization_action" placeholder="Corrective action taken...">
                         </div>
@@ -431,11 +455,11 @@
                         <small>Temperature monitoring equipment check</small>
                     </div>
                     <div class="checklist-controls">
-                        <select class="yes-no-select" id="thermobuttons_good_condition" name="thermobuttons_good_condition" onchange="toggleCorrective(this, 'thermobuttons_good_condition_action')">
-                            <option value="">Select...</option>
-                            <option value="1">Yes</option>
-                            <option value="0">No</option>
-                        </select>
+                        <input type="hidden" id="thermobuttons_good_condition" name="thermobuttons_good_condition" value="">
+                        <div class="yes-no-checkbox">
+                            <label class="yes-label"><input type="checkbox" onchange="setYesNoCheckbox('thermobuttons_good_condition', 'yes', this)"> Yes</label>
+                            <label class="no-label"><input type="checkbox" onchange="setYesNoCheckbox('thermobuttons_good_condition', 'no', this)"> No</label>
+                        </div>
                         <div class="corrective-input" id="thermobuttons_good_condition_action_wrapper">
                             <input type="text" id="thermobuttons_good_condition_action" name="thermobuttons_good_condition_action" placeholder="Corrective action taken...">
                         </div>
@@ -448,11 +472,11 @@
                         <small>Vacuum sealing process verification</small>
                     </div>
                     <div class="checklist-controls">
-                        <select class="yes-no-select" id="vacuum_done_properly" name="vacuum_done_properly" onchange="toggleCorrective(this, 'vacuum_done_properly_action')">
-                            <option value="">Select...</option>
-                            <option value="1">Yes</option>
-                            <option value="0">No</option>
-                        </select>
+                        <input type="hidden" id="vacuum_done_properly" name="vacuum_done_properly" value="">
+                        <div class="yes-no-checkbox">
+                            <label class="yes-label"><input type="checkbox" onchange="setYesNoCheckbox('vacuum_done_properly', 'yes', this)"> Yes</label>
+                            <label class="no-label"><input type="checkbox" onchange="setYesNoCheckbox('vacuum_done_properly', 'no', this)"> No</label>
+                        </div>
                         <div class="corrective-input" id="vacuum_done_properly_action_wrapper">
                             <input type="text" id="vacuum_done_properly_action" name="vacuum_done_properly_action" placeholder="Corrective action taken...">
                         </div>
@@ -500,11 +524,11 @@
                         <small>Equipment setting verification</small>
                     </div>
                     <div class="checklist-controls">
-                        <select class="yes-no-select" id="oven_steam_mode" name="oven_steam_mode" onchange="toggleCorrective(this, 'oven_steam_mode_action')">
-                            <option value="">Select...</option>
-                            <option value="1">Yes</option>
-                            <option value="0">No</option>
-                        </select>
+                        <input type="hidden" id="oven_steam_mode" name="oven_steam_mode" value="">
+                        <div class="yes-no-checkbox">
+                            <label class="yes-label"><input type="checkbox" onchange="setYesNoCheckbox('oven_steam_mode', 'yes', this)"> Yes</label>
+                            <label class="no-label"><input type="checkbox" onchange="setYesNoCheckbox('oven_steam_mode', 'no', this)"> No</label>
+                        </div>
                         <div class="corrective-input" id="oven_steam_mode_action_wrapper">
                             <input type="text" id="oven_steam_mode_action" name="oven_steam_mode_action" placeholder="Corrective action taken...">
                         </div>
@@ -545,11 +569,11 @@
                         <small>Thermobutton reading verification</small>
                     </div>
                     <div class="checklist-controls">
-                        <select class="yes-no-select" id="pasteurization_proper" name="pasteurization_proper" onchange="toggleCorrective(this, 'pasteurization_proper_action')">
-                            <option value="">Select...</option>
-                            <option value="1">Yes</option>
-                            <option value="0">No</option>
-                        </select>
+                        <input type="hidden" id="pasteurization_proper" name="pasteurization_proper" value="">
+                        <div class="yes-no-checkbox">
+                            <label class="yes-label"><input type="checkbox" onchange="setYesNoCheckbox('pasteurization_proper', 'yes', this)"> Yes</label>
+                            <label class="no-label"><input type="checkbox" onchange="setYesNoCheckbox('pasteurization_proper', 'no', this)"> No</label>
+                        </div>
                         <div class="corrective-input" id="pasteurization_proper_action_wrapper">
                             <input type="text" id="pasteurization_proper_action" name="pasteurization_proper_action" placeholder="Corrective action taken...">
                         </div>
@@ -585,11 +609,11 @@
                         <small>Post-pasteurization quality verification</small>
                     </div>
                     <div class="checklist-controls">
-                        <select class="yes-no-select" id="quality_after_pasteurization" name="quality_after_pasteurization" onchange="toggleCorrective(this, 'quality_after_pasteurization_action')">
-                            <option value="">Select...</option>
-                            <option value="1">Yes</option>
-                            <option value="0">No</option>
-                        </select>
+                        <input type="hidden" id="quality_after_pasteurization" name="quality_after_pasteurization" value="">
+                        <div class="yes-no-checkbox">
+                            <label class="yes-label"><input type="checkbox" onchange="setYesNoCheckbox('quality_after_pasteurization', 'yes', this)"> Yes</label>
+                            <label class="no-label"><input type="checkbox" onchange="setYesNoCheckbox('quality_after_pasteurization', 'no', this)"> No</label>
+                        </div>
                         <div class="corrective-input" id="quality_after_pasteurization_action_wrapper">
                             <input type="text" id="quality_after_pasteurization_action" name="quality_after_pasteurization_action" placeholder="Corrective action taken...">
                         </div>
@@ -602,11 +626,11 @@
                         <small>Date labelling verification</small>
                     </div>
                     <div class="checklist-controls">
-                        <select class="yes-no-select" id="expiry_date_correct" name="expiry_date_correct" onchange="toggleCorrective(this, 'expiry_date_correct_action')">
-                            <option value="">Select...</option>
-                            <option value="1">Yes</option>
-                            <option value="0">No</option>
-                        </select>
+                        <input type="hidden" id="expiry_date_correct" name="expiry_date_correct" value="">
+                        <div class="yes-no-checkbox">
+                            <label class="yes-label"><input type="checkbox" onchange="setYesNoCheckbox('expiry_date_correct', 'yes', this)"> Yes</label>
+                            <label class="no-label"><input type="checkbox" onchange="setYesNoCheckbox('expiry_date_correct', 'no', this)"> No</label>
+                        </div>
                         <div class="corrective-input" id="expiry_date_correct_action_wrapper">
                             <input type="text" id="expiry_date_correct_action" name="expiry_date_correct_action" placeholder="Corrective action taken...">
                         </div>
@@ -619,11 +643,11 @@
                         <small>Product label verification</small>
                     </div>
                     <div class="checklist-controls">
-                        <select class="yes-no-select" id="labelling_correct" name="labelling_correct" onchange="toggleCorrective(this, 'labelling_correct_action')">
-                            <option value="">Select...</option>
-                            <option value="1">Yes</option>
-                            <option value="0">No</option>
-                        </select>
+                        <input type="hidden" id="labelling_correct" name="labelling_correct" value="">
+                        <div class="yes-no-checkbox">
+                            <label class="yes-label"><input type="checkbox" onchange="setYesNoCheckbox('labelling_correct', 'yes', this)"> Yes</label>
+                            <label class="no-label"><input type="checkbox" onchange="setYesNoCheckbox('labelling_correct', 'no', this)"> No</label>
+                        </div>
                         <div class="corrective-input" id="labelling_correct_action_wrapper">
                             <input type="text" id="labelling_correct_action" name="labelling_correct_action" placeholder="Corrective action taken...">
                         </div>
@@ -636,11 +660,11 @@
                         <small>Sample retention for quality records</small>
                     </div>
                     <div class="checklist-controls">
-                        <select class="yes-no-select" id="retention_sample_taken" name="retention_sample_taken" onchange="toggleCorrective(this, 'retention_sample_taken_action')">
-                            <option value="">Select...</option>
-                            <option value="1">Yes</option>
-                            <option value="0">No</option>
-                        </select>
+                        <input type="hidden" id="retention_sample_taken" name="retention_sample_taken" value="">
+                        <div class="yes-no-checkbox">
+                            <label class="yes-label"><input type="checkbox" onchange="setYesNoCheckbox('retention_sample_taken', 'yes', this)"> Yes</label>
+                            <label class="no-label"><input type="checkbox" onchange="setYesNoCheckbox('retention_sample_taken', 'no', this)"> No</label>
+                        </div>
                         <div class="corrective-input" id="retention_sample_taken_action_wrapper">
                             <input type="text" id="retention_sample_taken_action" name="retention_sample_taken_action" placeholder="Corrective action taken...">
                         </div>
@@ -668,20 +692,39 @@
     </div>
     
     <script>
-        // Toggle corrective action input visibility
-        function toggleCorrective(select, actionFieldId) {
-            const wrapper = document.getElementById(actionFieldId + '_wrapper');
-            if (select.value === '0') {
-                wrapper.classList.add('show');
-                select.classList.remove('yes');
-                select.classList.add('no');
-            } else if (select.value === '1') {
-                wrapper.classList.remove('show');
-                select.classList.remove('no');
-                select.classList.add('yes');
-            } else {
-                wrapper.classList.remove('show');
-                select.classList.remove('yes', 'no');
+        // Handle Yes/No checkbox toggle
+        function setYesNoCheckbox(fieldId, value, checkboxEl) {
+            const hiddenInput = document.getElementById(fieldId);
+            const container = checkboxEl.closest('.yes-no-checkbox');
+            const yesLabel = container.querySelector('.yes-label');
+            const noLabel = container.querySelector('.no-label');
+            const yesCheckbox = yesLabel.querySelector('input');
+            const noCheckbox = noLabel.querySelector('input');
+            const wrapper = document.getElementById(fieldId + '_action_wrapper');
+            
+            if (value === 'yes') {
+                if (checkboxEl.checked) {
+                    hiddenInput.value = '1';
+                    noCheckbox.checked = false;
+                    yesLabel.classList.add('checked');
+                    noLabel.classList.remove('checked');
+                    if (wrapper) wrapper.classList.remove('show');
+                } else {
+                    hiddenInput.value = '';
+                    yesLabel.classList.remove('checked');
+                }
+            } else if (value === 'no') {
+                if (checkboxEl.checked) {
+                    hiddenInput.value = '0';
+                    yesCheckbox.checked = false;
+                    noLabel.classList.add('checked');
+                    yesLabel.classList.remove('checked');
+                    if (wrapper) wrapper.classList.add('show');
+                } else {
+                    hiddenInput.value = '';
+                    noLabel.classList.remove('checked');
+                    if (wrapper) wrapper.classList.remove('show');
+                }
             }
         }
         
