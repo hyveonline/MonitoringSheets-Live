@@ -508,6 +508,10 @@
 
         // Initialize
         document.addEventListener('DOMContentLoaded', async () => {
+            // Set date filter to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('filterDate').value = today;
+
             await Promise.all([
                 loadSections(),
                 loadCurrentUser()

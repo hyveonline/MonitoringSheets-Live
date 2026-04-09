@@ -23,6 +23,9 @@ Thumbs.db
 .vscode/
 .idea/
 
+# Uploads
+modules/dry-store-expiry/uploads/
+
 # Build output
 dist/
 build/
