@@ -513,20 +513,214 @@
         }
         
         @media print {
-            .header, .filters-card, .modal-close, .print-btn {
+            @page {
+                size: A4;
+                margin: 10mm 10mm 15mm 10mm;
+            }
+            
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            
+            html, body {
+                background: white !important;
+                font-size: 10pt;
+                height: auto !important;
+                overflow: visible !important;
+            }
+            
+            /* Hide everything except the modal */
+            .header, .filters-card, .container, .docs-list, .drafts-section,
+            .modal-close, .print-btn, .modal-actions, .verify-btn, .unverify-btn,
+            .absent-checkbox, .response-checkbox, .corrective-input, .locked-notice {
                 display: none !important;
             }
             
+            /* Show only the modal content */
             .modal-overlay {
-                position: static;
-                background: none;
-                padding: 0;
+                position: static !important;
+                background: white !important;
+                padding: 0 !important;
+                opacity: 1 !important;
+                visibility: visible !important;
+                display: block !important;
+                height: auto !important;
+                overflow: visible !important;
+            }
+            
+            .modal-overlay:not(.active) {
+                display: none !important;
             }
             
             .modal {
-                max-width: 100%;
-                box-shadow: none;
+                position: static !important;
+                max-width: 100% !important;
+                max-height: none !important;
+                height: auto !important;
+                box-shadow: none !important;
+                transform: none !important;
+                border-radius: 0 !important;
+                overflow: visible !important;
+                width: 100% !important;
             }
+            
+            .modal-header {
+                position: static !important;
+                border-bottom: 2px solid #059669 !important;
+                padding: 5mm 0 !important;
+                margin-bottom: 5mm;
+            }
+            
+            .modal-doc-number {
+                font-size: 14pt !important;
+                padding: 3mm 5mm !important;
+            }
+            
+            .modal-title h2 {
+                font-size: 14pt !important;
+            }
+            
+            .modal-body {
+                padding: 0 !important;
+                overflow: visible !important;
+                max-height: none !important;
+                height: auto !important;
+            }
+            
+            #employees-edit-list {
+                overflow: visible !important;
+                max-height: none !important;
+                height: auto !important;
+            }
+            
+            .modal-meta {
+                background: #f5f5f5 !important;
+                padding: 3mm !important;
+                margin-bottom: 5mm !important;
+                font-size: 9pt !important;
+            }
+            
+            /* Employee cards for print */
+            .employee-edit-card {
+                page-break-inside: avoid !important;
+                margin-bottom: 3mm !important;
+                border: 1px solid #ccc !important;
+                overflow: visible !important;
+            }
+            
+            .responses-container {
+                overflow: visible !important;
+                max-height: none !important;
+                height: auto !important;
+            }
+            
+            .employee-table {
+                width: 100% !important;
+                font-size: 8pt !important;
+                border-collapse: collapse !important;
+            }
+            
+            .employee-table th {
+                background: #059669 !important;
+                color: white !important;
+                padding: 2mm !important;
+                font-size: 8pt !important;
+                border: 0.5pt solid #333 !important;
+            }
+            
+            .employee-table td {
+                padding: 2mm !important;
+                border: 0.5pt solid #ccc !important;
+                vertical-align: top !important;
+            }
+            
+            .employee-table tr:nth-child(even) {
+                background: #f9f9f9 !important;
+            }
+            
+            .employee-avatar {
+                width: 20px !important;
+                height: 20px !important;
+                font-size: 8pt !important;
+            }
+            
+            .employee-name {
+                font-size: 9pt !important;
+            }
+            
+            .employee-position {
+                font-size: 7pt !important;
+            }
+            
+            .status-badge {
+                padding: 1mm 2mm !important;
+                font-size: 7pt !important;
+            }
+            
+            .response-item {
+                font-size: 7pt !important;
+                padding: 1mm 0 !important;
+            }
+            
+            .response-row {
+                page-break-inside: avoid !important;
+            }
+            
+            .response-icon {
+                width: 12px !important;
+                height: 12px !important;
+            }
+            
+            .response-corrective {
+                font-size: 7pt !important;
+                padding: 1mm 2mm !important;
+            }
+            
+            .doc-footer {
+                margin-top: 5mm !important;
+                padding-top: 3mm !important;
+            }
+            
+            .verified-badge {
+                font-size: 8pt !important;
+            }
+            
+            /* Print Header */
+            .print-header {
+                display: block !important;
+                text-align: center;
+                margin-bottom: 5mm;
+                padding-bottom: 3mm;
+                border-bottom: 1pt solid #ccc;
+            }
+            
+            .print-header h1 {
+                font-size: 16pt;
+                margin: 0;
+                color: #059669;
+            }
+            
+            .print-header p {
+                font-size: 9pt;
+                color: #666;
+                margin: 2mm 0 0 0;
+            }
+            
+            /* Print Footer */
+            .print-footer {
+                display: block !important;
+                text-align: center;
+                font-size: 8pt;
+                color: #999;
+                padding: 3mm;
+                border-top: 0.5pt solid #ccc;
+                margin-top: 5mm;
+            }
+        }
+        
+        .print-header, .print-footer {
+            display: none;
         }
         
         /* Document Info Footer */
@@ -944,6 +1138,10 @@
     <!-- Document Detail Modal -->
     <div class="modal-overlay" id="detail-modal">
         <div class="modal">
+            <div class="print-header">
+                <h1>FS Monitoring - Hygiene Checklist</h1>
+                <p>Food Safety Monitoring System</p>
+            </div>
             <div class="modal-header">
                 <div class="modal-title">
                     <span class="modal-doc-number" id="modal-doc-number">HYG-20260115-001</span>
@@ -973,6 +1171,9 @@
                     </svg>
                     Save Changes
                 </button>
+            </div>
+            <div class="print-footer">
+                Printed from FS Monitoring System • <span id="print-date"></span>
             </div>
         </div>
     </div>
@@ -1281,6 +1482,9 @@
             const modal = document.getElementById('detail-modal');
             const content = document.getElementById('modal-content');
             const actionsBar = document.getElementById('modal-actions');
+            
+            // Set print date
+            document.getElementById('print-date').textContent = new Date().toLocaleString();
             
             content.innerHTML = `
                 <div class="loading">
