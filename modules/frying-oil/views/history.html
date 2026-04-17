@@ -868,9 +868,6 @@
         }
         
         async function viewDetails(sessionId) {
-            // Set print date
-            document.getElementById('print-date').textContent = new Date().toLocaleString();
-            
             try {
                 const res = await fetch(`/frying-oil/api/tests/${sessionId}?_=${Date.now()}`, {
                     cache: 'no-store'

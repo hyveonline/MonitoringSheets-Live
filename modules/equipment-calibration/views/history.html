@@ -784,9 +784,6 @@
         }
         
         async function viewDetails(id) {
-            // Set print date
-            document.getElementById('print-date').textContent = new Date().toLocaleString();
-            
             try {
                 const res = await fetch(`/equipment-calibration/api/calibrations/${id}?_=${Date.now()}`, {
                     cache: 'no-store'
