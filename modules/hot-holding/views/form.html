@@ -358,52 +358,65 @@
             <p class="form-subtitle" id="formSubtitle">Record hot holding temperature checks for food safety</p>
 
             <form id="hotHoldingForm">
+
                 <input type="hidden" id="readingId">
-                
                 <div class="form-grid">
                     <div class="form-group">
                         <label for="logDate">Log Date <span class="required">*</span></label>
                         <input type="date" id="logDate" required>
                     </div>
-
                     <div class="form-group">
                         <label for="product">Product <span class="required">*</span></label>
                         <input type="text" id="product" placeholder="Enter product name" required>
                     </div>
                 </div>
 
-                <!-- Product Temperature Section -->
+                <!-- 3x Hourly Temperature Sections -->
                 <div class="temp-section">
-                    <h4><i class="fas fa-drumstick-bite"></i> Product Temperature</h4>
-                    <div class="temp-input-row">
-                        <input type="number" id="productTemp" step="0.1" placeholder="Enter product temperature (°C)" required>
-                        <span class="result-status pending" id="productTempStatus">Enter Value</span>
-                    </div>
-                    <div class="threshold-hint">Target: ≥<span id="productTargetHint">63</span>°C | Critical Limit: <span id="productCriticalHint">60</span>°C</div>
-                    
-                    <div class="corrective-section" id="productCorrectiveSection">
-                        <div class="form-group" style="margin-top: 1rem;">
-                            <label for="correctiveActionProduct">Corrective Action (Product) <span class="required">*</span></label>
-                            <textarea id="correctiveActionProduct" placeholder="Describe corrective action for product temperature..."></textarea>
+                    <h4><i class="fas fa-clock"></i> Hourly Temperature Checks (3 Times)</h4>
+                    <div class="temp-input-row" style="gap:0.5rem; flex-wrap:wrap;">
+                        <div style="flex:1; min-width:120px;">
+                            <label for="time1">Time 1</label>
+                            <input type="text" id="time1" name="time1" placeholder="HH:MM" required>
+                        </div>
+                        <div style="flex:1; min-width:120px;">
+                            <label for="productTemp1">Product Temp 1 (°C)</label>
+                            <input type="number" id="productTemp1" name="productTemp1" step="0.1" required>
+                        </div>
+                        <div style="flex:1; min-width:120px;">
+                            <label for="unitTemp1">Hot Holding Unit Temp 1 (°C)</label>
+                            <input type="number" id="unitTemp1" name="unitTemp1" step="0.1" required>
                         </div>
                     </div>
-                </div>
-
-                <!-- Hot Holding Unit Temperature Section -->
-                <div class="temp-section">
-                    <h4><i class="fas fa-temperature-high"></i> Hot Holding Unit Temperature</h4>
-                    <div class="temp-input-row">
-                        <input type="number" id="unitTemp" step="0.1" placeholder="Enter unit temperature (°C)" required>
-                        <span class="result-status pending" id="unitTempStatus">Enter Value</span>
-                    </div>
-                    <div class="threshold-hint">Target: ≥<span id="unitTargetHint">70</span>°C</div>
-                    
-                    <div class="corrective-section" id="unitCorrectiveSection">
-                        <div class="form-group" style="margin-top: 1rem;">
-                            <label for="correctiveActionUnit">Corrective Action (Hot Holding Unit) <span class="required">*</span></label>
-                            <textarea id="correctiveActionUnit" placeholder="Describe corrective action for unit temperature..."></textarea>
+                    <div class="temp-input-row" style="gap:0.5rem; flex-wrap:wrap;">
+                        <div style="flex:1; min-width:120px;">
+                            <label for="time2">Time 2</label>
+                            <input type="text" id="time2" name="time2" placeholder="HH:MM" required>
+                        </div>
+                        <div style="flex:1; min-width:120px;">
+                            <label for="productTemp2">Product Temp 2 (°C)</label>
+                            <input type="number" id="productTemp2" name="productTemp2" step="0.1" required>
+                        </div>
+                        <div style="flex:1; min-width:120px;">
+                            <label for="unitTemp2">Hot Holding Unit Temp 2 (°C)</label>
+                            <input type="number" id="unitTemp2" name="unitTemp2" step="0.1" required>
                         </div>
                     </div>
+                    <div class="temp-input-row" style="gap:0.5rem; flex-wrap:wrap;">
+                        <div style="flex:1; min-width:120px;">
+                            <label for="time3">Time 3</label>
+                            <input type="text" id="time3" name="time3" placeholder="HH:MM" required>
+                        </div>
+                        <div style="flex:1; min-width:120px;">
+                            <label for="productTemp3">Product Temp 3 (°C)</label>
+                            <input type="number" id="productTemp3" name="productTemp3" step="0.1" required>
+                        </div>
+                        <div style="flex:1; min-width:120px;">
+                            <label for="unitTemp3">Hot Holding Unit Temp 3 (°C)</label>
+                            <input type="number" id="unitTemp3" name="unitTemp3" step="0.1" required>
+                        </div>
+                    </div>
+                    <div class="threshold-hint">Target Product Temp: ≥<span id="productTargetHint">63</span>°C | Critical Limit: <span id="productCriticalHint">60</span>°C | Target Unit Temp: ≥<span id="unitTargetHint">70</span>°C</div>
                 </div>
 
                 <div class="form-grid">
@@ -516,78 +529,23 @@
                 
                 document.getElementById('logDate').value = reading.log_date.split('T')[0];
                 document.getElementById('product').value = reading.product;
-                document.getElementById('productTemp').value = reading.product_temp;
-                document.getElementById('unitTemp').value = reading.hot_holding_unit_temp;
-                document.getElementById('correctiveActionProduct').value = reading.corrective_action_product || '';
-                document.getElementById('correctiveActionUnit').value = reading.corrective_action_unit || '';
+                
+                // Load 3x time/temp fields
+                document.getElementById('time1').value = reading.time1 || '';
+                document.getElementById('productTemp1').value = reading.product_temp1 || '';
+                document.getElementById('unitTemp1').value = reading.unit_temp1 || '';
+                document.getElementById('time2').value = reading.time2 || '';
+                document.getElementById('productTemp2').value = reading.product_temp2 || '';
+                document.getElementById('unitTemp2').value = reading.unit_temp2 || '';
+                document.getElementById('time3').value = reading.time3 || '';
+                document.getElementById('productTemp3').value = reading.product_temp3 || '';
+                document.getElementById('unitTemp3').value = reading.unit_temp3 || '';
+                
                 document.getElementById('shelfLife').value = reading.correct_clear_shelf_life || '';
                 document.getElementById('filledBy').value = reading.filled_by;
-                
-                updateProductTempStatus();
-                updateUnitTempStatus();
             } catch (error) {
                 console.error('Error loading reading:', error);
                 showToast('Failed to load reading', 'error');
-            }
-        }
-
-        // Product temperature change handler
-        document.getElementById('productTemp').addEventListener('input', updateProductTempStatus);
-
-        function updateProductTempStatus() {
-            const value = parseFloat(document.getElementById('productTemp').value);
-            const statusEl = document.getElementById('productTempStatus');
-            const correctiveSection = document.getElementById('productCorrectiveSection');
-            const correctiveInput = document.getElementById('correctiveActionProduct');
-            
-            if (isNaN(value)) {
-                statusEl.textContent = 'Enter Value';
-                statusEl.className = 'result-status pending';
-                correctiveSection.classList.remove('show');
-                correctiveInput.required = false;
-                return;
-            }
-            
-            if (value >= productTempCritical) {
-                statusEl.textContent = '✓ PASS';
-                statusEl.className = 'result-status pass';
-                correctiveSection.classList.remove('show');
-                correctiveInput.required = false;
-            } else {
-                statusEl.textContent = '✗ FAIL';
-                statusEl.className = 'result-status fail';
-                correctiveSection.classList.add('show');
-                correctiveInput.required = true;
-            }
-        }
-
-        // Unit temperature change handler
-        document.getElementById('unitTemp').addEventListener('input', updateUnitTempStatus);
-
-        function updateUnitTempStatus() {
-            const value = parseFloat(document.getElementById('unitTemp').value);
-            const statusEl = document.getElementById('unitTempStatus');
-            const correctiveSection = document.getElementById('unitCorrectiveSection');
-            const correctiveInput = document.getElementById('correctiveActionUnit');
-            
-            if (isNaN(value)) {
-                statusEl.textContent = 'Enter Value';
-                statusEl.className = 'result-status pending';
-                correctiveSection.classList.remove('show');
-                correctiveInput.required = false;
-                return;
-            }
-            
-            if (value >= unitTempTarget) {
-                statusEl.textContent = '✓ PASS';
-                statusEl.className = 'result-status pass';
-                correctiveSection.classList.remove('show');
-                correctiveInput.required = false;
-            } else {
-                statusEl.textContent = '✗ FAIL';
-                statusEl.className = 'result-status fail';
-                correctiveSection.classList.add('show');
-                correctiveInput.required = true;
             }
         }
 
@@ -598,21 +556,18 @@
             const submitBtn = document.getElementById('submitBtn');
             submitBtn.disabled = true;
             
-            const productTemp = parseFloat(document.getElementById('productTemp').value);
-            const unitTemp = parseFloat(document.getElementById('unitTemp').value);
-            
-            const productTempStatus = productTemp >= productTempCritical ? 'Pass' : 'Fail';
-            const unitTempStatus = unitTemp >= unitTempTarget ? 'Pass' : 'Fail';
-            
             const data = {
                 log_date: document.getElementById('logDate').value,
                 product: document.getElementById('product').value,
-                product_temp: productTemp,
-                product_temp_status: productTempStatus,
-                hot_holding_unit_temp: unitTemp,
-                unit_temp_status: unitTempStatus,
-                corrective_action_product: document.getElementById('correctiveActionProduct').value || null,
-                corrective_action_unit: document.getElementById('correctiveActionUnit').value || null,
+                time1: document.getElementById('time1').value,
+                product_temp1: parseFloat(document.getElementById('productTemp1').value) || null,
+                unit_temp1: parseFloat(document.getElementById('unitTemp1').value) || null,
+                time2: document.getElementById('time2').value,
+                product_temp2: parseFloat(document.getElementById('productTemp2').value) || null,
+                unit_temp2: parseFloat(document.getElementById('unitTemp2').value) || null,
+                time3: document.getElementById('time3').value,
+                product_temp3: parseFloat(document.getElementById('productTemp3').value) || null,
+                unit_temp3: parseFloat(document.getElementById('unitTemp3').value) || null,
                 correct_clear_shelf_life: document.getElementById('shelfLife').value || null,
                 filled_by: document.getElementById('filledBy').value
             };
@@ -651,14 +606,6 @@
             document.getElementById('hotHoldingForm').reset();
             document.getElementById('logDate').value = new Date().toISOString().split('T')[0];
             document.getElementById('filledBy').value = currentUser.name;
-            
-            document.getElementById('productTempStatus').textContent = 'Enter Value';
-            document.getElementById('productTempStatus').className = 'result-status pending';
-            document.getElementById('productCorrectiveSection').classList.remove('show');
-            
-            document.getElementById('unitTempStatus').textContent = 'Enter Value';
-            document.getElementById('unitTempStatus').className = 'result-status pending';
-            document.getElementById('unitCorrectiveSection').classList.remove('show');
         }
 
         function showToast(message, type = 'success') {

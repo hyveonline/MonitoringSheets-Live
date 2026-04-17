@@ -169,9 +169,10 @@ async function generateDocNumber(pool) {
 router.post('/api/readings', async (req, res) => {
     try {
         const {
-            log_date, product, product_temp, product_temp_status,
-            hot_holding_unit_temp, unit_temp_status,
-            corrective_action_product, corrective_action_unit,
+            log_date, product,
+            time1, product_temp1, unit_temp1,
+            time2, product_temp2, unit_temp2,
+            time3, product_temp3, unit_temp3,
             correct_clear_shelf_life, filled_by
         } = req.body;
         
@@ -182,26 +183,31 @@ router.post('/api/readings', async (req, res) => {
             .input('document_number', sql.NVarChar, docNumber)
             .input('log_date', sql.Date, log_date)
             .input('product', sql.NVarChar, product)
-            .input('product_temp', sql.Decimal(5, 2), product_temp)
-            .input('product_temp_status', sql.NVarChar, product_temp_status || 'Pass')
-            .input('hot_holding_unit_temp', sql.Decimal(5, 2), hot_holding_unit_temp)
-            .input('unit_temp_status', sql.NVarChar, unit_temp_status || 'Pass')
-            .input('corrective_action_product', sql.NVarChar, corrective_action_product || null)
-            .input('corrective_action_unit', sql.NVarChar, corrective_action_unit || null)
+            .input('time1', sql.NVarChar, time1 || null)
+            .input('product_temp1', sql.Decimal(5, 2), product_temp1 || null)
+            .input('unit_temp1', sql.Decimal(5, 2), unit_temp1 || null)
+            .input('time2', sql.NVarChar, time2 || null)
+            .input('product_temp2', sql.Decimal(5, 2), product_temp2 || null)
+            .input('unit_temp2', sql.Decimal(5, 2), unit_temp2 || null)
+            .input('time3', sql.NVarChar, time3 || null)
+            .input('product_temp3', sql.Decimal(5, 2), product_temp3 || null)
+            .input('unit_temp3', sql.Decimal(5, 2), unit_temp3 || null)
             .input('correct_clear_shelf_life', sql.NVarChar, correct_clear_shelf_life || null)
             .input('filled_by', sql.NVarChar, filled_by)
             .query(`
                 INSERT INTO HotHoldingReadings (
-                    document_number, log_date, product, product_temp, product_temp_status,
-                    hot_holding_unit_temp, unit_temp_status,
-                    corrective_action_product, corrective_action_unit,
+                    document_number, log_date, product,
+                    time1, product_temp1, unit_temp1,
+                    time2, product_temp2, unit_temp2,
+                    time3, product_temp3, unit_temp3,
                     correct_clear_shelf_life, filled_by
                 )
                 OUTPUT INSERTED.*
                 VALUES (
-                    @document_number, @log_date, @product, @product_temp, @product_temp_status,
-                    @hot_holding_unit_temp, @unit_temp_status,
-                    @corrective_action_product, @corrective_action_unit,
+                    @document_number, @log_date, @product,
+                    @time1, @product_temp1, @unit_temp1,
+                    @time2, @product_temp2, @unit_temp2,
+                    @time3, @product_temp3, @unit_temp3,
                     @correct_clear_shelf_life, @filled_by
                 )
             `);
@@ -217,9 +223,10 @@ router.post('/api/readings', async (req, res) => {
 router.put('/api/readings/:id', async (req, res) => {
     try {
         const {
-            log_date, product, product_temp, product_temp_status,
-            hot_holding_unit_temp, unit_temp_status,
-            corrective_action_product, corrective_action_unit,
+            log_date, product,
+            time1, product_temp1, unit_temp1,
+            time2, product_temp2, unit_temp2,
+            time3, product_temp3, unit_temp3,
             correct_clear_shelf_life, filled_by
         } = req.body;
         
@@ -229,21 +236,23 @@ router.put('/api/readings/:id', async (req, res) => {
             .input('id', sql.Int, req.params.id)
             .input('log_date', sql.Date, log_date)
             .input('product', sql.NVarChar, product)
-            .input('product_temp', sql.Decimal(5, 2), product_temp)
-            .input('product_temp_status', sql.NVarChar, product_temp_status || 'Pass')
-            .input('hot_holding_unit_temp', sql.Decimal(5, 2), hot_holding_unit_temp)
-            .input('unit_temp_status', sql.NVarChar, unit_temp_status || 'Pass')
-            .input('corrective_action_product', sql.NVarChar, corrective_action_product || null)
-            .input('corrective_action_unit', sql.NVarChar, corrective_action_unit || null)
+            .input('time1', sql.NVarChar, time1 || null)
+            .input('product_temp1', sql.Decimal(5, 2), product_temp1 || null)
+            .input('unit_temp1', sql.Decimal(5, 2), unit_temp1 || null)
+            .input('time2', sql.NVarChar, time2 || null)
+            .input('product_temp2', sql.Decimal(5, 2), product_temp2 || null)
+            .input('unit_temp2', sql.Decimal(5, 2), unit_temp2 || null)
+            .input('time3', sql.NVarChar, time3 || null)
+            .input('product_temp3', sql.Decimal(5, 2), product_temp3 || null)
+            .input('unit_temp3', sql.Decimal(5, 2), unit_temp3 || null)
             .input('correct_clear_shelf_life', sql.NVarChar, correct_clear_shelf_life || null)
             .input('filled_by', sql.NVarChar, filled_by)
             .query(`
                 UPDATE HotHoldingReadings SET
                     log_date = @log_date, product = @product,
-                    product_temp = @product_temp, product_temp_status = @product_temp_status,
-                    hot_holding_unit_temp = @hot_holding_unit_temp, unit_temp_status = @unit_temp_status,
-                    corrective_action_product = @corrective_action_product,
-                    corrective_action_unit = @corrective_action_unit,
+                    time1 = @time1, product_temp1 = @product_temp1, unit_temp1 = @unit_temp1,
+                    time2 = @time2, product_temp2 = @product_temp2, unit_temp2 = @unit_temp2,
+                    time3 = @time3, product_temp3 = @product_temp3, unit_temp3 = @unit_temp3,
                     correct_clear_shelf_life = @correct_clear_shelf_life,
                     filled_by = @filled_by, updated_at = GETDATE()
                 OUTPUT INSERTED.*

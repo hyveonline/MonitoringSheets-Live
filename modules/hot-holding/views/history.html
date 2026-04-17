@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Hot Holding History - FS Monitoring</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -455,14 +458,6 @@
                     </select>
                 </div>
                 <div class="filter-group">
-                    <label for="filterStatus">Status</label>
-                    <select id="filterStatus">
-                        <option value="">All Status</option>
-                        <option value="Pass">Pass</option>
-                        <option value="Fail">Fail</option>
-                    </select>
-                </div>
-                <div class="filter-group">
                     <button class="btn-filter" onclick="applyFilters()">
                         <i class="fas fa-filter"></i>
                         Apply Filters
@@ -483,9 +478,16 @@
                             <th>Document #</th>
                             <th>Date</th>
                             <th>Product</th>
-                            <th>Product Temp</th>
-                            <th>Unit Temp</th>
-                            <th>Overall</th>
+                            <th>Time 1</th>
+                            <th>Prod Temp 1</th>
+                            <th>Unit Temp 1</th>
+                            <th>Time 2</th>
+                            <th>Prod Temp 2</th>
+                            <th>Unit Temp 2</th>
+                            <th>Time 3</th>
+                            <th>Prod Temp 3</th>
+                            <th>Unit Temp 3</th>
+                            <th>Shelf Life</th>
                             <th>Filled By</th>
                             <th>Verified</th>
                             <th>Actions</th>
@@ -573,7 +575,6 @@
             const dateFrom = document.getElementById('filterDateFrom').value;
             const dateTo = document.getElementById('filterDateTo').value;
             const product = document.getElementById('filterProduct').value;
-            const status = document.getElementById('filterStatus').value;
             
             let filtered = [...allReadings];
             
@@ -586,12 +587,7 @@
             if (product) {
                 filtered = filtered.filter(r => r.product === product);
             }
-            if (status) {
-                filtered = filtered.filter(r => {
-                    const overallStatus = (r.product_temp_status === 'Pass' && r.unit_temp_status === 'Pass') ? 'Pass' : 'Fail';
-                    return overallStatus === status;
-                });
-            }
+            // Status filter removed - no longer applicable with 3x readings
             
             renderReadings(filtered);
         }
@@ -616,30 +612,21 @@
             const canDelete = currentUser.role === 'Admin';
             
             tbody.innerHTML = readings.map(r => {
-                const overallStatus = (r.product_temp_status === 'Pass' && r.unit_temp_status === 'Pass') ? 'Pass' : 'Fail';
                 return `
                 <tr>
                     <td><strong>${r.document_number}</strong></td>
                     <td>${new Date(r.log_date).toLocaleDateString()}</td>
                     <td>${r.product}</td>
-                    <td>
-                        <span class="temp-display">${r.product_temp}°C</span>
-                        <span class="status-badge ${r.product_temp_status === 'Pass' ? 'status-pass' : 'status-fail'}">
-                            ${r.product_temp_status}
-                        </span>
-                    </td>
-                    <td>
-                        <span class="temp-display">${r.hot_holding_unit_temp}°C</span>
-                        <span class="status-badge ${r.unit_temp_status === 'Pass' ? 'status-pass' : 'status-fail'}">
-                            ${r.unit_temp_status}
-                        </span>
-                    </td>
-                    <td>
-                        <span class="status-badge ${overallStatus === 'Pass' ? 'status-pass' : 'status-fail'}">
-                            <i class="fas fa-${overallStatus === 'Pass' ? 'check' : 'times'}"></i>
-                            ${overallStatus}
-                        </span>
-                    </td>
+                    <td>${r.time1 || '-'}</td>
+                    <td><span class="temp-display">${r.product_temp1 != null ? r.product_temp1 + '°C' : '-'}</span></td>
+                    <td><span class="temp-display">${r.unit_temp1 != null ? r.unit_temp1 + '°C' : '-'}</span></td>
+                    <td>${r.time2 || '-'}</td>
+                    <td><span class="temp-display">${r.product_temp2 != null ? r.product_temp2 + '°C' : '-'}</span></td>
+                    <td><span class="temp-display">${r.unit_temp2 != null ? r.unit_temp2 + '°C' : '-'}</span></td>
+                    <td>${r.time3 || '-'}</td>
+                    <td><span class="temp-display">${r.product_temp3 != null ? r.product_temp3 + '°C' : '-'}</span></td>
+                    <td><span class="temp-display">${r.unit_temp3 != null ? r.unit_temp3 + '°C' : '-'}</span></td>
+                    <td>${r.correct_clear_shelf_life || '-'}</td>
                     <td>${r.filled_by}</td>
                     <td>
                         ${r.verified ? `
