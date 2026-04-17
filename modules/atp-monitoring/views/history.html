@@ -418,6 +418,127 @@
                 flex-direction: column;
             }
         }
+        
+        /* Print Styles for A4 */
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 15mm 10mm 20mm 10mm;
+            }
+            
+            body {
+                background: white !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            
+            .header, .filters-card, .toast, .modal-overlay, .btn-action, .table-header {
+                display: none !important;
+            }
+            
+            tr {
+                display: none !important;
+            }
+            
+            tr.printing, thead tr {
+                display: table-row !important;
+            }
+            
+            .container {
+                max-width: 100% !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            
+            .table-card {
+                box-shadow: none !important;
+                border-radius: 0 !important;
+            }
+            
+            .print-header {
+                display: flex !important;
+                justify-content: space-between;
+                align-items: center;
+                padding-bottom: 10px;
+                border-bottom: 2px solid #7c3aed;
+                margin-bottom: 15px;
+            }
+            
+            .print-header-left h1 {
+                font-size: 18px;
+                color: #7c3aed;
+                margin: 0;
+            }
+            
+            .print-header-left p {
+                font-size: 11px;
+                color: #666;
+                margin: 2px 0 0 0;
+            }
+            
+            .print-header-right {
+                text-align: right;
+                font-size: 11px;
+                color: #666;
+            }
+            
+            .print-footer {
+                display: block !important;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                text-align: center;
+                font-size: 10px;
+                color: #666;
+                padding: 10px 0;
+                border-top: 1px solid #ddd;
+                background: white;
+            }
+            
+            .status-badge {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            
+            .status-pass {
+                background: #d1fae5 !important;
+                color: #059669 !important;
+            }
+            
+            .status-fail {
+                background: #fee2e2 !important;
+                color: #dc2626 !important;
+            }
+            
+            .verified-badge {
+                background: #dbeafe !important;
+                color: #1d4ed8 !important;
+            }
+        }
+        
+        .print-header, .print-footer {
+            display: none;
+        }
+        
+        .btn-print-row {
+            background: #f3f4f6;
+            border: none;
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            color: #6b7280;
+            transition: all 0.2s;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+        
+        .btn-print-row:hover {
+            background: #e5e7eb;
+            color: #374151;
+        }
     </style>
 </head>
 <body>
@@ -437,6 +558,17 @@
         </div>
     </header>
 
+    <div class="print-header">
+        <div class="print-header-left">
+            <h1>FS Monitoring System</h1>
+            <p>ATP Reading Record</p>
+        </div>
+        <div class="print-header-right">
+            <div id="print-doc-number"></div>
+            <div>Printed: <span id="print-date"></span></div>
+        </div>
+    </div>
+    
     <div class="container">
         <div class="filters-card">
             <div class="filters-grid">
@@ -535,7 +667,9 @@
 
         async function loadCurrentUser() {
             try {
-                const response = await fetch('/atp-monitoring/api/current-user');
+                const response = await fetch('/atp-monitoring/api/current-user?_=' + Date.now(), {
+                    cache: 'no-store'
+                });
                 currentUser = await response.json();
             } catch (error) {
                 console.error('Error loading user:', error);
@@ -544,7 +678,9 @@
 
         async function loadSections() {
             try {
-                const response = await fetch('/atp-monitoring/api/sections');
+                const response = await fetch('/atp-monitoring/api/sections?_=' + Date.now(), {
+                    cache: 'no-store'
+                });
                 const sections = await response.json();
                 
                 const select = document.getElementById('filterSection');
@@ -561,7 +697,9 @@
 
         async function loadReadings() {
             try {
-                const response = await fetch('/atp-monitoring/api/readings');
+                const response = await fetch('/atp-monitoring/api/readings?_=' + Date.now(), {
+                    cache: 'no-store'
+                });
                 allReadings = await response.json();
                 renderReadings(allReadings);
             } catch (error) {
@@ -614,8 +752,13 @@
             const canDelete = currentUser.role === 'Admin';
             
             tbody.innerHTML = readings.map(r => `
-                <tr>
-                    <td><strong>${r.document_number}</strong></td>
+                <tr id="row-${r.id}">
+                    <td>
+                        <strong>${r.document_number}</strong>
+                        <button class="btn-print-row" onclick="printRow(${r.id}, '${r.document_number}')" title="Print">
+                            <i class="fas fa-print"></i>
+                        </button>
+                    </td>
                     <td>${new Date(r.log_date).toLocaleDateString()}</td>
                     <td>${r.branch}</td>
                     <td>${r.section}</td>
@@ -718,6 +861,24 @@
             
             toast.classList.add('show');
             setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+        
+        function printRow(id, docNumber) {
+            const row = document.getElementById('row-' + id);
+            if (!row) return;
+            
+            document.getElementById('print-doc-number').textContent = docNumber;
+            document.getElementById('print-date').textContent = new Date().toLocaleDateString();
+            
+            // Mark only this row for printing
+            row.classList.add('printing');
+            
+            window.print();
+            
+            // Remove printing class after print
+            setTimeout(() => {
+                row.classList.remove('printing');
+            }, 100);
         }
     </script>
 </body>
