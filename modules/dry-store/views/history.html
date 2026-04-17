@@ -380,6 +380,153 @@
             .reading-header { flex-direction: column; gap: 0.75rem; align-items: flex-start; }
             .reading-footer { flex-direction: column; gap: 0.75rem; align-items: flex-start; }
         }
+        
+        /* Print Styles for A4 */
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 15mm 10mm 20mm 10mm;
+            }
+            
+            body {
+                background: white !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            
+            .header, .filters, .toast, .action-buttons, .btn-add, .btn-print-card {
+                display: none !important;
+            }
+            
+            .reading-card {
+                display: none !important;
+            }
+            
+            .reading-card.printing {
+                display: block !important;
+                page-break-inside: avoid;
+                box-shadow: none !important;
+                border: 1px solid #e5e7eb !important;
+                margin-bottom: 10px !important;
+            }
+            
+            .container {
+                max-width: 100% !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            
+            .print-header {
+                display: flex !important;
+                justify-content: space-between;
+                align-items: center;
+                padding-bottom: 10px;
+                border-bottom: 2px solid #d97706;
+                margin-bottom: 15px;
+            }
+            
+            .print-header-left h1 {
+                font-size: 18px;
+                color: #d97706;
+                margin: 0;
+            }
+            
+            .print-header-left p {
+                font-size: 11px;
+                color: #666;
+                margin: 2px 0 0 0;
+            }
+            
+            .print-header-right {
+                text-align: right;
+                font-size: 11px;
+                color: #666;
+            }
+            
+            .print-footer {
+                display: block !important;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                text-align: center;
+                font-size: 10px;
+                color: #666;
+                padding: 10px 0;
+                border-top: 1px solid #ddd;
+                background: white;
+            }
+            
+            .reading-card {
+                page-break-inside: avoid;
+                box-shadow: none !important;
+                border: 1px solid #e5e7eb !important;
+                margin-bottom: 10px !important;
+            }
+            
+            .reading-footer {
+                justify-content: flex-start !important;
+            }
+            
+            .badge, .period-section {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            
+            .badge.pass {
+                background: #d1fae5 !important;
+                color: #065f46 !important;
+            }
+            
+            .badge.fail {
+                background: #fee2e2 !important;
+                color: #dc2626 !important;
+            }
+            
+            .badge.verified {
+                background: #dbeafe !important;
+                color: #1e40af !important;
+            }
+            
+            .period-section.am {
+                background: #fffbeb !important;
+                border-color: #fcd34d !important;
+            }
+            
+            .period-section.pm {
+                background: #f5f3ff !important;
+                border-color: #a78bfa !important;
+            }
+            
+            .reading-value .value.fail {
+                color: #dc2626 !important;
+            }
+            
+            .reading-value .value.pass {
+                color: #059669 !important;
+            }
+        }
+        
+        .print-header, .print-footer {
+            display: none;
+        }
+        
+        .btn-print-card {
+            background: #f3f4f6;
+            border: none;
+            padding: 0.35rem;
+            border-radius: 6px;
+            cursor: pointer;
+            color: #6b7280;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+        }
+        
+        .btn-print-card:hover {
+            background: #e5e7eb;
+            color: #374151;
+        }
     </style>
 </head>
 <body>
@@ -401,6 +548,17 @@
             New Reading
         </a>
     </header>
+    
+    <div class="print-header">
+        <div class="print-header-left">
+            <h1>FS Monitoring System</h1>
+            <p>Dry Store Temperature & Humidity History</p>
+        </div>
+        <div class="print-header-right">
+            <div id="print-date-range"></div>
+            <div>Printed: <span id="print-date"></span></div>
+        </div>
+    </div>
     
     <div class="container">
         <div class="filters">
@@ -443,6 +601,10 @@
     </div>
     
     <div class="toast" id="toast"></div>
+    
+    <div class="print-footer">
+        Printed from FS Monitoring System | Golden Mango Restaurant LLC | Confidential
+    </div>
     
     <script>
         let readings = [];
@@ -575,12 +737,19 @@
                 });
                 
                 return `
-                    <div class="reading-card">
+                    <div class="reading-card" id="card-${r.id}">
                         <div class="reading-header">
                             <div class="reading-info">
                                 <span class="reading-date">${date}</span>
                                 <span class="reading-store">${r.dry_store}</span>
                                 <span class="reading-doc">${r.document_number}</span>
+                                <button class="btn-print-card" onclick="printCard(${r.id})" title="Print this record">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="6 9 6 2 18 2 18 9"/>
+                                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+                                        <rect x="6" y="14" width="12" height="8"/>
+                                    </svg>
+                                </button>
                             </div>
                             <div class="reading-badges">
                                 ${hasFailures ? '<span class="badge fail">Has Deviations</span>' : '<span class="badge pass">All Pass</span>'}
@@ -714,6 +883,28 @@
             toast.textContent = message;
             toast.className = `toast ${type} show`;
             setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+        
+        function printCard(id) {
+            const card = document.getElementById('card-' + id);
+            if (!card) return;
+            
+            // Get reading data for print header
+            const docNum = card.querySelector('.reading-doc').textContent;
+            const dateText = card.querySelector('.reading-date').textContent;
+            
+            document.getElementById('print-date-range').textContent = docNum;
+            document.getElementById('print-date').textContent = new Date().toLocaleDateString();
+            
+            // Mark only this card for printing
+            card.classList.add('printing');
+            
+            window.print();
+            
+            // Remove printing class after print
+            setTimeout(() => {
+                card.classList.remove('printing');
+            }, 100);
         }
     </script>
 </body>
